@@ -1,0 +1,192 @@
+[
+ {
+  "name": "Porto Alegre",
+  "lat": -30.03,
+  "lon": -51.23
+ },
+ {
+  "name": "Alvorada",
+  "lat": -29.99,
+  "lon": -51.08
+ },
+ {
+  "name": "Viamão",
+  "lat": -30.08,
+  "lon": -51.02
+ },
+ {
+  "name": "São Leopoldo",
+  "lat": -29.76,
+  "lon": -51.15
+ },
+ {
+  "name": "Canoas",
+  "lat": -29.92,
+  "lon": -51.18
+ },
+ {
+  "name": "Gravataí",
+  "lat": -29.94,
+  "lon": -50.99
+ },
+ {
+  "name": "Pelotas",
+  "lat": -31.77,
+  "lon": -52.34
+ },
+ {
+  "name": "Cachoeirinha",
+  "lat": -29.95,
+  "lon": -51.09
+ },
+ {
+  "name": "Guaíba",
+  "lat": -30.11,
+  "lon": -51.33
+ },
+ {
+  "name": "Novo Hamburgo",
+  "lat": -29.68,
+  "lon": -51.13
+ },
+ {
+  "name": "Santa Cruz do Sul",
+  "lat": -29.72,
+  "lon": -52.43
+ },
+ {
+  "name": "Santa Maria",
+  "lat": -29.69,
+  "lon": -53.81
+ },
+ {
+  "name": "Camaquã",
+  "lat": -30.85,
+  "lon": -51.81
+ },
+ {
+  "name": "Rio Grande",
+  "lat": -32.03,
+  "lon": -52.1
+ },
+ {
+  "name": "Ijuí",
+  "lat": -28.39,
+  "lon": -53.91
+ },
+ {
+  "name": "São Gabriel",
+  "lat": -30.34,
+  "lon": -54.32
+ },
+ {
+  "name": "Caxias do Sul",
+  "lat": -29.17,
+  "lon": -51.18
+ },
+ {
+  "name": "Uruguaiana",
+  "lat": -29.75,
+  "lon": -57.09
+ },
+ {
+  "name": "Taquara",
+  "lat": -29.65,
+  "lon": -50.78
+ },
+ {
+  "name": "Cachoeira do Sul",
+  "lat": -30.04,
+  "lon": -52.89
+ },
+ {
+  "name": "Santana do Livramento",
+  "lat": -30.89,
+  "lon": -55.53
+ },
+ {
+  "name": "Charqueadas",
+  "lat": -29.96,
+  "lon": -51.63
+ },
+ {
+  "name": "Bagé",
+  "lat": -31.33,
+  "lon": -54.1
+ },
+ {
+  "name": "Torres",
+  "lat": -29.33,
+  "lon": -49.73
+ },
+ {
+  "name": "Tramandaí",
+  "lat": -29.98,
+  "lon": -50.13
+ },
+ {
+  "name": "Osório",
+  "lat": -29.89,
+  "lon": -50.27
+ },
+ {
+  "name": "Eldorado do Sul",
+  "lat": -30.08,
+  "lon": -51.62
+ },
+ {
+  "name": "Montenegro",
+  "lat": -29.69,
+  "lon": -51.46
+ },
+ {
+  "name": "Cruz Alta",
+  "lat": -28.64,
+  "lon": -53.61
+ },
+ {
+  "name": "Passo Fundo",
+  "lat": -28.26,
+  "lon": -52.41
+ },
+ {
+  "name": "Sapucaia do Sul",
+  "lat": -29.83,
+  "lon": -51.15
+ },
+ {
+  "name": "Alegrete",
+  "lat": -29.78,
+  "lon": -55.79
+ },
+ {
+  "name": "São Borja",
+  "lat": -28.66,
+  "lon": -56.0
+ },
+ {
+  "name": "Erechim",
+  "lat": -27.63,
+  "lon": -52.27
+ },
+ {
+  "name": "Santa Rosa",
+  "lat": -27.87,
+  "lon": -54.48
+ },
+ {
+  "name": "Esteio",
+  "lat": -29.85,
+  "lon": -51.18
+ },
+ {
+  "name": "Santo Ângelo",
+  "lat": -28.3,
+  "lon": -54.26
+ },
+ {
+  "name": "Lajeado",
+  "lat": -29.47,
+  "lon": -51.96
+ }
+]

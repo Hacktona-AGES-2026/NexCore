@@ -1,4 +1,5 @@
 """JSON error handlers, so a client never receives an exception page as HTML."""
+from flask import request
 from werkzeug.exceptions import HTTPException
 
 
@@ -26,6 +27,12 @@ def register(app):
 
     @app.errorhandler(HTTPException)
     def _http_error(exc):
+        # Routing errors (404/405) fire before any blueprint is matched, so the
+        # regulation API's own handler never sees them: keep its {"detail"} shape.
+        from .regulation.errors import API_PREFIX, http_detail
+
+        if request.path.startswith(API_PREFIX + "/"):
+            return {"detail": http_detail(exc.code)}, exc.code
         return _response(exc.description, exc.code)
 
     @app.errorhandler(Exception)

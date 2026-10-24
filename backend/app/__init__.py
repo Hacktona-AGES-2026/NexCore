@@ -3,7 +3,7 @@ import logging
 
 from flask import Flask, jsonify
 
-from . import data, errors, realtime
+from . import data, errors, realtime, regulation
 from .config import get_config
 
 
@@ -26,6 +26,7 @@ def create_app(environment=None, **overrides):
 
     app.register_blueprint(api)
     realtime.init_app(app)
+    regulation.init_app(app)
     _configure_cors(app)
 
     @app.get("/")
@@ -36,6 +37,10 @@ def create_app(environment=None, **overrides):
                 "description": "Surgical queue prioritization — synthetic data",
                 "transport": "websocket",
                 "websocket": app.config["WS_PATH"],
+                "regulation": {
+                    "rest": f"{regulation.API_PREFIX}/hospitais/{app.config['HOSPITAL_ID']}",
+                    "stream": regulation.STREAM_PATH,
+                },
                 "protocol": realtime.protocol.PROTOCOL_VERSION,
                 "actions": realtime.actions.names(),
                 "routes": sorted(

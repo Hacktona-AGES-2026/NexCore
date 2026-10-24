@@ -39,9 +39,22 @@ def test_os_endpoints_de_leitura_sairam(cliente):
         assert cliente.get(rota).status_code == 404, rota
 
 
-def test_rotas_registradas_sao_so_as_duas(cliente):
+def test_rotas_registradas_sao_as_do_canal_e_as_da_regulacao(cliente):
+    """O canal de ações continua; a API do front (docs/CONTRATO_BACKEND.md) soma-se a ele."""
     rotas = set(cliente.get("/").get_json()["routes"])
-    assert rotas == {"/", "/api/health", "/ws"}
+    base = "/v1/hospitais/<hospital>"
+    assert rotas == {
+        "/", "/api/health", "/ws", "/v1/ws",
+        f"{base}/fila", f"{base}/fila/<request_id>/reordenar",
+        f"{base}/fila/<request_id>/validar", f"{base}/auditoria", f"{base}/pendencias",
+        f"{base}/pendencias/<pendency_id>/resolver", f"{base}/painel/resumo",
+        f"{base}/painel/equidade", f"{base}/neco/perguntar",
+    }
+
+
+def test_raiz_anuncia_a_api_da_regulacao(cliente):
+    corpo = cliente.get("/").get_json()
+    assert corpo["regulation"] == {"rest": "/v1/hospitais/hsl", "stream": "/v1/ws"}
 
 
 def test_rota_inexistente_devolve_json(cliente):

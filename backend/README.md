@@ -5,7 +5,15 @@ Lucas). O frontend consome tudo por **uma conexão WebSocket**: a fila, os event
 o catálogo e os cálculos — que reportam progresso enquanto rodam, em vez de deixar a tela
 parada esperando a resposta. **Dados 100% sintéticos.**
 
-HTTP sobrou só para `/api/health` e para a raiz, que anuncia o canal.
+Ao lado dele existe a **API da regulação**, que é o que o frontend de verdade consome
+(`docs/CONTRATO_BACKEND.md`): REST em `/v1/hospitais/hsl/...` para as ações do
+administrador e um WebSocket **que só envia**, em `/v1/ws`, que manda `queue.snapshot` ao
+conectar e depois `queue.patch` / `audit.appended` / `pendency.resolved` / `activity` para
+todos os conectados. A fila priorizada pelo Neco, as travas manuais, a auditoria com hash e
+as pendências resolvidas ficam **em memória**: reiniciar o servidor volta à ordem inicial.
+
+Para o front usar este servidor, crie `frontend/.env` a partir de `frontend/.env.example`
+com `VITE_USE_MOCK=false` (as URLs do exemplo já apontam para a porta 5000).
 
 ## Rodar
 
@@ -23,13 +31,15 @@ Não precisa gerar o dataset: `dataset/normalizado/` é versionado. Se ele não 
 aplicação falha na subida dizendo o que rodar (`python dataset/normalizar_dataset.py`).
 
 Para servir de verdade, o worker **precisa ser de thread** — o processo fica parado numa
-conexão aberta, e o worker `sync` padrão do gunicorn não dá conta:
+conexão aberta, e o worker `sync` padrão do gunicorn não dá conta — e **um processo só**: o
+estado da fila e o broadcast vivem na memória do processo, e dois workers seriam duas filas
+diferentes.
 
 ```bash
-gunicorn -k gthread -w 2 --threads 50 -b 0.0.0.0:5000 wsgi:app
+gunicorn -k gthread -w 1 --threads 50 -b 0.0.0.0:5000 wsgi:app
 ```
 
-Conferir que está tudo de pé — 270 testes, ~10s, **da raiz do repositório** (é lá que mora
+Conferir que está tudo de pé — 367 testes, ~25s, **da raiz do repositório** (é lá que mora
 o `pytest.ini`):
 
 ```bash
@@ -62,8 +72,21 @@ backend/
 │   │   ├── actions.py       registry: nome → cálculo, e o streaming de progresso
 │   │   ├── handlers.py      os cálculos em si (puros)
 │   │   └── channel.py       laço da conexão: recebe, despacha, envia
+│   ├── prioritization/      a regra do Neco (pura): classe, índice, avisos, regra de ouro
+│   │   ├── rules.py         classe A1–D, fatores, "sem urgência" do verificador
+│   │   ├── text.py          destaques no texto livre e palavras de alarme
+│   │   └── ranking.py       ordenação, travas, relocação, checagem da regra de ouro
+│   ├── regulation/          API do front (docs/CONTRATO_BACKEND.md)
+│   │   ├── routes.py        REST em /v1/hospitais/<id>, erros em {"detail"}
+│   │   ├── state.py         fila mutável em memória: reordenar, validar, resolver
+│   │   ├── stream.py        /v1/ws, só envia
+│   │   ├── hub.py           fan-out dos frames para cada socket
+│   │   ├── audit.py         log só de inclusão, encadeado por SHA-256
+│   │   ├── pendencies.py    as 5 categorias de pendência de dados
+│   │   ├── panels.py        resumo (telão) e equidade
+│   │   └── ask.py           "Pergunte ao Neco" por palavra-chave (o LLM é P3)
 │   └── api/
-│       └── health.py        /api/health, o único endpoint HTTP
+│       └── health.py        /api/health
 ├── tools/
 │   └── ws_client.py        cliente de terminal para falar com o canal
 └── tests/                  leitor, repositório, canal, config e contrato

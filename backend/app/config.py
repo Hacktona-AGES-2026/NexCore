@@ -27,6 +27,7 @@ class Config:
     MAX_PAGE_SIZE = int(os.environ.get("MAX_PAGE_SIZE", "500"))
     CORS_ORIGINS = os.environ.get("CORS_ORIGINS", "*")
     WS_PATH = os.environ.get("WS_PATH", "/ws")
+    HOSPITAL_ID = os.environ.get("HOSPITAL_ID", "hsl")
     TESTING = False
     DEBUG = _bool(os.environ.get("FLASK_DEBUG"))
 
