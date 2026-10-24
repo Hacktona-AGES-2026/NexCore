@@ -7,7 +7,11 @@ import json
 
 import pytest
 
-import normalizar_dataset as nd
+# Sem pandas, um erro de import aqui interromperia a coleta da suíte inteira e
+# levaria embora também os testes do backend, que não dependem dele.
+pytest.importorskip("pandas", reason="pandas: pip install -r dataset/requirements.txt")
+
+import normalizar_dataset as nd  # noqa: E402  (depende do importorskip acima)
 
 
 # --- helpers puros --------------------------------------------------------

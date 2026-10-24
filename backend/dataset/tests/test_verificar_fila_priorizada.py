@@ -14,6 +14,10 @@ import pytest
 
 SCRIPT = Path(__file__).resolve().parents[1] / "verificar_fila_priorizada.py"
 
+# O script é chamado por subprocess, mas é ele que importa pandas: sem a
+# dependência todo caso falharia no subprocess, com erro difícil de ler.
+pytest.importorskip("pandas", reason="pandas: pip install -r dataset/requirements.txt")
+
 pytestmark = pytest.mark.lento
 
 

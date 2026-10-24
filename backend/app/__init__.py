@@ -3,7 +3,7 @@ import logging
 
 from flask import Flask, jsonify
 
-from . import data, errors
+from . import data, errors, realtime
 from .config import get_config
 
 
@@ -25,6 +25,7 @@ def create_app(environment=None, **overrides):
     from .api import api
 
     app.register_blueprint(api)
+    realtime.init_app(app)
     _configure_cors(app)
 
     @app.get("/")
@@ -33,6 +34,10 @@ def create_app(environment=None, **overrides):
             {
                 "name": "NexCore API",
                 "description": "Surgical queue prioritization — synthetic data",
+                "transport": "websocket",
+                "websocket": app.config["WS_PATH"],
+                "protocol": realtime.protocol.PROTOCOL_VERSION,
+                "actions": realtime.actions.names(),
                 "routes": sorted(
                     str(rule)
                     for rule in app.url_map.iter_rules()

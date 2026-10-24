@@ -25,6 +25,7 @@ class Config:
     DEFAULT_PAGE_SIZE = int(os.environ.get("DEFAULT_PAGE_SIZE", "50"))
     MAX_PAGE_SIZE = int(os.environ.get("MAX_PAGE_SIZE", "500"))
     CORS_ORIGINS = os.environ.get("CORS_ORIGINS", "*")
+    WS_PATH = os.environ.get("WS_PATH", "/ws")
     TESTING = False
     DEBUG = _bool(os.environ.get("FLASK_DEBUG"))
 

@@ -6,16 +6,12 @@ from ..data import current_repository
 
 @api.get("/health")
 def health():
-    repository = current_repository()
+    """Service liveness plus what the loaded dataset holds."""
     return jsonify(
         {
             "status": "ok",
             "reference_date": current_app.config["REFERENCE_DATE"],
-            "dataset": repository.counts(),
+            "websocket": current_app.config["WS_PATH"],
+            "dataset": current_repository().counts(),
         }
     )
-
-
-@api.get("/statistics")
-def statistics():
-    return jsonify(current_repository().statistics())

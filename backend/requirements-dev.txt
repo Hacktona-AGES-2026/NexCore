@@ -1,2 +1,5 @@
 -r requirements.txt
+# Os scripts de dataset (e os testes deles) precisam de pandas: uma venv de
+# desenvolvimento cobre o projeto inteiro, que é o que a suíte única espera.
+-r dataset/requirements.txt
 pytest==8.2.2
