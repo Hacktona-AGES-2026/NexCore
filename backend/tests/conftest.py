@@ -1,5 +1,6 @@
 from pathlib import Path
 import csv
+import json
 
 import pytest
 
@@ -87,3 +88,71 @@ def app_sintetico(dataset_sintetico):
         return create_app("teste", DATASET_DIR=Path(destino))
 
     return montar
+
+
+# --- canal WebSocket ------------------------------------------------------
+
+class WsFalso:
+    """Duplo do socket: entrega comandos de uma lista e guarda o que foi enviado.
+
+    `channel.serve` só chama receive()/send(), então isso basta para exercitar o
+    canal inteiro sem rede. receive() devolvendo None imita o cliente fechando.
+    """
+
+    def __init__(self, comandos=()):
+        self.pendentes = [
+            c if isinstance(c, str) else json.dumps(c) for c in comandos
+        ]
+        self.enviados = []
+
+    def receive(self):
+        return self.pendentes.pop(0) if self.pendentes else None
+
+    def send(self, texto):
+        self.enviados.append(json.loads(texto))
+
+    # --- leitura dos frames recebidos ---
+
+    @property
+    def frames(self):
+        """Tudo que o servidor mandou, menos o welcome inicial."""
+        return [f for f in self.enviados if f["type"] != "welcome"]
+
+    @property
+    def welcome(self):
+        return self.enviados[0]
+
+    def tipos(self, tipo):
+        return [f for f in self.frames if f["type"] == tipo]
+
+    def primeiro(self, tipo):
+        frames = self.tipos(tipo)
+        assert frames, f"nenhum frame '{tipo}' em {[f['type'] for f in self.frames]}"
+        return frames[0]
+
+    def payload(self):
+        return self.primeiro("result")["payload"]
+
+
+@pytest.fixture()
+def conversa(app):
+    """Roda uma conversa inteira no canal e devolve o socket falso."""
+    from app.realtime import limits
+    from app.realtime.channel import serve
+
+    def rodar(*comandos):
+        ws = WsFalso(comandos)
+        serve(ws, app.extensions["repository"], limits(app.config))
+        return ws
+
+    return rodar
+
+
+@pytest.fixture()
+def pedir(conversa):
+    """Atalho: manda uma ação e devolve o payload do result."""
+
+    def chamar(action, **params):
+        return conversa({"id": "c1", "action": action, "params": params}).payload()
+
+    return chamar

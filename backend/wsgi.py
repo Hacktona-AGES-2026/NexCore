@@ -1,5 +1,9 @@
 """Entry point for WSGI servers and for `flask run`.
 
+The app serves a WebSocket channel, so a worker must be able to sit on an open
+connection: `gunicorn -k gthread --threads 50`, never the default `sync` worker.
+The dev server below is already threaded.
+
 The .env file is loaded before `app` is imported: Config reads os.environ in the
 class body, so anything loaded after that import would be ignored. Values already
 present in the environment win, so an explicit export still overrides the file.
