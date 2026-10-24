@@ -144,16 +144,18 @@ i.hl.red_flag{box-shadow:inset 0 -3px 0 var(--red)}
 .tv-hist i{width:100%;background:#fff;border-radius:4px 4px 0 0;min-height:4px}
 .tv-hist .v{font-weight:600;font-variant-numeric:tabular-nums}
 .tv-hist .l{font-size:.8em;opacity:.7;white-space:nowrap}
-.tv-right .tv-map{flex:1;min-height:0;display:flex;justify-content:center}
+/* Mapa com altura fixa; o "Agora" tem espaço reservado para 2 eventos e não empurra o mapa. */
+.tv-right .tv-map{flex:1 1 0;min-height:0;display:flex;justify-content:center;margin-bottom:1.6vh}
 .tv-map .rsmap{height:100%;width:auto;max-width:100%}
 .tv .rsmap .land{fill:rgba(255,255,255,.08);stroke:rgba(255,255,255,.25)}
 .tv .rsmap .water{fill:var(--bordo-dark);stroke:rgba(255,255,255,.2)}
 .tv .rsmap .city circle{stroke:var(--bordo-dark);cursor:default}
 .tv .rsmap .lbl{fill:#fff;stroke:var(--bordo-dark);font-size:17px}
-.tv-feed{list-style:none;margin:0;padding:0}
-.tv-feed li{display:flex;gap:.8em;padding:.4em 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:.92em}
+.tv-feed{list-style:none;margin:0;padding:0;flex:none;height:calc(2 * 2.6em);overflow:hidden}
+.tv-feed li{display:flex;gap:.8em;align-items:center;height:2.6em;padding:0;border-bottom:1px solid rgba(255,255,255,.08);font-size:.92em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tv-feed li:last-child{border-bottom:0}
-.tv-feed time{opacity:.6;font-variant-numeric:tabular-nums}
+.tv-feed time{opacity:.6;font-variant-numeric:tabular-nums;flex:none}
+.tv-feed .t{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tv-feed li.new{animation:tvflash 2.6s ease}
 @keyframes tvflash{0%{background:rgba(255,255,255,.18)}100%{background:transparent}}
 

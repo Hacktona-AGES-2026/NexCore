@@ -10,6 +10,8 @@ function useClock() {
   useEffect(() => { const t = setInterval(() => setNow(new Date()), 1000 * 15); return () => clearInterval(t); }, []);
   return now;
 }
+// Quantos eventos o "Agora" mostra; o espaço deles é fixo, para o mapa não encolher.
+const FEED_SIZE = 2;
 const hhmm = (d: Date | string) => new Date(d).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 
 /** Telão para TV do hospital: sem nomes completos, sem interação, legível de longe. */
@@ -19,10 +21,12 @@ export function Screen() {
   const [equity, setEquity] = useState<EquityReport | null>(null);
   const now = useClock();
 
+  // Busca de novo a cada mudança da fila (evento, reordenação, entrada nova): os gráficos
+  // acompanham o que chega. Os dados antigos ficam na tela enquanto os novos não chegam.
   useEffect(() => {
     backend.getSummary().then(setSummary).catch(console.error);
     backend.getEquity().then(setEquity).catch(console.error);
-  }, [backend]);
+  }, [backend, patches]);
   if (!summary || !equity) return <div className="tv"><p className="empty">Carregando…</p></div>;
 
   const maxClass = Math.max(...summary.byClass.map((c) => c.total));
@@ -96,7 +100,7 @@ export function Screen() {
           <div className="tv-map"><RSMap cities={equity.cities} big /></div>
           <h2>Agora</h2>
           <ul className="tv-feed">
-            {activity.slice(0, 4).map((a, i) => <li key={a.at + a.text} className={i === 0 ? "new" : ""}><time>{hhmm(a.at)}</time>{a.text}</li>)}
+            {activity.slice(0, FEED_SIZE).map((a, i) => <li key={a.at + a.text} className={i === 0 ? "new" : ""}><time>{hhmm(a.at)}</time><span className="t">{a.text}</span></li>)}
           </ul>
         </section>
       </div>

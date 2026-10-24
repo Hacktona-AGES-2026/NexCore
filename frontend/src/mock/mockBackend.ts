@@ -157,7 +157,39 @@ export function createMockBackend(): Backend {
   let step = 0;
   let pendencies = stats.pendencies as unknown as Pendency[];
   const equity = { cities: stats.cities, byDistance: stats.byDistance, byAge: stats.byAge, bySex: stats.bySex } as EquityReport;
-  const summary = () => ({ ...(stats.summary as QueueSummary), total });
+  // O resumo do mock vem do dataset inteiro (stats.json); as mudanças da amostra
+  // (reclassificação, entrada nova, saída) são somadas por cima, para o telão acompanhar.
+  const counts = (list: QueueEntry[]) => {
+    const byClass = Object.fromEntries((["A1", "A2", "B", "C", "D"] as UrgencyClass[]).map((c) => [c, { total: 0, overdue: 0 }]));
+    const buckets = [0, 0, 0, 0, 0];
+    let onco = 0, overdue = 0;
+    for (const e of list) {
+      const late = e.daysWaiting > { A1: 15, A2: 21, B: 60, C: 180, D: 360 }[e.urgencyClass];
+      byClass[e.urgencyClass].total++;
+      if (late) { byClass[e.urgencyClass].overdue++; overdue++; }
+      if (e.oncologic) onco++;
+      const d = e.daysWaiting;
+      buckets[d <= 90 ? 0 : d <= 180 ? 1 : d <= 365 ? 2 : d <= 730 ? 3 : 4]++;
+    }
+    return { byClass, buckets, onco, overdue };
+  };
+  const baseline = counts(entries);
+  const summary = (): QueueSummary => {
+    const base = stats.summary as QueueSummary;
+    const now = counts(entries);
+    return {
+      ...base,
+      total,
+      oncologic: base.oncologic + now.onco - baseline.onco,
+      overdueTotal: base.overdueTotal + now.overdue - baseline.overdue,
+      byClass: base.byClass.map((c) => ({
+        ...c,
+        total: c.total + now.byClass[c.cls].total - baseline.byClass[c.cls].total,
+        overdue: c.overdue + now.byClass[c.cls].overdue - baseline.byClass[c.cls].overdue,
+      })),
+      waitBuckets: base.waitBuckets.map((b, i) => ({ ...b, total: b.total + now.buckets[i] - baseline.buckets[i] })),
+    };
+  };
 
   // O mock registra a decisão, mas não recalcula a fila: a correção de verdade é do backend.
   const PENDENCY_LOG: Record<string, (v: Record<string, string>) => string> = {
