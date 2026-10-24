@@ -1,0 +1,44 @@
+{
+  "data_referencia": "2026-10-23",
+  "fila_linhas": 941,
+  "eventos_linhas": 1505,
+  "procedimentos_linhas": 23,
+  "solicitacao_id_duplicado": 0,
+  "eventos_sem_solicitacao_ativa": 9,
+  "eventos_duplicados_por_conteudo": 6,
+  "paciente_evento_divergente_em_solicitacao_ativa": 0,
+  "solicitacoes_paciente_procedimento_repetidas": 22,
+  "ids_procedimento_sem_catalogo": 0,
+  "oncologicos_por_cid": 177,
+  "divergencia_flag_oncologica_vs_cid": 44,
+  "valores_prioridade_manual_origem": {
+    "baixa": 348,
+    "alta": 296,
+    "media": 263,
+    "Baixa": 13,
+    "": 11,
+    "Média": 7,
+    "Alta": 3
+  },
+  "campos_vazios_na_fila_origem": {
+    "distancia_hospital_km": 20,
+    "cid_secundario": 730,
+    "asa": 26,
+    "intensidade_dor_eva": 38,
+    "limitacao_funcional": 20,
+    "observacoes": 397,
+    "prioridade_regulacao": 11,
+    "hba1c_ultima": 728,
+    "data_hba1c_ultima": 728
+  },
+  "preparo_pre_operatorio": "Campos opcionais mantidos; fora do escopo avaliativo do desafio.",
+  "regras": [
+    "Arquivos de origem preservados; nenhuma linha removida.",
+    "Espaços periféricos removidos e Unicode normalizado para NFC.",
+    "Colunas *_norm adicionadas para comparação e agrupamento.",
+    "CID comparável sem ponto em cid_principal_norm/cid_secundario_norm.",
+    "oncologico_cid é derivado do CID, não da flag manual.",
+    "Eventos duplicados, órfãos e com paciente divergente são sinalizados e mantidos.",
+    "Campos ausentes permanecem vazios; não foram imputados."
+  ]
+}
