@@ -99,11 +99,11 @@ jobs:
           echo "secret_key=$key" >> "$GITHUB_OUTPUT"
 
       - name: Deploy na VPS
-        uses: hostinger/deploy-action@v1
+        uses: hostinger/deploy-on-vps@v2
         with:
           api-key: ${{ secrets.HOSTINGER_API_KEY }}
           virtual-machine: ${{ secrets.HOSTINGER_VM_ID }}
-          project-name: srv1945772.hstgr.cloud
+          project-name: nexcore
           docker-compose-path: docker-compose.yml
           # repositório privado: a VPS baixa o código com o token do próprio job
           personal-token: ${{ secrets.GITHUB_TOKEN }}
