@@ -123,51 +123,104 @@ def _update_cid(record):
 
 
 # --- detectors ---------------------------------------------------------------
+#
+# Each kind has a public function for one record, which the ingestion calls when
+# a request or event arrives, and a private generator over the whole repository
+# for the initial load.
+
+def cid_flag(r, assessment, events):
+    """The pendency for a record whose manual cancer flag contradicts its CID, or None."""
+    flag = r.get("flag_oncologico_norm")
+    oncological = bool(r.get("oncologico_cid"))
+    if flag is None or bool(flag) == oncological:
+        return None
+    evidence = _note_evidence(r) + [
+        _event_evidence(e, "Biópsia · " + (e.get("resultado_norm") or ""))
+        for e in clinical_events(events) if e.get("tipo_evento_norm") == "biopsia"
+    ]
+    cancer_in_text = any(h["kind"] == "urgency" for h in assessment["highlights"])
+    biopsy_ = assessment["signals"]["positive_biopsy"]
+    if oncological:
+        risk, why = "baixo", "O Neco já usa o CID; só o cadastro está desatualizado."
+        suggestion = {"actionId": "fix_cadastro", "reason": "O CID é de neoplasia maligna; o cadastro deve acompanhar."}
+    else:
+        risk, why = "alto", "Se o cadastro estiver certo, há um câncer escondido por um CID benigno."
+        suggestion = (
+            {"actionId": "update_cid", "reason": "O texto do médico ou uma biópsia indicam câncer; o CID parece errado."}
+            if cancer_in_text or biopsy_ else
+            {"actionId": "fix_cadastro", "reason": "Nada no texto nem nos eventos indica câncer; o cadastro parece errado."}
+        )
+    return {
+        "kind": "cid_flag",
+        "title": f"Cadastro diz {'sem câncer' if oncological else 'câncer'}, CID {r.get('cid_principal')} diz o contrário",
+        "detail": f"{_sentence(r.get('cid_descricao'))} O Neco já usa o CID; falta corrigir o cadastro.",
+        "name": r.get("nome_paciente"),
+        "entryIds": [r["solicitacao_id"]],
+        "risk": risk, "riskReason": why,
+        "divergences": [{
+            "field": "oncologia", "label": "Câncer",
+            "values": [
+                {"source": "CID principal", "value": f"{_cid_label(r)} ({'câncer' if oncological else 'não é câncer'})"},
+                {"source": "Marcação do cadastro", "value": "câncer" if flag else "sem câncer"},
+            ],
+        }],
+        "evidence": evidence,
+        "actions": [
+            _action("fix_cadastro", "O CID está certo", "Corrige a marcação do cadastro para acompanhar o CID. A fila não muda."),
+            _update_cid(r),
+        ],
+        "suggestion": suggestion,
+    }
+
 
 def _cid_flag(repository, assessments):
     for r in repository.queue:
-        flag = r.get("flag_oncologico_norm")
-        oncological = bool(r.get("oncologico_cid"))
-        if flag is None or bool(flag) == oncological:
-            continue
         rid = r["solicitacao_id"]
-        evidence = _note_evidence(r) + [
-            _event_evidence(e, "Biópsia · " + (e.get("resultado_norm") or ""))
-            for e in clinical_events(repository.events_for_request(rid)) if e.get("tipo_evento_norm") == "biopsia"
-        ]
-        cancer_in_text = any(h["kind"] == "urgency" for h in assessments[rid]["highlights"])
-        biopsy = assessments[rid]["signals"]["positive_biopsy"]
-        if oncological:
-            risk, why = "baixo", "O Neco já usa o CID; só o cadastro está desatualizado."
-            suggestion = {"actionId": "fix_cadastro", "reason": "O CID é de neoplasia maligna; o cadastro deve acompanhar."}
-        else:
-            risk, why = "alto", "Se o cadastro estiver certo, há um câncer escondido por um CID benigno."
-            suggestion = (
-                {"actionId": "update_cid", "reason": "O texto do médico ou uma biópsia indicam câncer; o CID parece errado."}
-                if cancer_in_text or biopsy else
-                {"actionId": "fix_cadastro", "reason": "Nada no texto nem nos eventos indica câncer; o cadastro parece errado."}
-            )
-        yield {
-            "kind": "cid_flag",
-            "title": f"Cadastro diz {'sem câncer' if oncological else 'câncer'}, CID {r.get('cid_principal')} diz o contrário",
-            "detail": f"{_sentence(r.get('cid_descricao'))} O Neco já usa o CID; falta corrigir o cadastro.",
-            "name": r.get("nome_paciente"),
-            "entryIds": [rid],
-            "risk": risk, "riskReason": why,
-            "divergences": [{
-                "field": "oncologia", "label": "Câncer",
-                "values": [
-                    {"source": "CID principal", "value": f"{_cid_label(r)} ({'câncer' if oncological else 'não é câncer'})"},
-                    {"source": "Marcação do cadastro", "value": "câncer" if flag else "sem câncer"},
-                ],
-            }],
-            "evidence": evidence,
-            "actions": [
-                _action("fix_cadastro", "O CID está certo", "Corrige a marcação do cadastro para acompanhar o CID. A fila não muda."),
-                _update_cid(r),
+        pendency = cid_flag(r, assessments[rid], repository.events_for_request(rid))
+        if pendency:
+            yield pendency
+
+
+def duplicate(records):
+    """The pendency for two or more requests of one patient for one procedure."""
+    records = sorted(records, key=lambda r: (r.get("data_entrada_fila") or "", r["solicitacao_id"]))
+    dates = [br_date(r.get("data_entrada_fila")) for r in records]
+    listed = ", ".join(dates[:-1]) + " e " + dates[-1]
+    options = [
+        {"value": r["solicitacao_id"], "label": f"{r['solicitacao_id']} · entrada {br_date(r.get('data_entrada_fila'))}"
+         + (" (mais antiga)" if i == 0 else "")}
+        for i, r in enumerate(records)
+    ]
+    return {
+        "kind": "duplicate",
+        "title": f"{len(records)} solicitações para o mesmo procedimento",
+        "detail": f"{records[0].get('procedimento')}. Entradas em {listed}.",
+        "name": records[0].get("nome_paciente"),
+        "entryIds": [r["solicitacao_id"] for r in records],
+        "risk": "medio", "riskReason": "A mesma pessoa pode estar ocupando duas vagas na fila.",
+        "divergences": [{
+            "field": "solicitacao", "label": records[0].get("procedimento") or "Procedimento",
+            "values": [
+                {"source": r["solicitacao_id"], "value": f"entrada {br_date(r.get('data_entrada_fila'))} · CID {r.get('cid_principal')}"}
+                for r in records
             ],
-            "suggestion": suggestion,
-        }
+        }],
+        "evidence": [
+            {"label": f"Justificativa · {r['solicitacao_id']}", "text": r.get("justificativa_clinica") or "—"} for r in records
+        ],
+        "actions": [
+            _action(
+                "merge", "Mesclar", "Mantém uma solicitação, junta os eventos e tira as outras da fila.",
+                fields=[{"name": "keep", "label": "Manter", "type": "select", "required": True,
+                         "options": options, "suggested": records[0]["solicitacao_id"],
+                         "help": "Manter a mais antiga preserva o tempo de espera do paciente."}],
+                changes_queue=True,
+            ),
+            _action("keep_both", "São distintas", "Por exemplo, um procedimento de cada lado. As duas continuam na fila.",
+                    justification=True),
+        ],
+        "suggestion": {"actionId": "merge", "reason": "Mesmo paciente e mesmo procedimento: mantenha a entrada mais antiga."},
+    }
 
 
 def _duplicates(repository):
@@ -175,116 +228,89 @@ def _duplicates(repository):
     for r in repository.queue:
         groups.setdefault((r.get("paciente_id"), r.get("procedimento_id")), []).append(r)
     for records in groups.values():
-        if len(records) < 2:
-            continue
-        records = sorted(records, key=lambda r: (r.get("data_entrada_fila") or "", r["solicitacao_id"]))
-        dates = [br_date(r.get("data_entrada_fila")) for r in records]
-        listed = ", ".join(dates[:-1]) + " e " + dates[-1]
-        options = [
-            {"value": r["solicitacao_id"], "label": f"{r['solicitacao_id']} · entrada {br_date(r.get('data_entrada_fila'))}"
-             + (" (mais antiga)" if i == 0 else "")}
-            for i, r in enumerate(records)
-        ]
-        yield {
-            "kind": "duplicate",
-            "title": f"{len(records)} solicitações para o mesmo procedimento",
-            "detail": f"{records[0].get('procedimento')}. Entradas em {listed}.",
-            "name": records[0].get("nome_paciente"),
-            "entryIds": [r["solicitacao_id"] for r in records],
-            "risk": "medio", "riskReason": "A mesma pessoa pode estar ocupando duas vagas na fila.",
-            "divergences": [{
-                "field": "solicitacao", "label": records[0].get("procedimento") or "Procedimento",
-                "values": [
-                    {"source": r["solicitacao_id"], "value": f"entrada {br_date(r.get('data_entrada_fila'))} · CID {r.get('cid_principal')}"}
-                    for r in records
-                ],
-            }],
-            "evidence": [
-                {"label": f"Justificativa · {r['solicitacao_id']}", "text": r.get("justificativa_clinica") or "—"} for r in records
+        if len(records) >= 2:
+            yield duplicate(records)
+
+
+def biopsy(r, assessment, events):
+    """The pendency for a positive biopsy under a CID that is not cancer, or None."""
+    if assessment["oncological"] or not assessment["signals"]["positive_biopsy"]:
+        return None
+    biopsies = [e for e in clinical_events(events)
+                if e.get("tipo_evento_norm") == "biopsia" and e.get("resultado_norm") == "positivo"]
+    last = biopsies[-1] if biopsies else {}
+    return {
+        "kind": "biopsy",
+        "title": f"Biópsia positiva, mas o CID {r.get('cid_principal')} não é de câncer",
+        "detail": "O Neco já trata como câncer (classe A2). Confirme e atualize o CID.",
+        "name": r.get("nome_paciente"),
+        "entryIds": [r["solicitacao_id"]],
+        "risk": "alto", "riskReason": "Sem o CID de câncer, a regra de ouro não protege este paciente pelo diagnóstico.",
+        "divergences": [{
+            "field": "cid", "label": "Diagnóstico",
+            "values": [
+                {"source": "CID principal", "value": _cid_label(r)},
+                {"source": f"Biópsia de {br_date(last.get('data_evento'))}", "value": f"positiva · {_sentence(last.get('descricao'))}"},
             ],
-            "actions": [
-                _action(
-                    "merge", "Mesclar", "Mantém uma solicitação, junta os eventos e tira as outras da fila.",
-                    fields=[{"name": "keep", "label": "Manter", "type": "select", "required": True,
-                             "options": options, "suggested": records[0]["solicitacao_id"],
-                             "help": "Manter a mais antiga preserva o tempo de espera do paciente."}],
-                    changes_queue=True,
-                ),
-                _action("keep_both", "São distintas", "Por exemplo, um procedimento de cada lado. As duas continuam na fila.",
-                        justification=True),
-            ],
-            "suggestion": {"actionId": "merge", "reason": "Mesmo paciente e mesmo procedimento: mantenha a entrada mais antiga."},
-        }
+        }],
+        "evidence": [_event_evidence(e, "Biópsia positiva") for e in biopsies] + _note_evidence(r),
+        "actions": [
+            _update_cid(r),
+            _action("keep", "Manter como está", "O Neco continua tratando como câncer (A2) pela biópsia."),
+            _action("unrelated", "A biópsia não é deste pedido",
+                    "Desconsidera a biópsia nesta solicitação; o paciente perde a classe A2 e o Neco recalcula.",
+                    justification=True, danger=True, changes_queue=True),
+        ],
+        "suggestion": {"actionId": "update_cid", "reason": "A biópsia confirma malignidade; o CID deve refletir o diagnóstico."},
+    }
 
 
 def _biopsy(repository, assessments):
     for r in repository.queue:
         rid = r["solicitacao_id"]
-        a = assessments[rid]
-        if a["oncological"] or not a["signals"]["positive_biopsy"]:
-            continue
-        biopsies = [e for e in clinical_events(repository.events_for_request(rid))
-                    if e.get("tipo_evento_norm") == "biopsia" and e.get("resultado_norm") == "positivo"]
-        last = biopsies[-1] if biopsies else {}
-        yield {
-            "kind": "biopsy",
-            "title": f"Biópsia positiva, mas o CID {r.get('cid_principal')} não é de câncer",
-            "detail": "O Neco já trata como câncer (classe A2). Confirme e atualize o CID.",
-            "name": r.get("nome_paciente"),
-            "entryIds": [rid],
-            "risk": "alto", "riskReason": "Sem o CID de câncer, a regra de ouro não protege este paciente pelo diagnóstico.",
-            "divergences": [{
-                "field": "cid", "label": "Diagnóstico",
-                "values": [
-                    {"source": "CID principal", "value": _cid_label(r)},
-                    {"source": f"Biópsia de {br_date(last.get('data_evento'))}", "value": f"positiva · {_sentence(last.get('descricao'))}"},
-                ],
-            }],
-            "evidence": [_event_evidence(e, "Biópsia positiva") for e in biopsies] + _note_evidence(r),
-            "actions": [
-                _update_cid(r),
-                _action("keep", "Manter como está", "O Neco continua tratando como câncer (A2) pela biópsia."),
-                _action("unrelated", "A biópsia não é deste pedido",
-                        "Desconsidera a biópsia nesta solicitação; o paciente perde a classe A2 e o Neco recalcula.",
-                        justification=True, danger=True, changes_queue=True),
+        pendency = biopsy(r, assessments[rid], repository.events_for_request(rid))
+        if pendency:
+            yield pendency
+
+
+def left_queue(event, record):
+    """The pendency for a call-center contact saying the patient left, or None."""
+    result = event.get("resultado_norm")
+    if event.get("tipo_evento_norm") != "contato_telefonico" or result not in LEFT_QUEUE:
+        return None
+    return {
+        "kind": "left_queue",
+        "title": LEFT_QUEUE_TITLE[result],
+        "detail": f"Call center em {br_date(event.get('data_evento'))}: {_sentence(event.get('descricao'))}",
+        "name": record.get("nome_paciente"),
+        "entryIds": [record["solicitacao_id"]],
+        "risk": "medio", "riskReason": "Confirmar a saída libera uma vaga para quem está esperando.",
+        "divergences": [{
+            "field": "situacao", "label": "Situação do paciente",
+            "values": [
+                {"source": "Fila", "value": "ativo, aguardando cirurgia"},
+                {"source": f"Call center em {br_date(event.get('data_evento'))}", "value": LEFT_QUEUE_TITLE[result].lower()},
             ],
-            "suggestion": {"actionId": "update_cid", "reason": "A biópsia confirma malignidade; o CID deve refletir o diagnóstico."},
-        }
+        }],
+        "evidence": [_event_evidence(event, "Contato telefônico")] + _note_evidence(record),
+        "actions": [
+            _action("remove", "Confirmar a saída", "Retira o paciente da fila. Só confirme depois de falar com ele ou ver um documento.",
+                    fields=[{"name": "confirmacao", "label": "Como foi confirmado", "type": "select", "required": True,
+                             "options": CONFIRMATIONS}],
+                    danger=True, changes_queue=True),
+            _action("keep", "Paciente quer continuar", "O paciente confirmou que ainda quer operar; o alerta sai."),
+        ],
+        "suggestion": {"actionId": None, "reason": "Confirme com o paciente antes de decidir: a informação veio de um contato telefônico."},
+    }
 
 
 def _left_queue(repository):
     """One per call-center contact reporting the patient left, in event order."""
     for event in clinical_events(repository.events):
-        result = event.get("resultado_norm")
-        if event.get("tipo_evento_norm") != "contato_telefonico" or result not in LEFT_QUEUE:
-            continue
         record = repository.get_request(event.get("solicitacao_id"))
-        if record is None:
-            continue
-        yield {
-            "kind": "left_queue",
-            "title": LEFT_QUEUE_TITLE[result],
-            "detail": f"Call center em {br_date(event.get('data_evento'))}: {_sentence(event.get('descricao'))}",
-            "name": record.get("nome_paciente"),
-            "entryIds": [record["solicitacao_id"]],
-            "risk": "medio", "riskReason": "Confirmar a saída libera uma vaga para quem está esperando.",
-            "divergences": [{
-                "field": "situacao", "label": "Situação do paciente",
-                "values": [
-                    {"source": "Fila", "value": "ativo, aguardando cirurgia"},
-                    {"source": f"Call center em {br_date(event.get('data_evento'))}", "value": LEFT_QUEUE_TITLE[result].lower()},
-                ],
-            }],
-            "evidence": [_event_evidence(event, "Contato telefônico")] + _note_evidence(record),
-            "actions": [
-                _action("remove", "Confirmar a saída", "Retira o paciente da fila. Só confirme depois de falar com ele ou ver um documento.",
-                        fields=[{"name": "confirmacao", "label": "Como foi confirmado", "type": "select", "required": True,
-                                 "options": CONFIRMATIONS}],
-                        danger=True, changes_queue=True),
-                _action("keep", "Paciente quer continuar", "O paciente confirmou que ainda quer operar; o alerta sai."),
-            ],
-            "suggestion": {"actionId": None, "reason": "Confirme com o paciente antes de decidir: a informação veio de um contato telefônico."},
-        }
+        pendency = left_queue(event, record) if record else None
+        if pendency:
+            yield pendency
 
 
 def _orphans(repository):

@@ -2,14 +2,15 @@
 
 One route per row of docs/CONTRATO_BACKEND.md §2. Each one validates its body,
 calls QueueState and returns what the front's `httpBackend` expects. The
-ingestion routes (/fila/entradas, /fila/eventos) are not here yet: the front
-does not call them.
+ingestion routes (/fila/entradas, /fila/eventos) are for other systems, not the
+front: they take rows of the dataset's source CSVs (one object, or a list for a
+batch) and the front only sees their effect, over the WebSocket.
 """
 from functools import partial
 
 from flask import Blueprint, Response, current_app, g, request
 
-from . import verifier
+from . import intake, verifier
 from .errors import API_PREFIX, ContractError, register
 
 regulation = Blueprint("regulation", __name__, url_prefix=f"{API_PREFIX}/hospitais/<hospital>")
@@ -38,6 +39,20 @@ def _body():
 @regulation.get("/fila")
 def queue_snapshot():
     return current_state().snapshot(g.hospital_id)
+
+
+@regulation.post("/fila/entradas")
+def add_entries():
+    rows, batch = intake.rows(request.get_json(silent=True))
+    created = current_state().add_entries(rows)
+    return (created if batch else created[0]), 201
+
+
+@regulation.post("/fila/eventos")
+def add_events():
+    rows, batch = intake.rows(request.get_json(silent=True))
+    updated = current_state().add_events(rows)
+    return (updated if batch else updated[0]), 202
 
 
 @regulation.post("/fila/<request_id>/reordenar")

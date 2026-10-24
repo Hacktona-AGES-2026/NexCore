@@ -1,9 +1,10 @@
 """The queue as the regulation sees it: ranked, mutable, audited, broadcast.
 
-Built once from the read-only repository when the app starts, then changed only
-by the admin's actions. State lives in memory (a decision for the hackathon):
-restarting the server goes back to the Neco's initial ranking and an empty
-audit log. That also means ONE process — two gunicorn workers would hold two
+Built once from the read-only repository when the app starts, then changed by
+the admin's actions and by ingestion (new requests and clinical events, which
+the Neco places and recalculates on its own). State lives in memory (a
+decision for the hackathon): restarting the server goes back to the dataset,
+the Neco's initial ranking and an empty audit log, ingested rows included. That also means ONE process — two gunicorn workers would hold two
 different queues.
 
 Every mutation runs under one lock and publishes its frames before releasing
@@ -14,8 +15,8 @@ from pathlib import Path
 import threading
 
 from ..data.reader import strip_accents
-from ..prioritization import CLASS_LABEL, assess, golden_rule_violation, rank, relocate
-from . import ask, corrections, impact, panels, pendencies, serializers
+from ..prioritization import CLASS_LABEL, assess, golden_rule_violation, place, rank, relocate
+from . import ask, corrections, impact, intake, panels, pendencies, serializers
 from .audit import AuditLog, utc_now
 from .errors import ContractError
 from .hub import Hub
@@ -24,6 +25,18 @@ ADMIN = "Marina Albuquerque"
 NECO = "Neco"
 MIN_JUSTIFICATION = 40
 MUNICIPALITIES = Path(__file__).with_name("municipalities.json")
+
+#: How the audit and the activity feed name each event type.
+EVENT_LABEL = {
+    "biopsia": "biópsia",
+    "hba1c": "HbA1c",
+    "pronto_socorro": "ida ao pronto-socorro",
+    "internacao": "internação",
+    "exame_imagem": "exame de imagem",
+    "consulta_reavaliacao": "reavaliação",
+    "contato_telefonico": "contato do call center",
+    "falta": "falta",
+}
 
 
 def load_municipalities(path=MUNICIPALITIES):
@@ -45,9 +58,10 @@ class QueueState:
         self.audit = AuditLog(clock)
         self._clock = clock
 
-        places = load_municipalities() if municipalities is None else municipalities
-        self.coordinates = {p["name"]: p for p in places.values()}
         self.repository = repository
+        self.places = load_municipalities() if municipalities is None else municipalities
+        self.coordinates = {p["name"]: p for p in self.places.values()}
+        self.procedures = repository.procedures_by_id
         self.records = {}
         self.events = {}
         self.cities = {}
@@ -56,14 +70,12 @@ class QueueState:
         self.confirmed = set()  # left-queue alerts a human dismissed ("the patient wants to stay")
         for record in repository.queue:
             rid = record["solicitacao_id"]
-            events = repository.events_for_request(rid)
-            place = places.get(strip_accents(record.get("municipio_norm")))
-            # Own copies: corrections change these, never the repository's rows.
+            # Own copies: corrections and ingestion change these, never the repository's rows.
             self.records[rid] = dict(record)
-            self.events[rid] = events
-            self.cities[rid] = place["name"] if place else None
-            self.assessments[rid] = assess(record, events, repository.reference_date)
-            self._rebuild_entry(rid)
+            self.events[rid] = repository.events_for_request(rid)
+            self._evaluate(rid)
+        self.event_ids = {e["evento_id"] for e in repository.events}
+        self.ingested = {"fila": [], "eventos": []}  # source rows, for the verifier
 
         self.order = rank(self.assessments)
         self.suggested = {}
@@ -71,7 +83,8 @@ class QueueState:
         self.locked = set()
         self.previous = {}
         self.pendencies = {p["id"]: p for p in pendencies.detect(repository, self.assessments)}
-        self._impact = None  # (order, report): the verifier is slow, so one run per order
+        self._pendency_seq = len(self.pendencies)
+        self._impact = None  # (key, report): the verifier is slow, so one run per queue
         self._initial_audit()
 
     # --- reads ---------------------------------------------------------
@@ -121,17 +134,20 @@ class QueueState:
         run outside the lock: a slow check never holds up the admin's actions.
         """
         with self._lock:
-            order = tuple(self.order)
-            if self._impact and self._impact[0] == order:
+            # an ingested event can change who is calm without moving anyone
+            key = (tuple(self.order), len(self.ingested["eventos"]))
+            if self._impact and self._impact[0] == key:
                 return self._impact[1]
             entries = self.entries()
             neco_csv = self.export_csv()
             manual = impact.manual_order(entries, list(self.records))
-        neco_run = impact.verifier_run(*verify(neco_csv))
-        manual_run = impact.verifier_run(*verify(impact.manual_csv(entries, manual)))
+            extra = {"fila": list(self.ingested["fila"]), "eventos": list(self.ingested["eventos"])}
+        options = {"extra": extra} if any(extra.values()) else {}
+        neco_run = impact.verifier_run(*verify(neco_csv, **options))
+        manual_run = impact.verifier_run(*verify(impact.manual_csv(entries, manual), **options))
         report = impact.report(entries, manual, neco_run, manual_run)
         with self._lock:
-            self._impact = (order, report)
+            self._impact = (key, report)
         return report
 
     def explanation_context(self, rid):
@@ -334,7 +350,192 @@ class QueueState:
                 self._activity(f"Correção de dados recalculou a fila ({first_name(pendency['name'])})", record["at"])
             return record
 
+    # --- ingestion -----------------------------------------------------
+
+    def add_entries(self, rows):
+        """New requests (fila_cirurgica.csv rows): assessed, placed, audited, pushed.
+
+        The whole batch is checked before anything changes, so a bad row leaves
+        the queue as it was. Returns the created QueueEntries.
+        """
+        with self._lock:
+            records = []
+            seen = set()
+            for n, raw in enumerate(rows, start=1):
+                label = f"Linha {n}" if len(rows) > 1 else "Entrada"
+                record = intake.queue_record(raw, self.procedures, self.reference_date, label)
+                rid = record["solicitacao_id"]
+                if rid in self.records or rid in seen:
+                    raise ContractError(f"{label}: a solicitação {rid} já existe.", 409)
+                seen.add(rid)
+                records.append(record)
+
+            created = []
+            for record in records:
+                rid = record["solicitacao_id"]
+                self.records[rid] = record
+                self.events[rid] = []
+                self._evaluate(rid)
+                changed = self._commit(place(self.order, self.assessments, rid), extra={rid})
+                self._refresh_suggested()
+                position = self.order.index(rid) + 1
+                self.ingested["fila"].append(intake.source_row(record, intake.QUEUE_COLUMNS))
+
+                a = self.assessments[rid]
+                name = self._entries[rid]["name"]
+                audit = self.audit.append(
+                    "intake", NECO, rid, name, None, position,
+                    f"Nova entrada. Classificada como {CLASS_LABEL[a['urgency_class']]} "
+                    f"({a['urgency_class']}): {a['class_reason']}. Entrou na posição {position} "
+                    f"de {len(self.order)}." + (
+                        " Câncer pelo CID: fica acima de todos os casos sem urgência clínica."
+                        if a["oncological"] else ""
+                    ),
+                )
+                self._publish_patch(changed)
+                self._publish_audit(audit)
+                self._activity(f"Nova entrada: {first_name(name)} na posição {position}", audit["at"])
+                same = [
+                    self.records[other] for other in self.order
+                    if self.records[other].get("paciente_id") == record.get("paciente_id")
+                    and self.records[other].get("procedimento_id") == record.get("procedimento_id")
+                ]
+                if len(same) > 1:  # the new group replaces the one listed for the pair
+                    ids = {r["solicitacao_id"] for r in same}
+                    for pendency_id, p in list(self.pendencies.items()):
+                        if p["kind"] == "duplicate" and set(p["entryIds"]) <= ids:
+                            del self.pendencies[pendency_id]
+                self._open_pendencies(
+                    pendencies.cid_flag(record, a, self.events[rid]),
+                    pendencies.duplicate(same) if len(same) > 1 else None,
+                )
+                created.append(self._entry(rid, position))
+            return created
+
+    def add_events(self, rows):
+        """Clinical events (eventos_clinicos.csv rows): the request is reassessed.
+
+        It moves only when its class or index changed, and a request a human
+        locked stays where it was put. HbA1c is a pre-op criterion: it is
+        recorded and audited but never changes the priority. Returns the
+        updated QueueEntries, one per row.
+        """
+        with self._lock:
+            events = []
+            pending = {}
+            for n, raw in enumerate(rows, start=1):
+                label = f"Linha {n}" if len(rows) > 1 else "Evento"
+                event = intake.event_record(
+                    raw,
+                    lambda rid: self.records.get(rid) if rid in self.order else None,
+                    lambda rid: self.events[rid] + pending.get(rid, []),
+                    self.reference_date,
+                    label,
+                )
+                event_id = event["evento_id"]
+                if event_id and (event_id in self.event_ids or event_id in {e["evento_id"] for e in events}):
+                    raise ContractError(f"{label}: o evento {event_id} já existe.", 409)
+                pending.setdefault(event["solicitacao_id"], []).append(event)
+                events.append(event)
+
+            updated = []
+            for event in events:
+                updated.append(self._apply_event(event))
+            return updated
+
+    def _apply_event(self, event):
+        rid = event["solicitacao_id"]
+        if not event["evento_id"]:
+            event["evento_id"] = self._next_event_id()
+        self.event_ids.add(event["evento_id"])
+        self.events[rid].append(event)
+        self.events[rid].sort(key=lambda e: e.get("data_evento") or "")
+        self.ingested["eventos"].append(intake.source_row(event, intake.EVENT_COLUMNS))
+
+        before = self.assessments[rid]
+        kind = event["tipo_evento_norm"]
+        if kind == "contato_telefonico" and event["resultado_norm"] in pendencies.LEFT_QUEUE_TITLE:
+            self.confirmed.discard(rid)  # new news: the warning comes back
+        self._evaluate(rid)
+        after = self.assessments[rid]
+
+        origin = self.order.index(rid) + 1
+        moves = (
+            rid not in self.locked
+            and (before["urgency_class"], before["score"]) != (after["urgency_class"], after["score"])
+        )
+        changed = self._commit(place(self.order, self.assessments, rid) if moves else self.order, extra={rid})
+        self._refresh_suggested()
+        target = self.order.index(rid) + 1
+
+        name = self._entries[rid]["name"]
+        audit = self.audit.append(
+            "recalc", NECO, rid, name, origin, target, self._recalc_text(event, before, after, origin, target),
+        )
+        self._publish_patch(changed)
+        self._publish_audit(audit)
+        what = EVENT_LABEL[kind]
+        if target < origin:
+            text = f"{first_name(name)} subiu de {origin} para {target} após {what}"
+        elif target > origin:
+            text = f"{first_name(name)} desceu de {origin} para {target} após {what}"
+        else:
+            text = f"{first_name(name)}: {what} registrada, posição {target} mantida"
+        self._activity(text, audit["at"])
+        record = self.records[rid]
+        self._open_pendencies(pendencies.left_queue(event, record), self._new_biopsy_pendency(rid))
+        return self._entry(rid, target)
+
+    def _recalc_text(self, event, before, after, origin, target):
+        kind = event["tipo_evento_norm"]
+        sentence = f"Evento recebido: {EVENT_LABEL[kind]} ({event['resultado_norm']}) em {pendencies.br_date(event['data_evento'])}."
+        if kind == "hba1c":
+            return f"{sentence} HbA1c é critério de preparo cirúrgico, não de prioridade: posição mantida."
+        if before["urgency_class"] != after["urgency_class"]:
+            sentence += (
+                f" Reclassificado de {CLASS_LABEL[before['urgency_class']]} ({before['urgency_class']}) "
+                f"para {CLASS_LABEL[after['urgency_class']]} ({after['urgency_class']}): {after['class_reason']}."
+            )
+        elif before["score"] != after["score"]:
+            sentence += f" Índice de {before['score']:.1f} para {after['score']:.1f}, classe mantida."
+        else:
+            sentence += " Não muda classe nem índice."
+        if after["pending_confirmation"] and not before["pending_confirmation"]:
+            sentence += " Posição mantida até confirmação humana: o Neco não retira pacientes da fila."
+        elif event["solicitacao_id"] in self.locked and (
+            (before["urgency_class"], before["score"]) != (after["urgency_class"], after["score"])
+        ):
+            sentence += f" Posição {target} mantida: foi fixada pela regulação."
+        elif target != origin:
+            sentence += f" Posição {origin} → {target}."
+        return sentence
+
+    def _next_event_id(self):
+        numbers = [int(i[4:]) for i in self.event_ids if i and i.startswith("EVT-") and i[4:].isdigit()]
+        return f"EVT-{max(numbers, default=0) + 1:06d}"
+
+    def _new_biopsy_pendency(self, rid):
+        open_for = any(p["kind"] == "biopsy" and rid in p["entryIds"] for p in self.pendencies.values())
+        return None if open_for else pendencies.biopsy(self.records[rid], self.assessments[rid], self.events[rid])
+
+    def _open_pendencies(self, *found):
+        for pendency in found:
+            if pendency is None:
+                continue
+            self._pendency_seq += 1
+            pendency_id = f"PEN-{self._pendency_seq:04d}"
+            kind_label = pendencies.KIND_LABEL.get(pendency["kind"], pendency["kind"])
+            self.pendencies[pendency_id] = {"id": pendency_id, "kindLabel": kind_label, **pendency}
+            self._activity(f"Nova pendência: {pendency['title']}")
+
     # --- internals -----------------------------------------------------
+
+    def _evaluate(self, rid):
+        """(Re)assesses one request from its record and events and rebuilds its entry."""
+        place_ = self.places.get(strip_accents(self.records[rid].get("municipio_norm")))
+        self.cities[rid] = place_["name"] if place_ else None
+        self.assessments[rid] = assess(self.records[rid], self.events[rid], self.reference_date)
+        self._rebuild_entry(rid)
 
     def _commit(self, new_order, extra=()):
         """Adopts `new_order`; returns the ids whose entry must be re-sent."""

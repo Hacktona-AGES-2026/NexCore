@@ -45,7 +45,8 @@ def test_rotas_registradas_sao_as_do_canal_e_as_da_regulacao(cliente):
     base = "/v1/hospitais/<hospital>"
     assert rotas == {
         "/", "/api/health", "/ws", "/v1/ws", "/v1/dpss/ws",
-        f"{base}/fila", f"{base}/fila/<request_id>/reordenar",
+        f"{base}/fila", f"{base}/fila/entradas", f"{base}/fila/eventos",
+        f"{base}/fila/<request_id>/reordenar",
         f"{base}/fila/<request_id>/validar", f"{base}/auditoria", f"{base}/pendencias",
         f"{base}/pendencias/<pendency_id>/resolver", f"{base}/painel/resumo",
         f"{base}/painel/equidade", f"{base}/painel/impacto", f"{base}/fila/exportar",

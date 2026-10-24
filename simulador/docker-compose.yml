@@ -1,0 +1,27 @@
+# Simulador da ingestão do NexCore, avulso. O compose da raiz JÁ sobe o simulador
+# junto com o backend; este aqui é só para quando o backend roda fora do Docker
+# (`python backend/wsgi.py`). Não use os dois ao mesmo tempo: seriam dois simuladores.
+#
+#   docker compose up --build -d      (nesta pasta, com o backend já no ar)
+#   docker compose logs -f simulador  (as entradas e os pulos na fila)
+#   docker compose down
+#
+# Por padrão fala com o backend publicado no host (porta 5000), sirva ele pelo
+# compose da raiz ou por `python backend/wsgi.py`. Variáveis opcionais num .env
+# nesta pasta: BACKEND_URL, HOSPITAL_ID, ENTRY_INTERVAL, EVENT_INTERVAL, SIM_SEED.
+name: nexcore-simulador
+
+services:
+  simulador:
+    build: .
+    environment:
+      BACKEND_URL: ${BACKEND_URL:-http://host.docker.internal:5000}
+      HOSPITAL_ID: ${HOSPITAL_ID:-hsl}
+      REFERENCE_DATE: "2026-10-23"
+      # uma entrada nova a cada 10 s; a cada 5 s, um evento que mexe na última entrada
+      ENTRY_INTERVAL: ${ENTRY_INTERVAL:-10s}
+      EVENT_INTERVAL: ${EVENT_INTERVAL:-5s}
+      SIM_SEED: ${SIM_SEED:-}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped

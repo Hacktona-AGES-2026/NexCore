@@ -1,11 +1,14 @@
-# NexCore completo: backend Flask + frontend React servido pelo nginx.
+# NexCore completo: backend Flask + frontend React servido pelo nginx + simulador Go.
 #
 #   docker compose up --build        → http://localhost:8080  (front, já falando com o backend)
 #                                      http://localhost:5000  (backend direto: /api/health, /ws)
+#   docker compose logs -f simulador → entradas e pulos na fila
+#   docker compose stop simulador    → congela a fila sem derrubar o resto
 #
 # O nginx do front faz proxy de /v1 (REST + WebSocket) e /api para o backend, então
 # o navegador só conversa com uma origem. Variáveis opcionais: copie para um .env na
-# raiz (SECRET_KEY, CORS_ORIGINS, HOSPITAL_ID, FRONTEND_PORT, BACKEND_PORT).
+# raiz (SECRET_KEY, CORS_ORIGINS, HOSPITAL_ID, FRONTEND_PORT, BACKEND_PORT,
+# ENTRY_INTERVAL, EVENT_INTERVAL, SIM_SEED).
 name: nexcore
 
 services:
@@ -38,6 +41,23 @@ services:
       BACKEND_UPSTREAM: backend:5000
     ports:
       - "${FRONTEND_PORT:-8080}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Simulador da ingestão (imagem própria, ./simulador): só sobe quando o healthcheck
+  # do backend passa, e fala com ele pela rede do compose, sem passar pelo host.
+  simulador:
+    build: ./simulador
+    environment:
+      BACKEND_URL: http://backend:5000
+      HOSPITAL_ID: ${HOSPITAL_ID:-hsl}
+      REFERENCE_DATE: "2026-10-23"
+      # uma entrada nova a cada 10 s; a cada 5 s, um evento que mexe na última entrada
+      ENTRY_INTERVAL: ${ENTRY_INTERVAL:-10s}
+      EVENT_INTERVAL: ${EVENT_INTERVAL:-5s}
+      SIM_SEED: ${SIM_SEED:-}
     depends_on:
       backend:
         condition: service_healthy
