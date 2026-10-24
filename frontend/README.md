@@ -17,7 +17,7 @@ cd backend && python wsgi.py          # outro terminal
 cd frontend && npm run dev:backend    # usa .env.backend
 ```
 
-Enquanto o backend não tiver `/painel/impacto` e `/fila/exportar`, o front usa o relatório de `entrega/impacto.json` e monta o `fila_priorizada.csv` a partir da fila ao vivo (o resultado passa no verificador oficial). No modo backend não há "Simular evento": as atualizações em tempo real vêm das ações dos administradores e, quando existir, da ingestão (`/fila/eventos`).
+Se `/painel/impacto` ou `/fila/exportar` responderem 404 (backend antigo), o front usa o relatório de `entrega/impacto.json` e monta o `fila_priorizada.csv` a partir da fila ao vivo. No modo backend não há "Simular evento": as atualizações em tempo real vêm das ações dos administradores e, quando existir, da ingestão (`/fila/eventos`).
 
 ## Estrutura
 

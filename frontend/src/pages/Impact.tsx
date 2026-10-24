@@ -80,7 +80,13 @@ export function Impact() {
     }
   }
 
-  if (!data) return <section className="page"><p className="empty">Carregando…</p></section>;
+  if (!data) {
+    return (
+      <section className="page">
+        <div className="insight"><Neco size={44} busy /><p>Rodando o verificador oficial na fila do Neco e na fila de hoje…</p></div>
+      </section>
+    );
+  }
   const { neco, manual } = data.verifier;
   const h = data.headline;
   const maxCell = Math.max(...data.matrix.flatMap((r) => PRIORITIES.map((p) => r[p])));

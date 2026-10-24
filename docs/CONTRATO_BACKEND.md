@@ -12,7 +12,7 @@ Para o front usar o servidor real: `frontend/.env` com `VITE_USE_MOCK=false`, `V
 
 ## Status da integração (24/10)
 
-O front roda contra o backend real com `npm run dev:backend`. Testado ponta a ponta: fila completa (941), reordenação com regra de ouro (422), validação, auditoria encadeada, pendências, resumo, equidade, Pergunte ao Neco e WebSocket (`queue.snapshot`, `queue.patch`, `audit.appended`, `pendency.resolved`, `activity`). Todos os formatos batem com `types.ts`.
+O front roda contra o backend real com `npm run dev:backend`. Testado ponta a ponta: fila completa (941), reordenação com regra de ouro (422), validação, auditoria encadeada, pendências, resumo, equidade, impacto (verificador oficial no servidor, ~3 s), exportação do CSV oficial, Pergunte ao Neco e WebSocket (`queue.snapshot`, `queue.patch`, `audit.appended`, `pendency.resolved`, `activity`). Todos os formatos batem com `types.ts`.
 
 Ainda faltam no backend:
 
