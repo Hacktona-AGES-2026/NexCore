@@ -32,12 +32,30 @@ Base: `VITE_API_URL` + `/hospitais/{hospital}`.
 | GET | `/auditoria` | `AuditEntry[]` |
 | POST | `/fila/{id}/reordenar` | body `ReorderRequest`, retorna `AuditEntry`; 4xx com `{detail}` se violar a regra de ouro |
 | POST | `/fila/{id}/validar` | retorna `AuditEntry` |
+| GET | `/pendencias` | `Pendency[]`: inconsistências de dados para resolver |
+| POST | `/pendencias/{id}/resolver` | body `ResolveRequest` (`action`, `note?`), retorna `AuditEntry` do tipo `data` |
+| GET | `/painel/equidade` | `EquityReport`: municípios (com lat/lon) e grupos por distância, idade e sexo |
+| GET | `/painel/resumo` | `QueueSummary` para o telão; o topo da fila vem só com iniciais |
+| POST | `/neco/perguntar` | body `{question}`, retorna `NecoAnswer` (`text`, `entryIds?`, `suggestions?`) |
 
 WebSocket em `VITE_WS_URL?hospital={hospital}`. O servidor só envia; ações do usuário vão por REST. Mensagens (JSON, campo `type`):
 
 - `queue.snapshot`: enviado ao conectar e reconectar. Fila completa.
 - `queue.patch`: só as entradas que mudaram (`entries`), `total` e `removed` opcional.
 - `audit.appended`: novo registro de auditoria.
+- `pendency.resolved`: pendência resolvida (por qualquer administrador).
 - `activity`: frase curta para o feed da home.
+
+Cada `QueueEntry` traz `highlights`: trechos do texto livre (`clinicalNote`/`regulationNote`, com `start`/`end`) que o Neco usou, classificados como `urgency`, `events`, `symptoms` ou `red_flag`.
+
+O "Pergunte ao Neco" deve ser um LLM com ferramentas de consulta à fila no backend (a chave nunca vai para o front). Ele explica e consulta; não altera posições.
+
+## Telas
+
+- `/` início · `/fila` e `/fila/:id` · `/pendencias` · `/equidade` · `/auditoria`
+- `/telao`: painel para TV, sem nomes completos. Abra em outra janela e use tela cheia. No modo mock, as ações feitas na aba principal são repetidas no telão (BroadcastChannel).
+- Ctrl+K abre o "Pergunte ao Neco" em qualquer tela.
+
+Os agregados do mock (`src/mock/stats.json`) foram gerados a partir do dataset completo (941 solicitações).
 
 Tipos completos em [src/api/types.ts](src/api/types.ts).

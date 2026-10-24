@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { QueueEntry } from "../api/types";
 import { CLASS_LABEL, CLASS_RANK, DEADLINE_DAYS, FACTOR_LABEL, byPosition, firstName } from "../domain/queue";
 import { useQueue } from "../state/QueueContext";
+import { HighlightLegend, HighlightedText } from "./HighlightedText";
 import { InfoIcon } from "./icons";
 import { Neco } from "./Neco";
 import { ReorderModal } from "./ReorderModal";
@@ -84,6 +85,19 @@ export function PatientDrawer({ entryId, onClose }: { entryId: string | null; on
               ))}
               {validation && <div className="ok">✓ Validado por {validation.author} às {new Date(validation.at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</div>}
 
+              <div className="sect">O que o Neco leu no texto</div>
+              <HighlightLegend highlights={e.highlights} />
+              <div className="note-src">
+                <span>Médico solicitante</span>
+                <p><HighlightedText text={e.clinicalNote} highlights={e.highlights.filter((h) => h.field === "clinicalNote")} /></p>
+              </div>
+              {e.regulationNote && (
+                <div className="note-src">
+                  <span>Observações da regulação</span>
+                  <p><HighlightedText text={e.regulationNote} highlights={e.highlights.filter((h) => h.field === "regulationNote")} /></p>
+                </div>
+              )}
+
               <div className="sect">Como o índice foi composto</div>
               {e.factors.map((f) => (
                 <div className="factor" key={f.key}>
@@ -102,8 +116,6 @@ export function PatientDrawer({ entryId, onClose }: { entryId: string | null; on
                   <dt>Comorbidades</dt><dd>{e.comorbidities ?? "—"}</dd>
                   <dt>Entrada na fila</dt><dd>{fmtDate(e.enteredAt)}</dd>
                   <dt>Prioridade manual</dt><dd style={{ textTransform: "capitalize" }}>{e.manualPriority ?? "vazia"}</dd>
-                  <dt>Texto do médico</dt><dd>{e.clinicalNote}</dd>
-                  {e.regulationNote && <><dt>Observações</dt><dd>{e.regulationNote}</dd></>}
                 </dl>
               </details>
               <details>

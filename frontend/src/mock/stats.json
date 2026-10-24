@@ -1,0 +1,1834 @@
+{
+ "cities": [
+  {
+   "name": "Porto Alegre",
+   "lat": -30.03,
+   "lon": -51.23,
+   "total": 367,
+   "avgWait": 364,
+   "overdue": 252,
+   "urgent": 75,
+   "distanceKm": 14
+  },
+  {
+   "name": "Alvorada",
+   "lat": -29.99,
+   "lon": -51.08,
+   "total": 48,
+   "avgWait": 380,
+   "overdue": 34,
+   "urgent": 10,
+   "distanceKm": 18
+  },
+  {
+   "name": "Viamão",
+   "lat": -30.08,
+   "lon": -51.02,
+   "total": 42,
+   "avgWait": 370,
+   "overdue": 32,
+   "urgent": 14,
+   "distanceKm": 25
+  },
+  {
+   "name": "São Leopoldo",
+   "lat": -29.76,
+   "lon": -51.15,
+   "total": 42,
+   "avgWait": 335,
+   "overdue": 31,
+   "urgent": 10,
+   "distanceKm": 36
+  },
+  {
+   "name": "Canoas",
+   "lat": -29.92,
+   "lon": -51.18,
+   "total": 39,
+   "avgWait": 350,
+   "overdue": 32,
+   "urgent": 11,
+   "distanceKm": 15
+  },
+  {
+   "name": "Gravataí",
+   "lat": -29.94,
+   "lon": -50.99,
+   "total": 35,
+   "avgWait": 432,
+   "overdue": 28,
+   "urgent": 11,
+   "distanceKm": 25
+  },
+  {
+   "name": "Pelotas",
+   "lat": -31.77,
+   "lon": -52.34,
+   "total": 28,
+   "avgWait": 547,
+   "overdue": 22,
+   "urgent": 5,
+   "distanceKm": 258
+  },
+  {
+   "name": "Cachoeirinha",
+   "lat": -29.95,
+   "lon": -51.09,
+   "total": 26,
+   "avgWait": 307,
+   "overdue": 18,
+   "urgent": 4,
+   "distanceKm": 19
+  },
+  {
+   "name": "Guaíba",
+   "lat": -30.11,
+   "lon": -51.33,
+   "total": 20,
+   "avgWait": 444,
+   "overdue": 15,
+   "urgent": 2,
+   "distanceKm": 35
+  },
+  {
+   "name": "Novo Hamburgo",
+   "lat": -29.68,
+   "lon": -51.13,
+   "total": 19,
+   "avgWait": 398,
+   "overdue": 15,
+   "urgent": 3,
+   "distanceKm": 44
+  },
+  {
+   "name": "Santa Cruz do Sul",
+   "lat": -29.72,
+   "lon": -52.43,
+   "total": 18,
+   "avgWait": 371,
+   "overdue": 11,
+   "urgent": 3,
+   "distanceKm": 157
+  },
+  {
+   "name": "Santa Maria",
+   "lat": -29.69,
+   "lon": -53.81,
+   "total": 16,
+   "avgWait": 378,
+   "overdue": 14,
+   "urgent": 3,
+   "distanceKm": 293
+  },
+  {
+   "name": "Camaquã",
+   "lat": -30.85,
+   "lon": -51.81,
+   "total": 15,
+   "avgWait": 463,
+   "overdue": 13,
+   "urgent": 3,
+   "distanceKm": 127
+  },
+  {
+   "name": "Rio Grande",
+   "lat": -32.03,
+   "lon": -52.1,
+   "total": 15,
+   "avgWait": 549,
+   "overdue": 15,
+   "urgent": 4,
+   "distanceKm": 315
+  },
+  {
+   "name": "Ijuí",
+   "lat": -28.39,
+   "lon": -53.91,
+   "total": 14,
+   "avgWait": 456,
+   "overdue": 11,
+   "urgent": 2,
+   "distanceKm": 404
+  },
+  {
+   "name": "São Gabriel",
+   "lat": -30.34,
+   "lon": -54.32,
+   "total": 14,
+   "avgWait": 486,
+   "overdue": 12,
+   "urgent": 2,
+   "distanceKm": 323
+  },
+  {
+   "name": "Caxias do Sul",
+   "lat": -29.17,
+   "lon": -51.18,
+   "total": 14,
+   "avgWait": 359,
+   "overdue": 11,
+   "urgent": 2,
+   "distanceKm": 128
+  },
+  {
+   "name": "Uruguaiana",
+   "lat": -29.75,
+   "lon": -57.09,
+   "total": 13,
+   "avgWait": 441,
+   "overdue": 9,
+   "urgent": 2,
+   "distanceKm": 643
+  },
+  {
+   "name": "Taquara",
+   "lat": -29.65,
+   "lon": -50.78,
+   "total": 10,
+   "avgWait": 431,
+   "overdue": 8,
+   "urgent": 4,
+   "distanceKm": 69
+  },
+  {
+   "name": "Cachoeira do Sul",
+   "lat": -30.04,
+   "lon": -52.89,
+   "total": 10,
+   "avgWait": 217,
+   "overdue": 5,
+   "urgent": 2,
+   "distanceKm": 188
+  },
+  {
+   "name": "Santana do Livramento",
+   "lat": -30.89,
+   "lon": -55.53,
+   "total": 10,
+   "avgWait": 615,
+   "overdue": 7,
+   "urgent": 0,
+   "distanceKm": 499
+  },
+  {
+   "name": "Charqueadas",
+   "lat": -29.96,
+   "lon": -51.63,
+   "total": 9,
+   "avgWait": 575,
+   "overdue": 7,
+   "urgent": 4,
+   "distanceKm": 59
+  },
+  {
+   "name": "Bagé",
+   "lat": -31.33,
+   "lon": -54.1,
+   "total": 9,
+   "avgWait": 565,
+   "overdue": 9,
+   "urgent": 2,
+   "distanceKm": 402
+  },
+  {
+   "name": "Torres",
+   "lat": -29.33,
+   "lon": -49.73,
+   "total": 9,
+   "avgWait": 402,
+   "overdue": 8,
+   "urgent": 1,
+   "distanceKm": 198
+  },
+  {
+   "name": "Tramandaí",
+   "lat": -29.98,
+   "lon": -50.13,
+   "total": 9,
+   "avgWait": 357,
+   "overdue": 5,
+   "urgent": 1,
+   "distanceKm": 125
+  },
+  {
+   "name": "Osório",
+   "lat": -29.89,
+   "lon": -50.27,
+   "total": 8,
+   "avgWait": 261,
+   "overdue": 4,
+   "urgent": 2,
+   "distanceKm": 97
+  },
+  {
+   "name": "Eldorado do Sul",
+   "lat": -30.08,
+   "lon": -51.62,
+   "total": 8,
+   "avgWait": 229,
+   "overdue": 7,
+   "urgent": 4,
+   "distanceKm": 20
+  },
+  {
+   "name": "Montenegro",
+   "lat": -29.69,
+   "lon": -51.46,
+   "total": 8,
+   "avgWait": 183,
+   "overdue": 6,
+   "urgent": 4,
+   "distanceKm": 56
+  },
+  {
+   "name": "Cruz Alta",
+   "lat": -28.64,
+   "lon": -53.61,
+   "total": 8,
+   "avgWait": 673,
+   "overdue": 8,
+   "urgent": 0,
+   "distanceKm": 352
+  },
+  {
+   "name": "Passo Fundo",
+   "lat": -28.26,
+   "lon": -52.41,
+   "total": 7,
+   "avgWait": 521,
+   "overdue": 6,
+   "urgent": 1,
+   "distanceKm": 294
+  },
+  {
+   "name": "Sapucaia do Sul",
+   "lat": -29.83,
+   "lon": -51.15,
+   "total": 7,
+   "avgWait": 367,
+   "overdue": 5,
+   "urgent": 2,
+   "distanceKm": 27
+  },
+  {
+   "name": "Alegrete",
+   "lat": -29.78,
+   "lon": -55.79,
+   "total": 7,
+   "avgWait": 303,
+   "overdue": 7,
+   "urgent": 2,
+   "distanceKm": 503
+  },
+  {
+   "name": "São Borja",
+   "lat": -28.66,
+   "lon": -56.0,
+   "total": 7,
+   "avgWait": 407,
+   "overdue": 7,
+   "urgent": 2,
+   "distanceKm": 634
+  },
+  {
+   "name": "Erechim",
+   "lat": -27.63,
+   "lon": -52.27,
+   "total": 7,
+   "avgWait": 409,
+   "overdue": 5,
+   "urgent": 0,
+   "distanceKm": 372
+  },
+  {
+   "name": "Santa Rosa",
+   "lat": -27.87,
+   "lon": -54.48,
+   "total": 6,
+   "avgWait": 520,
+   "overdue": 6,
+   "urgent": 1,
+   "distanceKm": 504
+  },
+  {
+   "name": "Esteio",
+   "lat": -29.85,
+   "lon": -51.18,
+   "total": 6,
+   "avgWait": 272,
+   "overdue": 3,
+   "urgent": 1,
+   "distanceKm": 22
+  },
+  {
+   "name": "Santo Ângelo",
+   "lat": -28.3,
+   "lon": -54.26,
+   "total": 6,
+   "avgWait": 449,
+   "overdue": 5,
+   "urgent": 0,
+   "distanceKm": 430
+  },
+  {
+   "name": "Lajeado",
+   "lat": -29.47,
+   "lon": -51.96,
+   "total": 5,
+   "avgWait": 496,
+   "overdue": 4,
+   "urgent": 1,
+   "distanceKm": 110
+  }
+ ],
+ "byDistance": [
+  {
+   "label": "Até 50 km",
+   "total": 646,
+   "avgWait": 366,
+   "overduePct": 72
+  },
+  {
+   "label": "50 a 200 km",
+   "total": 104,
+   "avgWait": 378,
+   "overduePct": 71
+  },
+  {
+   "label": "Mais de 200 km",
+   "total": 171,
+   "avgWait": 492,
+   "overduePct": 85
+  }
+ ],
+ "byAge": [
+  {
+   "label": "18 a 39",
+   "total": 128,
+   "avgWait": 421,
+   "overduePct": 68
+  },
+  {
+   "label": "40 a 59",
+   "total": 366,
+   "avgWait": 356,
+   "overduePct": 75
+  },
+  {
+   "label": "60 a 74",
+   "total": 311,
+   "avgWait": 379,
+   "overduePct": 75
+  },
+  {
+   "label": "75 ou mais",
+   "total": 136,
+   "avgWait": 472,
+   "overduePct": 77
+  }
+ ],
+ "bySex": [
+  {
+   "label": "Mulheres",
+   "total": 549,
+   "avgWait": 396,
+   "overduePct": 77
+  },
+  {
+   "label": "Homens",
+   "total": 392,
+   "avgWait": 379,
+   "overduePct": 70
+  }
+ ],
+ "summary": {
+  "total": 941,
+  "byClass": [
+   {
+    "cls": "A1",
+    "total": 29,
+    "overdue": 29
+   },
+   {
+    "cls": "A2",
+    "total": 171,
+    "overdue": 168
+   },
+   {
+    "cls": "B",
+    "total": 202,
+    "overdue": 198
+   },
+   {
+    "cls": "C",
+    "total": 247,
+    "overdue": 181
+   },
+   {
+    "cls": "D",
+    "total": 292,
+    "overdue": 121
+   }
+  ],
+  "bySpecialty": [
+   {
+    "label": "Cirurgia Geral",
+    "total": 190,
+    "overdue": 131
+   },
+   {
+    "label": "Cirurgia Oncologica",
+    "total": 130,
+    "overdue": 111
+   },
+   {
+    "label": "Ortopedia",
+    "total": 115,
+    "overdue": 94
+   },
+   {
+    "label": "Urologia",
+    "total": 110,
+    "overdue": 78
+   },
+   {
+    "label": "Oftalmologia",
+    "total": 102,
+    "overdue": 64
+   },
+   {
+    "label": "Mastologia",
+    "total": 53,
+    "overdue": 52
+   },
+   {
+    "label": "Cirurgia Vascular",
+    "total": 52,
+    "overdue": 33
+   },
+   {
+    "label": "Ginecologia",
+    "total": 47,
+    "overdue": 37
+   },
+   {
+    "label": "Cirurgia de Cabeca e Pescoco",
+    "total": 38,
+    "overdue": 25
+   },
+   {
+    "label": "Coloproctologia",
+    "total": 26,
+    "overdue": 18
+   },
+   {
+    "label": "Cirurgia Bariatrica",
+    "total": 24,
+    "overdue": 15
+   },
+   {
+    "label": "Cirurgia Cardiaca",
+    "total": 23,
+    "overdue": 15
+   },
+   {
+    "label": "Cirurgia Toracica",
+    "total": 16,
+    "overdue": 15
+   },
+   {
+    "label": "Otorrinolaringologia",
+    "total": 15,
+    "overdue": 9
+   }
+  ],
+  "waitBuckets": [
+   {
+    "label": "0–90",
+    "total": 173
+   },
+   {
+    "label": "91–180",
+    "total": 162
+   },
+   {
+    "label": "181–365",
+    "total": 253
+   },
+   {
+    "label": "1–2 anos",
+    "total": 201
+   },
+   {
+    "label": "2+ anos",
+    "total": 152
+   }
+  ],
+  "oncologic": 177,
+  "overdueTotal": 697,
+  "top": [
+   {
+    "position": 1,
+    "id": "SOL-2026-00098",
+    "initials": "E.L.P.",
+    "procedure": "Histerectomia",
+    "cls": "A1",
+    "days": 264
+   },
+   {
+    "position": 2,
+    "id": "SOL-2026-00229",
+    "initials": "I.S.M.",
+    "procedure": "Gastrectomia",
+    "cls": "A1",
+    "days": 217
+   },
+   {
+    "position": 3,
+    "id": "SOL-2026-00781",
+    "initials": "N.F.M.",
+    "procedure": "Lobectomia pulmonar",
+    "cls": "A1",
+    "days": 67
+   },
+   {
+    "position": 4,
+    "id": "SOL-2026-00340",
+    "initials": "C.M.V.",
+    "procedure": "Colectomia",
+    "cls": "A1",
+    "days": 184
+   },
+   {
+    "position": 5,
+    "id": "SOL-2026-00563",
+    "initials": "C.B.C.",
+    "procedure": "Colectomia",
+    "cls": "A1",
+    "days": 118
+   },
+   {
+    "position": 6,
+    "id": "SOL-2025-00011",
+    "initials": "V.P.C.",
+    "procedure": "Mastectomia / setorectomia de mama",
+    "cls": "A1",
+    "days": 648
+   },
+   {
+    "position": 7,
+    "id": "SOL-2026-00129",
+    "initials": "I.P.K.",
+    "procedure": "Histerectomia",
+    "cls": "A1",
+    "days": 252
+   },
+   {
+    "position": 8,
+    "id": "SOL-2026-00489",
+    "initials": "E.L.R.",
+    "procedure": "Histerectomia",
+    "cls": "A1",
+    "days": 138
+   },
+   {
+    "position": 9,
+    "id": "SOL-2026-00262",
+    "initials": "R.G.R.",
+    "procedure": "Mastectomia / setorectomia de mama",
+    "cls": "A1",
+    "days": 208
+   },
+   {
+    "position": 10,
+    "id": "SOL-2025-00146",
+    "initials": "A.R.D.C.",
+    "procedure": "Prostatectomia radical",
+    "cls": "A1",
+    "days": 511
+   },
+   {
+    "position": 11,
+    "id": "SOL-2026-00881",
+    "initials": "F.H.S.",
+    "procedure": "Exerese de tumor de pele com reconstrucao",
+    "cls": "A1",
+    "days": 50
+   },
+   {
+    "position": 12,
+    "id": "SOL-2026-00331",
+    "initials": "M.M.B.",
+    "procedure": "Prostatectomia radical",
+    "cls": "A1",
+    "days": 188
+   }
+  ]
+ },
+ "pendencies": [
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2026-00191"
+   ],
+   "name": "Claudia Moraes Nunes",
+   "title": "Cadastro diz sem câncer, CID C44.9 diz o contrário",
+   "detail": "Neoplasia maligna da pele, nao especificada. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0001"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2025-00149"
+   ],
+   "name": "Paulo Pires Lopes",
+   "title": "Cadastro diz sem câncer, CID C61 diz o contrário",
+   "detail": "Neoplasia maligna da prostata. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0002"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2025-00196"
+   ],
+   "name": "Elza Camargo Hoffmann",
+   "title": "Cadastro diz câncer, CID D24 diz o contrário",
+   "detail": "Neoplasia benigna da mama. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0003"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2025-00508"
+   ],
+   "name": "Zilda Nunes Vargas",
+   "title": "Cadastro diz câncer, CID D23.9 diz o contrário",
+   "detail": "Neoplasia benigna da pele, nao especificada. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0004"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2026-00583"
+   ],
+   "name": "Claudio Dutra Quadros",
+   "title": "Cadastro diz câncer, CID K40.9 diz o contrário",
+   "detail": "Hernia inguinal unilateral, sem obstrucao ou gangrena. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0005"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2026-00782"
+   ],
+   "name": "Claudio Moraes Rocha",
+   "title": "Cadastro diz sem câncer, CID C61 diz o contrário",
+   "detail": "Neoplasia maligna da prostata. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0006"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2022-00049"
+   ],
+   "name": "Jorge Prestes Rodrigues",
+   "title": "Cadastro diz câncer, CID D14.3 diz o contrário",
+   "detail": "Neoplasia benigna dos bronquios e pulmao. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0007"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2026-00543"
+   ],
+   "name": "Maria Schneider Kunz",
+   "title": "Cadastro diz sem câncer, CID C50.4 diz o contrário",
+   "detail": "Neoplasia maligna do quadrante superior externo da mama. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0008"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2025-00252"
+   ],
+   "name": "Lurdes Dutra Souza",
+   "title": "Cadastro diz câncer, CID K80.1 diz o contrário",
+   "detail": "Calculose da vesicula biliar com outra colecistite. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0009"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2026-00155"
+   ],
+   "name": "Rodrigo Schmidt Borges",
+   "title": "Cadastro diz sem câncer, CID C61 diz o contrário",
+   "detail": "Neoplasia maligna da prostata. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0010"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2024-00121"
+   ],
+   "name": "Adriana Lima Vieira",
+   "title": "Cadastro diz câncer, CID K80.1 diz o contrário",
+   "detail": "Calculose da vesicula biliar com outra colecistite. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0011"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2025-00295"
+   ],
+   "name": "Eduardo Nunes Silva",
+   "title": "Cadastro diz sem câncer, CID C61 diz o contrário",
+   "detail": "Neoplasia maligna da prostata. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0012"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2026-00809"
+   ],
+   "name": "Gilberto Silva Pacheco",
+   "title": "Cadastro diz sem câncer, CID C20 diz o contrário",
+   "detail": "Neoplasia maligna do reto. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0013"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2026-00864"
+   ],
+   "name": "Marlene Muller Machado",
+   "title": "Cadastro diz sem câncer, CID C50.9 diz o contrário",
+   "detail": "Neoplasia maligna da mama, nao especificada. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0014"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2026-00486"
+   ],
+   "name": "Juarez Kerber Pereira",
+   "title": "Cadastro diz câncer, CID M160 diz o contrário",
+   "detail": "Coxartrose primaria bilateral. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0015"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2026-00574"
+   ],
+   "name": "Salete Dalla Costa Medeiros",
+   "title": "Cadastro diz câncer, CID D251 diz o contrário",
+   "detail": "Leiomioma intramural do utero. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0016"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2025-00324"
+   ],
+   "name": "Juarez Fagundes Bitencourt",
+   "title": "Cadastro diz sem câncer, CID C34.3 diz o contrário",
+   "detail": "Neoplasia maligna do lobo inferior, bronquio ou pulmao. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0017"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2026-00738"
+   ],
+   "name": "Marcos Lopes Peixoto",
+   "title": "Cadastro diz câncer, CID H250 diz o contrário",
+   "detail": "Catarata senil incipiente. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0018"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2026-00131"
+   ],
+   "name": "Antonio Camargo Prestes",
+   "title": "Cadastro diz sem câncer, CID C16.2 diz o contrário",
+   "detail": "Neoplasia maligna do corpo do estomago. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0019"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2025-00435"
+   ],
+   "name": "Celso Garcia Fontoura",
+   "title": "Cadastro diz câncer, CID N20.1 diz o contrário",
+   "detail": "Calculose do ureter. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0020"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2025-00350"
+   ],
+   "name": "Claudia Bortolini Weber",
+   "title": "Cadastro diz câncer, CID N20.0 diz o contrário",
+   "detail": "Calculose do rim. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0021"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2026-00557"
+   ],
+   "name": "Zilda Oliveira Lima",
+   "title": "Cadastro diz sem câncer, CID C16.9 diz o contrário",
+   "detail": "Neoplasia maligna do estomago, nao especificado. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0022"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2026-00263"
+   ],
+   "name": "Leandro Schmidt Goncalves",
+   "title": "Cadastro diz câncer, CID H25.8 diz o contrário",
+   "detail": "Outras cataratas senis. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0023"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2026-00466"
+   ],
+   "name": "Lurdes Kerber Brizola",
+   "title": "Cadastro diz câncer, CID D25.1 diz o contrário",
+   "detail": "Leiomioma intramural do utero. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0024"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2026-00460"
+   ],
+   "name": "Marlene Muller Machado",
+   "title": "Cadastro diz sem câncer, CID C50.9 diz o contrário",
+   "detail": "Neoplasia maligna da mama, nao especificada. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0025"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2025-00420"
+   ],
+   "name": "Lucas Garcia Hoffmann",
+   "title": "Cadastro diz sem câncer, CID C16.2 diz o contrário",
+   "detail": "Neoplasia maligna do corpo do estomago. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0026"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2025-00224"
+   ],
+   "name": "Dirce Vargas Kunz",
+   "title": "Cadastro diz sem câncer, CID C16.0 diz o contrário",
+   "detail": "Neoplasia maligna da cardia. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0027"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2026-00392"
+   ],
+   "name": "Bruna Nunes Borges",
+   "title": "Cadastro diz câncer, CID H25.8 diz o contrário",
+   "detail": "Outras cataratas senis. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0028"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2026-00791"
+   ],
+   "name": "Salete Bortolini Quadros",
+   "title": "Cadastro diz câncer, CID J34.2 diz o contrário",
+   "detail": "Desvio do septo nasal. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0029"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2023-00010"
+   ],
+   "name": "Jair Schneider Muller",
+   "title": "Cadastro diz sem câncer, CID C18.7 diz o contrário",
+   "detail": "Neoplasia maligna do colon sigmoide. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0030"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2025-00280"
+   ],
+   "name": "Antonio Severo Schmidt",
+   "title": "Cadastro diz câncer, CID M16.0 diz o contrário",
+   "detail": "Coxartrose primaria bilateral. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0031"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2026-00995"
+   ],
+   "name": "Claudio Ramos Weber",
+   "title": "Cadastro diz câncer, CID K40.9 diz o contrário",
+   "detail": "Hernia inguinal unilateral, sem obstrucao ou gangrena. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0032"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2026-00311"
+   ],
+   "name": "Marcos Weber Camargo",
+   "title": "Cadastro diz câncer, CID K40.9 diz o contrário",
+   "detail": "Hernia inguinal unilateral, sem obstrucao ou gangrena. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0033"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2025-00378"
+   ],
+   "name": "Celso Lopes Kerber",
+   "title": "Cadastro diz câncer, CID H25.0 diz o contrário",
+   "detail": "Catarata senil incipiente. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0034"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2026-00602"
+   ],
+   "name": "Ana Kunz Schmidt",
+   "title": "Cadastro diz sem câncer, CID C50.9 diz o contrário",
+   "detail": "Neoplasia maligna da mama, nao especificada. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0035"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2025-00495"
+   ],
+   "name": "Ana Borges Dalla Costa",
+   "title": "Cadastro diz câncer, CID M23.2 diz o contrário",
+   "detail": "Transtorno do menisco devido a ruptura ou lesao antiga. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0036"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2026-00601"
+   ],
+   "name": "Marcos Weber Camargo",
+   "title": "Cadastro diz câncer, CID K40.9 diz o contrário",
+   "detail": "Hernia inguinal unilateral, sem obstrucao ou gangrena. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0037"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2024-00147"
+   ],
+   "name": "Everton Dalla Costa Vieira",
+   "title": "Cadastro diz sem câncer, CID C61 diz o contrário",
+   "detail": "Neoplasia maligna da prostata. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0038"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2024-00017"
+   ],
+   "name": "Vera Dutra Souza",
+   "title": "Cadastro diz câncer, CID E04.2 diz o contrário",
+   "detail": "Bocio nao-toxico multinodular. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0039"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2026-00572"
+   ],
+   "name": "Loreno Azambuja Pires",
+   "title": "Cadastro diz câncer, CID D22.9 diz o contrário",
+   "detail": "Nevo melanocitico, nao especificado. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0040"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2026-00103"
+   ],
+   "name": "Maria Garcia Schneider",
+   "title": "Cadastro diz sem câncer, CID C18.0 diz o contrário",
+   "detail": "Neoplasia maligna do ceco. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0041"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2026-00776"
+   ],
+   "name": "Claudia Lopes Teixeira",
+   "title": "Cadastro diz sem câncer, CID C44.3 diz o contrário",
+   "detail": "Neoplasia maligna da pele de outras partes e partes nao especificadas da face. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0042"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2026-00816"
+   ],
+   "name": "GILBERTO SILVA PACHECO",
+   "title": "Cadastro diz sem câncer, CID C20 diz o contrário",
+   "detail": "Neoplasia maligna do reto. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0043"
+  },
+  {
+   "kind": "cid_flag",
+   "entryIds": [
+    "SOL-2026-00036"
+   ],
+   "name": "Marta Muller Brizola",
+   "title": "Cadastro diz sem câncer, CID C73 diz o contrário",
+   "detail": "Neoplasia maligna da glandula tireoide. O Neco já usa o CID; falta corrigir o cadastro.",
+   "id": "PEN-0044"
+  },
+  {
+   "kind": "duplicate",
+   "entryIds": [
+    "SOL-2024-00003",
+    "SOL-2024-00044"
+   ],
+   "name": "Jurema Quadros Weber",
+   "title": "2 solicitações para o mesmo procedimento",
+   "detail": "Safenectomia / tratamento cirurgico de varizes. Entradas em 14/01/2024 e 07/05/2024.",
+   "id": "PEN-0045"
+  },
+  {
+   "kind": "duplicate",
+   "entryIds": [
+    "SOL-2025-00409",
+    "SOL-2026-00093"
+   ],
+   "name": "Vera Carvalho Machado",
+   "title": "2 solicitações para o mesmo procedimento",
+   "detail": "Liberacao do tunel do carpo. Entradas em 19/11/2025 e 31/01/2026.",
+   "id": "PEN-0046"
+  },
+  {
+   "kind": "duplicate",
+   "entryIds": [
+    "SOL-2025-00290",
+    "SOL-2025-00348"
+   ],
+   "name": "Eduardo Carvalho Fontoura",
+   "title": "2 solicitações para o mesmo procedimento",
+   "detail": "Herniorrafia umbilical / incisional. Entradas em 19/09/2025 e 19/10/2025.",
+   "id": "PEN-0047"
+  },
+  {
+   "kind": "duplicate",
+   "entryIds": [
+    "SOL-2023-00074",
+    "SOL-2023-00088"
+   ],
+   "name": "Sonia Freitas Zanella",
+   "title": "2 solicitações para o mesmo procedimento",
+   "detail": "Exerese de tumor de pele com reconstrucao. Entradas em 03/11/2023 e 22/12/2023.",
+   "id": "PEN-0048"
+  },
+  {
+   "kind": "duplicate",
+   "entryIds": [
+    "SOL-2026-00852",
+    "SOL-2026-00865"
+   ],
+   "name": "Vanessa Dalla Costa Cardoso",
+   "title": "2 solicitações para o mesmo procedimento",
+   "detail": "Exerese de tumor de pele com reconstrucao. Entradas em 31/08/2026 e 01/09/2026.",
+   "id": "PEN-0049"
+  },
+  {
+   "kind": "duplicate",
+   "entryIds": [
+    "SOL-2026-00809",
+    "SOL-2026-00816"
+   ],
+   "name": "Gilberto Silva Pacheco",
+   "title": "2 solicitações para o mesmo procedimento",
+   "detail": "Colectomia. Entradas em 24/08/2026 e 25/08/2026.",
+   "id": "PEN-0050"
+  },
+  {
+   "kind": "duplicate",
+   "entryIds": [
+    "SOL-2026-00743",
+    "SOL-2026-01014"
+   ],
+   "name": "Dirce Freitas Schneider",
+   "title": "2 solicitações para o mesmo procedimento",
+   "detail": "Tireoidectomia. Entradas em 09/08/2026 e 11/10/2026.",
+   "id": "PEN-0051"
+  },
+  {
+   "kind": "duplicate",
+   "entryIds": [
+    "SOL-2026-00460",
+    "SOL-2026-00864"
+   ],
+   "name": "Marlene Muller Machado",
+   "title": "2 solicitações para o mesmo procedimento",
+   "detail": "Mastectomia / setorectomia de mama. Entradas em 01/06/2026 e 01/09/2026.",
+   "id": "PEN-0052"
+  },
+  {
+   "kind": "duplicate",
+   "entryIds": [
+    "SOL-2026-00066",
+    "SOL-2026-00276"
+   ],
+   "name": "Osmar Fontoura Rodrigues",
+   "title": "2 solicitações para o mesmo procedimento",
+   "detail": "Facectomia com implante de lente intraocular. Entradas em 22/01/2026 e 05/04/2026.",
+   "id": "PEN-0053"
+  },
+  {
+   "kind": "duplicate",
+   "entryIds": [
+    "SOL-2026-00288",
+    "SOL-2026-00375"
+   ],
+   "name": "Juliana Fontoura Rossi",
+   "title": "2 solicitações para o mesmo procedimento",
+   "detail": "Facectomia com implante de lente intraocular. Entradas em 07/04/2026 e 05/05/2026.",
+   "id": "PEN-0054"
+  },
+  {
+   "kind": "duplicate",
+   "entryIds": [
+    "SOL-2025-00080",
+    "SOL-2025-00158"
+   ],
+   "name": "Terezinha Freitas Severo",
+   "title": "2 solicitações para o mesmo procedimento",
+   "detail": "Herniorrafia umbilical / incisional. Entradas em 24/03/2025 e 19/06/2025.",
+   "id": "PEN-0055"
+  },
+  {
+   "kind": "duplicate",
+   "entryIds": [
+    "SOL-2026-00500",
+    "SOL-2026-00798"
+   ],
+   "name": "Marcos Rodrigues Rocha",
+   "title": "2 solicitações para o mesmo procedimento",
+   "detail": "Ureterolitotripsia / nefrolitotripsia. Entradas em 10/06/2026 e 22/08/2026.",
+   "id": "PEN-0056"
+  },
+  {
+   "kind": "duplicate",
+   "entryIds": [
+    "SOL-2025-00515",
+    "SOL-2026-00215"
+   ],
+   "name": "Odete Ramos Kerber",
+   "title": "2 solicitações para o mesmo procedimento",
+   "detail": "Facectomia com implante de lente intraocular. Entradas em 30/12/2025 e 16/03/2026.",
+   "id": "PEN-0057"
+  },
+  {
+   "kind": "duplicate",
+   "entryIds": [
+    "SOL-2026-00362",
+    "SOL-2026-00771"
+   ],
+   "name": "Everton Lima Weber",
+   "title": "2 solicitações para o mesmo procedimento",
+   "detail": "Ureterolitotripsia / nefrolitotripsia. Entradas em 04/05/2026 e 15/08/2026.",
+   "id": "PEN-0058"
+  },
+  {
+   "kind": "duplicate",
+   "entryIds": [
+    "SOL-2025-00510",
+    "SOL-2026-00063"
+   ],
+   "name": "Camila Azambuja Pereira",
+   "title": "2 solicitações para o mesmo procedimento",
+   "detail": "Colecistectomia videolaparoscopica. Entradas em 28/12/2025 e 22/01/2026.",
+   "id": "PEN-0059"
+  },
+  {
+   "kind": "duplicate",
+   "entryIds": [
+    "SOL-2026-00049",
+    "SOL-2026-00357"
+   ],
+   "name": "Dirce Peixoto Lenz",
+   "title": "2 solicitações para o mesmo procedimento",
+   "detail": "Tireoidectomia. Entradas em 18/01/2026 e 01/05/2026.",
+   "id": "PEN-0060"
+  },
+  {
+   "kind": "duplicate",
+   "entryIds": [
+    "SOL-2026-00190",
+    "SOL-2026-00447"
+   ],
+   "name": "Lurdes Rossi Mendes",
+   "title": "2 solicitações para o mesmo procedimento",
+   "detail": "Septoplastia / turbinectomia. Entradas em 04/03/2026 e 27/05/2026.",
+   "id": "PEN-0061"
+  },
+  {
+   "kind": "duplicate",
+   "entryIds": [
+    "SOL-2025-00155",
+    "SOL-2025-00235"
+   ],
+   "name": "Maria Freitas Carvalho",
+   "title": "2 solicitações para o mesmo procedimento",
+   "detail": "Artroplastia total de joelho. Entradas em 09/06/2025 e 22/08/2025.",
+   "id": "PEN-0062"
+  },
+  {
+   "kind": "duplicate",
+   "entryIds": [
+    "SOL-2026-00311",
+    "SOL-2026-00601"
+   ],
+   "name": "Marcos Weber Camargo",
+   "title": "2 solicitações para o mesmo procedimento",
+   "detail": "Herniorrafia inguinal. Entradas em 12/04/2026 e 06/07/2026.",
+   "id": "PEN-0063"
+  },
+  {
+   "kind": "duplicate",
+   "entryIds": [
+    "SOL-2025-00442",
+    "SOL-2026-00088"
+   ],
+   "name": "Nelson Fagundes Goncalves",
+   "title": "2 solicitações para o mesmo procedimento",
+   "detail": "Artroscopia de joelho. Entradas em 05/12/2025 e 30/01/2026.",
+   "id": "PEN-0064"
+  },
+  {
+   "kind": "duplicate",
+   "entryIds": [
+    "SOL-2025-00206",
+    "SOL-2025-00247"
+   ],
+   "name": "Camila Silva Brizola",
+   "title": "2 solicitações para o mesmo procedimento",
+   "detail": "Lobectomia pulmonar. Entradas em 01/08/2025 e 24/08/2025.",
+   "id": "PEN-0065"
+  },
+  {
+   "kind": "duplicate",
+   "entryIds": [
+    "SOL-2025-00039",
+    "SOL-2025-00069"
+   ],
+   "name": "Sergio Dalla Costa Hoffmann",
+   "title": "2 solicitações para o mesmo procedimento",
+   "detail": "Artroscopia de joelho. Entradas em 11/02/2025 e 13/03/2025.",
+   "id": "PEN-0066"
+  },
+  {
+   "kind": "biopsy",
+   "entryIds": [
+    "SOL-2026-00647"
+   ],
+   "name": "Neusa Bitencourt Bortolini",
+   "title": "Biópsia positiva, mas o CID D44.0 não é de câncer",
+   "detail": "O Neco já trata como câncer (classe A2). Confirme e atualize o CID.",
+   "id": "PEN-0067"
+  },
+  {
+   "kind": "biopsy",
+   "entryIds": [
+    "SOL-2026-00380"
+   ],
+   "name": "Andre Oliveira Severo",
+   "title": "Biópsia positiva, mas o CID K57.3 não é de câncer",
+   "detail": "O Neco já trata como câncer (classe A2). Confirme e atualize o CID.",
+   "id": "PEN-0068"
+  },
+  {
+   "kind": "biopsy",
+   "entryIds": [
+    "SOL-2026-00615"
+   ],
+   "name": "Vanessa Garcia Teixeira",
+   "title": "Biópsia positiva, mas o CID D05.1 não é de câncer",
+   "detail": "O Neco já trata como câncer (classe A2). Confirme e atualize o CID.",
+   "id": "PEN-0069"
+  },
+  {
+   "kind": "biopsy",
+   "entryIds": [
+    "SOL-2026-00502"
+   ],
+   "name": "Nair Prestes Moraes",
+   "title": "Biópsia positiva, mas o CID D24 não é de câncer",
+   "detail": "O Neco já trata como câncer (classe A2). Confirme e atualize o CID.",
+   "id": "PEN-0070"
+  },
+  {
+   "kind": "biopsy",
+   "entryIds": [
+    "SOL-2026-00519"
+   ],
+   "name": "Patricia Brizola Kerber",
+   "title": "Biópsia positiva, mas o CID E041 não é de câncer",
+   "detail": "O Neco já trata como câncer (classe A2). Confirme e atualize o CID.",
+   "id": "PEN-0071"
+  },
+  {
+   "kind": "biopsy",
+   "entryIds": [
+    "SOL-2026-00279"
+   ],
+   "name": "Fernanda Dutra Lima",
+   "title": "Biópsia positiva, mas o CID D44.0 não é de câncer",
+   "detail": "O Neco já trata como câncer (classe A2). Confirme e atualize o CID.",
+   "id": "PEN-0072"
+  },
+  {
+   "kind": "biopsy",
+   "entryIds": [
+    "SOL-2026-00283"
+   ],
+   "name": "Elza Pires Pereira",
+   "title": "Biópsia positiva, mas o CID K51.0 não é de câncer",
+   "detail": "O Neco já trata como câncer (classe A2). Confirme e atualize o CID.",
+   "id": "PEN-0073"
+  },
+  {
+   "kind": "biopsy",
+   "entryIds": [
+    "SOL-2026-00757"
+   ],
+   "name": "Marli Rocha Oliveira",
+   "title": "Biópsia positiva, mas o CID D37.4 não é de câncer",
+   "detail": "O Neco já trata como câncer (classe A2). Confirme e atualize o CID.",
+   "id": "PEN-0074"
+  },
+  {
+   "kind": "biopsy",
+   "entryIds": [
+    "SOL-2026-00537"
+   ],
+   "name": "Carla Borges Cardoso",
+   "title": "Biópsia positiva, mas o CID E04.2 não é de câncer",
+   "detail": "O Neco já trata como câncer (classe A2). Confirme e atualize o CID.",
+   "id": "PEN-0075"
+  },
+  {
+   "kind": "biopsy",
+   "entryIds": [
+    "SOL-2026-00359"
+   ],
+   "name": "Zilda Severo Pereira",
+   "title": "Biópsia positiva, mas o CID N60.1 não é de câncer",
+   "detail": "O Neco já trata como câncer (classe A2). Confirme e atualize o CID.",
+   "id": "PEN-0076"
+  },
+  {
+   "kind": "biopsy",
+   "entryIds": [
+    "SOL-2025-00478"
+   ],
+   "name": "Ari Moraes Rodrigues",
+   "title": "Biópsia positiva, mas o CID D12.6 não é de câncer",
+   "detail": "O Neco já trata como câncer (classe A2). Confirme e atualize o CID.",
+   "id": "PEN-0077"
+  },
+  {
+   "kind": "biopsy",
+   "entryIds": [
+    "SOL-2025-00309"
+   ],
+   "name": "Gabriela Souza Goncalves",
+   "title": "Biópsia positiva, mas o CID D05.1 não é de câncer",
+   "detail": "O Neco já trata como câncer (classe A2). Confirme e atualize o CID.",
+   "id": "PEN-0078"
+  },
+  {
+   "kind": "biopsy",
+   "entryIds": [
+    "SOL-2026-00355"
+   ],
+   "name": "Claudio Silva Quadros",
+   "title": "Biópsia positiva, mas o CID R91 não é de câncer",
+   "detail": "O Neco já trata como câncer (classe A2). Confirme e atualize o CID.",
+   "id": "PEN-0079"
+  },
+  {
+   "kind": "biopsy",
+   "entryIds": [
+    "SOL-2025-00360"
+   ],
+   "name": "Carla Kerber Flores",
+   "title": "Biópsia positiva, mas o CID E04.2 não é de câncer",
+   "detail": "O Neco já trata como câncer (classe A2). Confirme e atualize o CID.",
+   "id": "PEN-0080"
+  },
+  {
+   "kind": "biopsy",
+   "entryIds": [
+    "SOL-2026-00273"
+   ],
+   "name": "Daniela Dutra Mendes",
+   "title": "Biópsia positiva, mas o CID D05.1 não é de câncer",
+   "detail": "O Neco já trata como câncer (classe A2). Confirme e atualize o CID.",
+   "id": "PEN-0081"
+  },
+  {
+   "kind": "biopsy",
+   "entryIds": [
+    "SOL-2026-00351"
+   ],
+   "name": "Juliana Nunes Lenz",
+   "title": "Biópsia positiva, mas o CID D440 não é de câncer",
+   "detail": "O Neco já trata como câncer (classe A2). Confirme e atualize o CID.",
+   "id": "PEN-0082"
+  },
+  {
+   "kind": "biopsy",
+   "entryIds": [
+    "SOL-2026-00379"
+   ],
+   "name": "Ieda Lima Flores",
+   "title": "Biópsia positiva, mas o CID D05.1 não é de câncer",
+   "detail": "O Neco já trata como câncer (classe A2). Confirme e atualize o CID.",
+   "id": "PEN-0083"
+  },
+  {
+   "kind": "biopsy",
+   "entryIds": [
+    "SOL-2026-00232"
+   ],
+   "name": "Leticia Freitas Vieira",
+   "title": "Biópsia positiva, mas o CID D22.9 não é de câncer",
+   "detail": "O Neco já trata como câncer (classe A2). Confirme e atualize o CID.",
+   "id": "PEN-0084"
+  },
+  {
+   "kind": "biopsy",
+   "entryIds": [
+    "SOL-2026-00879"
+   ],
+   "name": "Gilberto Pires Borges",
+   "title": "Biópsia positiva, mas o CID D37.1 não é de câncer",
+   "detail": "O Neco já trata como câncer (classe A2). Confirme e atualize o CID.",
+   "id": "PEN-0085"
+  },
+  {
+   "kind": "biopsy",
+   "entryIds": [
+    "SOL-2025-00351"
+   ],
+   "name": "Gilberto Teixeira Pacheco",
+   "title": "Biópsia positiva, mas o CID L72.0 não é de câncer",
+   "detail": "O Neco já trata como câncer (classe A2). Confirme e atualize o CID.",
+   "id": "PEN-0086"
+  },
+  {
+   "kind": "biopsy",
+   "entryIds": [
+    "SOL-2026-00441"
+   ],
+   "name": "Nair Brizola Muller",
+   "title": "Biópsia positiva, mas o CID D25.1 não é de câncer",
+   "detail": "O Neco já trata como câncer (classe A2). Confirme e atualize o CID.",
+   "id": "PEN-0087"
+  },
+  {
+   "kind": "biopsy",
+   "entryIds": [
+    "SOL-2026-00003"
+   ],
+   "name": "Elza Camargo Fagundes",
+   "title": "Biópsia positiva, mas o CID D48.6 não é de câncer",
+   "detail": "O Neco já trata como câncer (classe A2). Confirme e atualize o CID.",
+   "id": "PEN-0088"
+  },
+  {
+   "kind": "biopsy",
+   "entryIds": [
+    "SOL-2026-00610"
+   ],
+   "name": "Carla Rocha Flores",
+   "title": "Biópsia positiva, mas o CID D25.9 não é de câncer",
+   "detail": "O Neco já trata como câncer (classe A2). Confirme e atualize o CID.",
+   "id": "PEN-0089"
+  },
+  {
+   "kind": "left_queue",
+   "entryIds": [
+    "SOL-2024-00011"
+   ],
+   "name": "Salete Flores Garcia",
+   "title": "Paciente desistiu",
+   "detail": "Call center em 06/05/2026: Pct informa que nao deseja mais realizar a cirurgia.",
+   "id": "PEN-0090"
+  },
+  {
+   "kind": "left_queue",
+   "entryIds": [
+    "SOL-2023-00076"
+   ],
+   "name": "Juliana Freitas Machado",
+   "title": "Operou em outro serviço",
+   "detail": "Call center em 08/05/2026: Pct informa que ja realizou o procedimento em outro servico.",
+   "id": "PEN-0091"
+  },
+  {
+   "kind": "left_queue",
+   "entryIds": [
+    "SOL-2025-00435"
+   ],
+   "name": "Celso Garcia Fontoura",
+   "title": "Operou em outro serviço",
+   "detail": "Call center em 10/05/2026: Pct informa que ja realizou o procedimento em outro servico.",
+   "id": "PEN-0092"
+  },
+  {
+   "kind": "left_queue",
+   "entryIds": [
+    "SOL-2026-00305"
+   ],
+   "name": "Roberto Medeiros Pacheco",
+   "title": "Paciente desistiu",
+   "detail": "Call center em 25/05/2026: Pct informa que nao deseja mais realizar a cirurgia.",
+   "id": "PEN-0093"
+  },
+  {
+   "kind": "left_queue",
+   "entryIds": [
+    "SOL-2025-00495"
+   ],
+   "name": "Ana Borges Dalla Costa",
+   "title": "Paciente desistiu",
+   "detail": "Call center em 29/05/2026: Pct informa que nao deseja mais realizar a cirurgia.",
+   "id": "PEN-0094"
+  },
+  {
+   "kind": "left_queue",
+   "entryIds": [
+    "SOL-2024-00179"
+   ],
+   "name": "Fabio Souza Schmidt",
+   "title": "Operou em outro serviço",
+   "detail": "Call center em 13/06/2026: Pct informa que ja realizou o procedimento em outro servico.",
+   "id": "PEN-0095"
+  },
+  {
+   "kind": "left_queue",
+   "entryIds": [
+    "SOL-2023-00054"
+   ],
+   "name": "Loreno Weber Rocha",
+   "title": "Paciente desistiu",
+   "detail": "Call center em 25/06/2026: Pct informa que nao deseja mais realizar a cirurgia.",
+   "id": "PEN-0096"
+  },
+  {
+   "kind": "left_queue",
+   "entryIds": [
+    "SOL-2025-00131"
+   ],
+   "name": "Adao Ramos Freitas",
+   "title": "Paciente desistiu",
+   "detail": "Call center em 06/08/2026: Pct informa que nao deseja mais realizar a cirurgia.",
+   "id": "PEN-0097"
+  },
+  {
+   "kind": "left_queue",
+   "entryIds": [
+    "SOL-2026-00560"
+   ],
+   "name": "Edson Flores Zanella",
+   "title": "Operou em outro serviço",
+   "detail": "Call center em 17/08/2026: Pct informa que ja realizou o procedimento em outro servico.",
+   "id": "PEN-0098"
+  },
+  {
+   "kind": "left_queue",
+   "entryIds": [
+    "SOL-2025-00211"
+   ],
+   "name": "Roberto Camargo Souza",
+   "title": "Paciente desistiu",
+   "detail": "Call center em 22/08/2026: Pct informa que nao deseja mais realizar a cirurgia.",
+   "id": "PEN-0099"
+  },
+  {
+   "kind": "left_queue",
+   "entryIds": [
+    "SOL-2025-00453"
+   ],
+   "name": "Patricia Bortolini Garcia",
+   "title": "Paciente desistiu",
+   "detail": "Call center em 27/08/2026: Pct informa que nao deseja mais realizar a cirurgia.",
+   "id": "PEN-0100"
+  },
+  {
+   "kind": "left_queue",
+   "entryIds": [
+    "SOL-2024-00076"
+   ],
+   "name": "Jair Garcia Dalla Costa",
+   "title": "Paciente desistiu",
+   "detail": "Call center em 29/08/2026: Pct informa que nao deseja mais realizar a cirurgia.",
+   "id": "PEN-0101"
+  },
+  {
+   "kind": "left_queue",
+   "entryIds": [
+    "SOL-2024-00184"
+   ],
+   "name": "Vanessa Pires Medeiros",
+   "title": "Paciente desistiu",
+   "detail": "Call center em 02/09/2026: Pct informa que nao deseja mais realizar a cirurgia.",
+   "id": "PEN-0102"
+  },
+  {
+   "kind": "left_queue",
+   "entryIds": [
+    "SOL-2025-00378"
+   ],
+   "name": "Celso Lopes Kerber",
+   "title": "Paciente desistiu",
+   "detail": "Call center em 06/09/2026: Pct informa que nao deseja mais realizar a cirurgia.",
+   "id": "PEN-0103"
+  },
+  {
+   "kind": "left_queue",
+   "entryIds": [
+    "SOL-2024-00087"
+   ],
+   "name": "Leticia Santos Souza",
+   "title": "Paciente desistiu",
+   "detail": "Call center em 20/09/2026: Pct informa que nao deseja mais realizar a cirurgia.",
+   "id": "PEN-0104"
+  },
+  {
+   "kind": "left_queue",
+   "entryIds": [
+    "SOL-2026-00694"
+   ],
+   "name": "Vera Schmidt Pires",
+   "title": "Paciente desistiu",
+   "detail": "Call center em 27/09/2026: Pct informa que nao deseja mais realizar a cirurgia.",
+   "id": "PEN-0105"
+  },
+  {
+   "kind": "left_queue",
+   "entryIds": [
+    "SOL-2026-00167"
+   ],
+   "name": "Andre Teixeira Mendes",
+   "title": "Paciente desistiu",
+   "detail": "Call center em 13/10/2026: Pct informa que nao deseja mais realizar a cirurgia.",
+   "id": "PEN-0106"
+  },
+  {
+   "kind": "left_queue",
+   "entryIds": [
+    "SOL-2023-00034"
+   ],
+   "name": "Simone Schneider Severo",
+   "title": "Operou em outro serviço",
+   "detail": "Call center em 19/10/2026: Pct informa que ja realizou o procedimento em outro servico.",
+   "id": "PEN-0107"
+  },
+  {
+   "kind": "orphan_event",
+   "entryIds": [],
+   "name": "PAC-02391",
+   "title": "Evento para a solicitação SOL-2025-00998, que não está na fila",
+   "detail": "hba1c em 02/11/2025: HbA1c 6,6%.",
+   "id": "PEN-0108"
+  },
+  {
+   "kind": "orphan_event",
+   "entryIds": [],
+   "name": "PAC-02734",
+   "title": "Evento para a solicitação SOL-2025-00904, que não está na fila",
+   "detail": "hba1c em 09/11/2025: HbA1c 8,4%.",
+   "id": "PEN-0109"
+  },
+  {
+   "kind": "orphan_event",
+   "entryIds": [],
+   "name": "PAC-02238",
+   "title": "Evento para a solicitação SOL-2023-00941, que não está na fila",
+   "detail": "falta em 24/11/2025: Registro de solicitacao removida da fila.",
+   "id": "PEN-0110"
+  },
+  {
+   "kind": "orphan_event",
+   "entryIds": [],
+   "name": "PAC-02088",
+   "title": "Evento para a solicitação SOL-2025-00909, que não está na fila",
+   "detail": "falta em 09/01/2026: Registro de solicitacao removida da fila.",
+   "id": "PEN-0111"
+  },
+  {
+   "kind": "orphan_event",
+   "entryIds": [],
+   "name": "PAC-02573",
+   "title": "Evento para a solicitação SOL-2023-00926, que não está na fila",
+   "detail": "hba1c em 27/04/2026: HbA1c 9,3%.",
+   "id": "PEN-0112"
+  },
+  {
+   "kind": "orphan_event",
+   "entryIds": [],
+   "name": "PAC-02397",
+   "title": "Evento para a solicitação SOL-2023-00927, que não está na fila",
+   "detail": "falta em 24/05/2026: Registro de solicitacao removida da fila.",
+   "id": "PEN-0113"
+  },
+  {
+   "kind": "orphan_event",
+   "entryIds": [],
+   "name": "PAC-02044",
+   "title": "Evento para a solicitação SOL-2025-00955, que não está na fila",
+   "detail": "contato telefonico em 18/06/2026: Registro de solicitacao removida da fila.",
+   "id": "PEN-0114"
+  },
+  {
+   "kind": "orphan_event",
+   "entryIds": [],
+   "name": "PAC-02914",
+   "title": "Evento para a solicitação SOL-2024-00960, que não está na fila",
+   "detail": "falta em 21/07/2026: Registro de solicitacao removida da fila.",
+   "id": "PEN-0115"
+  },
+  {
+   "kind": "orphan_event",
+   "entryIds": [],
+   "name": "PAC-02218",
+   "title": "Evento para a solicitação SOL-2024-00962, que não está na fila",
+   "detail": "falta em 29/08/2026: Registro de solicitacao removida da fila.",
+   "id": "PEN-0116"
+  }
+ ]
+}

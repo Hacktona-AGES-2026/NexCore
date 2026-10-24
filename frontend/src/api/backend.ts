@@ -1,10 +1,18 @@
-import type { AuditEntry, ConnectionStatus, QueueSnapshot, ReorderRequest, ServerMessage } from "./types";
+import type {
+  AskRequest, AuditEntry, ConnectionStatus, EquityReport, NecoAnswer, Pendency, QueueSnapshot, QueueSummary, ReorderRequest,
+  ResolveRequest, ServerMessage,
+} from "./types";
 
 export interface Backend {
   getQueue(): Promise<QueueSnapshot>;
   getAudit(): Promise<AuditEntry[]>;
+  getPendencies(): Promise<Pendency[]>;
+  getEquity(): Promise<EquityReport>;
+  getSummary(): Promise<QueueSummary>;
   reorder(entryId: string, req: ReorderRequest): Promise<AuditEntry>;
   validate(entryId: string): Promise<AuditEntry>;
+  resolvePendency(id: string, req: ResolveRequest): Promise<AuditEntry>;
+  ask(req: AskRequest): Promise<NecoAnswer>;
   /** Abre o canal em tempo real. Retorna a função que fecha. */
   subscribe(onMessage: (m: ServerMessage) => void, onStatus: (s: ConnectionStatus) => void): () => void;
   /** Só existe no mock: injeta o próximo evento roteirizado. */

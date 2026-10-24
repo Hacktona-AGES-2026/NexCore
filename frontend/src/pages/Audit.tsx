@@ -3,16 +3,18 @@ import type { AuditEntry, AuditKind } from "../api/types";
 import { CheckIcon, DownloadIcon } from "../components/icons";
 import { useQueue } from "../state/QueueContext";
 
-const BADGE: Record<AuditKind, string> = { recalc: "Neco", intake: "API", manual: "Manual", validation: "Validação" };
+const BADGE: Record<AuditKind, string> = { recalc: "Neco", intake: "API", manual: "Manual", validation: "Validação", data: "Dados" };
 const FILTERS: [string, string, AuditKind[]][] = [
-  ["todos", "Todos", ["recalc", "intake", "manual", "validation"]],
+  ["todos", "Todos", ["recalc", "intake", "manual", "validation", "data"]],
   ["neco", "Neco", ["recalc", "intake"]],
   ["man", "Manuais", ["manual"]],
   ["val", "Validações", ["validation"]],
+  ["data", "Dados", ["data"]],
 ];
 
 function describe(a: AuditEntry) {
   if (a.kind === "validation") return `validou a posição ${a.to}`;
+  if (a.kind === "data") return "resolveu pendência de dados";
   if (a.from == null) return `incluiu na posição ${a.to}`;
   if (a.from === a.to) return `manteve na posição ${a.to}`;
   return `moveu de ${a.from} para ${a.to}`;

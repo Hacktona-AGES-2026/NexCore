@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useReducer, type ReactNode } from "react";
 import { config, type Backend } from "../api/backend";
 import { httpBackend } from "../api/http";
-import type { AuditEntry, ConnectionStatus, QueueEntry, ServerMessage } from "../api/types";
+import type { AuditEntry, ConnectionStatus, Pendency, QueueEntry, ServerMessage } from "../api/types";
 import { createMockBackend } from "../mock/mockBackend";
 
 interface Activity { at: string; text: string }
@@ -14,15 +14,17 @@ interface State {
   /** Variação de posição da última atualização, por solicitação. */
   deltas: Record<string, number>;
   audit: AuditEntry[];
+  pendencies: Pendency[];
   activity: Activity[];
 }
 
 type Action =
   | { type: "status"; status: ConnectionStatus }
   | { type: "audit.loaded"; audit: AuditEntry[] }
+  | { type: "pendencies.loaded"; pendencies: Pendency[] }
   | { type: "message"; message: ServerMessage };
 
-const initial: State = { status: "connecting", loaded: false, total: 0, entries: [], deltas: {}, audit: [], activity: [] };
+const initial: State = { status: "connecting", loaded: false, total: 0, entries: [], deltas: {}, audit: [], pendencies: [], activity: [] };
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
@@ -30,6 +32,8 @@ function reducer(state: State, action: Action): State {
       return { ...state, status: action.status };
     case "audit.loaded":
       return { ...state, audit: action.audit };
+    case "pendencies.loaded":
+      return { ...state, pendencies: action.pendencies };
     case "message": {
       const m = action.message;
       switch (m.type) {
@@ -51,6 +55,8 @@ function reducer(state: State, action: Action): State {
         }
         case "audit.appended":
           return state.audit.some((a) => a.id === m.entry.id) ? state : { ...state, audit: [m.entry, ...state.audit] };
+        case "pendency.resolved":
+          return { ...state, pendencies: state.pendencies.filter((p) => p.id !== m.id) };
         case "activity":
           return { ...state, activity: [{ at: m.at, text: m.text }, ...state.activity].slice(0, 20) };
       }
@@ -72,6 +78,7 @@ export function QueueProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     backend.getAudit().then((audit) => dispatch({ type: "audit.loaded", audit })).catch(console.error);
+    backend.getPendencies().then((pendencies) => dispatch({ type: "pendencies.loaded", pendencies })).catch(console.error);
     return backend.subscribe(
       (message) => dispatch({ type: "message", message }),
       (status) => dispatch({ type: "status", status }),

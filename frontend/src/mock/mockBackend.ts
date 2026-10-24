@@ -2,10 +2,14 @@
 // o front funcionar antes do servidor existir (VITE_USE_MOCK=true).
 import type { Backend } from "../api/backend";
 import type {
-  AuditEntry, AuditKind, ClinicalEvent, ConnectionStatus, QueueEntry, ScoreFactor, ServerMessage, UrgencyClass, Warning,
+  AuditEntry, AuditKind, ClinicalEvent, ConnectionStatus, EquityReport, Pendency, QueueEntry, QueueSummary, ScoreFactor,
+  ServerMessage, UrgencyClass, Warning,
 } from "../api/types";
 import { CLASS_RANK, goldenRuleViolation, relocate } from "../domain/queue";
+import { extractHighlights } from "./highlights";
+import { answer } from "./neco";
 import seed from "./seed.json";
+import stats from "./stats.json";
 
 type SeedRow = (typeof seed.rows)[number];
 
@@ -44,8 +48,15 @@ function toEntry(r: SeedRow): QueueEntry {
     factors: r.mods.map((m, i) => ({ key: FACTOR_KEYS[i], value: m.v, max: FACTOR_MAX[i] })),
     classReason: "", warnings, locked: false, pendingConfirmation: false,
     events: r.eventos.map((e) => ({ date: e.d, type: e.t, result: e.r, value: e.v || undefined, description: e.desc, origin: e.o })),
+    highlights: extractHighlights(r.just, r.obs || undefined),
   };
   entry.classReason = classReason(entry);
+  // Sinal de gravidade só no texto livre de um caso que não está no topo: vale revisão.
+  const flag = entry.highlights.find((h) => h.kind === "red_flag");
+  if (flag && CLASS_RANK[entry.urgencyClass] <= 3) {
+    const src = flag.field === "clinicalNote" ? entry.clinicalNote : entry.regulationNote!;
+    warnings.unshift({ level: "info", text: `O texto cita "${src.slice(flag.start, flag.end).toLowerCase()}", sinal de gravidade que não está nos campos estruturados.` });
+  }
   return entry;
 }
 
@@ -126,6 +137,7 @@ export function createMockBackend(): Backend {
         factors: [{ key: "urgency", value: 34, max: 40 }, { key: "wait", value: 0, max: 25 }, { key: "events", value: 0, max: 20 }, { key: "symptoms", value: 3.4, max: 12 }],
         classReason: "câncer confirmado pelo CID C50.9", warnings: [], locked: false, pendingConfirmation: false,
         events: [{ date: "2026-10-15", type: "biopsia", result: "positivo", description: "Carcinoma ductal invasivo grau 2.", origin: "patologia" }],
+        highlights: extractHighlights("Nódulo em mama esquerda, core biopsy com carcinoma ductal invasivo."),
       };
       entries = [...entries, fresh]; total++;
       emit({ type: "queue.patch", total, entries: changed(before) });
@@ -142,10 +154,40 @@ export function createMockBackend(): Backend {
     },
   ];
   let step = 0;
+  let pendencies = stats.pendencies as Pendency[];
+  const equity = { cities: stats.cities, byDistance: stats.byDistance, byAge: stats.byAge, bySex: stats.bySex } as EquityReport;
+  const summary = () => ({ ...(stats.summary as QueueSummary), total });
 
-  return {
+  const PENDENCY_LOG: Record<string, string> = {
+    fix_cadastro: "Cadastro corrigido para bater com o CID.",
+    update_cid: "CID atualizado após conferir a biópsia.",
+    keep: "Conferido e mantido como está.",
+    merge: "Solicitações duplicadas mescladas; mantida a entrada mais antiga.",
+    keep_both: "Conferido: são solicitações distintas.",
+    remove: "Saída da fila confirmada com o paciente.",
+    archive: "Evento arquivado: solicitação não está na fila.",
+  };
+
+  const api: Backend = {
     getQueue: async () => ({ hospitalId: "hsl", total, entries: sorted() }),
     getAudit: async () => [...audit],
+    getPendencies: async () => [...pendencies],
+    getEquity: async () => equity,
+    getSummary: async () => summary(),
+    async resolvePendency(id, req) {
+      const p = pendencies.find((x) => x.id === id);
+      if (!p) throw new Error("Pendência não encontrada");
+      pendencies = pendencies.filter((x) => x.id !== id);
+      const rec = appendAudit({ kind: "data", author: ADMIN, entry: { id: p.entryIds[0] ?? p.id, name: p.name }, from: null, to: 0,
+        justification: `${p.title}. ${PENDENCY_LOG[req.action] ?? req.action}${req.note ? " " + req.note : ""}` });
+      emit({ type: "pendency.resolved", id });
+      emit({ type: "audit.appended", entry: rec });
+      return rec;
+    },
+    async ask(req) {
+      await new Promise((r) => setTimeout(r, 500));
+      return answer(req.question, { entries, summary: summary(), equity, pendencies });
+    },
     async reorder(id, req) {
       const t = entries.find((e) => e.id === id);
       if (!t) throw new Error("Solicitação não encontrada");
@@ -180,5 +222,25 @@ export function createMockBackend(): Backend {
       if (step < script.length) script[step++]();
       else emit({ type: "activity", at: new Date().toISOString(), text: "Nenhum evento novo na API" });
     },
+  };
+
+  // Cada aba tem seu próprio mock. Para o telão (outra janela) acompanhar a
+  // demonstração, as ações que mudam estado são repetidas nas outras abas.
+  if (typeof BroadcastChannel === "undefined") return api;
+  const channel = new BroadcastChannel("nexcore-mock");
+  type Op = { op: "simulate" } | { op: "reorder" | "validate" | "resolve"; id: string; req?: unknown };
+  channel.onmessage = (ev: MessageEvent<Op>) => {
+    const m = ev.data;
+    if (m.op === "simulate") api.simulateEvent!();
+    else if (m.op === "reorder") api.reorder(m.id, m.req as never).catch(() => {});
+    else if (m.op === "validate") api.validate(m.id).catch(() => {});
+    else api.resolvePendency(m.id, m.req as never).catch(() => {});
+  };
+  return {
+    ...api,
+    simulateEvent: () => { api.simulateEvent!(); channel.postMessage({ op: "simulate" }); },
+    reorder: async (id, req) => { const r = await api.reorder(id, req); channel.postMessage({ op: "reorder", id, req }); return r; },
+    validate: async (id) => { const r = await api.validate(id); channel.postMessage({ op: "validate", id }); return r; },
+    resolvePendency: async (id, req) => { const r = await api.resolvePendency(id, req); channel.postMessage({ op: "resolve", id, req }); return r; },
   };
 }

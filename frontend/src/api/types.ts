@@ -24,6 +24,16 @@ export interface Warning {
   text: string;
 }
 
+export type HighlightKind = "urgency" | "events" | "symptoms" | "red_flag";
+
+/** Trecho de texto livre que o Neco usou. `start`/`end` são índices no campo. */
+export interface Highlight {
+  field: "clinicalNote" | "regulationNote";
+  start: number;
+  end: number;
+  kind: HighlightKind;
+}
+
 export interface QueueEntry {
   id: string; // solicitacao_id
   patientId: string;
@@ -58,9 +68,10 @@ export interface QueueEntry {
   locked: boolean;
   pendingConfirmation: boolean;
   events: ClinicalEvent[];
+  highlights: Highlight[];
 }
 
-export type AuditKind = "recalc" | "intake" | "manual" | "validation";
+export type AuditKind = "recalc" | "intake" | "manual" | "validation" | "data";
 
 export interface AuditEntry {
   id: string;
@@ -88,11 +99,80 @@ export interface ReorderRequest {
   justification: string;
 }
 
+// ---------- pendências de dados ----------
+export type PendencyKind = "cid_flag" | "duplicate" | "biopsy" | "left_queue" | "orphan_event";
+
+export interface Pendency {
+  id: string;
+  kind: PendencyKind;
+  title: string;
+  detail: string;
+  /** Nome do paciente (ou id, quando a solicitação não está na fila). */
+  name: string;
+  entryIds: string[];
+}
+
+export interface ResolveRequest {
+  action: string;
+  note?: string;
+}
+
+// ---------- equidade ----------
+export interface CityStat {
+  name: string;
+  lat: number;
+  lon: number;
+  total: number;
+  avgWait: number;
+  overdue: number;
+  urgent: number;
+  distanceKm: number | null;
+}
+
+export interface GroupStat {
+  label: string;
+  total: number;
+  avgWait: number;
+  overduePct: number;
+}
+
+export interface EquityReport {
+  cities: CityStat[];
+  byDistance: GroupStat[];
+  byAge: GroupStat[];
+  bySex: GroupStat[];
+}
+
+// ---------- resumo (telão) ----------
+export interface QueueSummary {
+  total: number;
+  oncologic: number;
+  overdueTotal: number;
+  byClass: { cls: UrgencyClass; total: number; overdue: number }[];
+  bySpecialty: { label: string; total: number; overdue: number }[];
+  waitBuckets: { label: string; total: number }[];
+  /** Topo da fila anonimizado (iniciais), próprio para tela pública. */
+  top: { position: number; id: string; initials: string; procedure: string; cls: UrgencyClass; days: number }[];
+}
+
+// ---------- Pergunte ao Neco ----------
+export interface AskRequest {
+  question: string;
+}
+
+export interface NecoAnswer {
+  text: string;
+  /** Solicitações citadas, para o front virar links. */
+  entryIds?: string[];
+  suggestions?: string[];
+}
+
 // Mensagens que o servidor envia pelo WebSocket.
 export type ServerMessage =
   | { type: "queue.snapshot"; snapshot: QueueSnapshot }
   | { type: "queue.patch"; total: number; entries: QueueEntry[]; removed?: string[] }
   | { type: "audit.appended"; entry: AuditEntry }
+  | { type: "pendency.resolved"; id: string }
   | { type: "activity"; at: string; text: string };
 
 export type ConnectionStatus = "connecting" | "open" | "closed";

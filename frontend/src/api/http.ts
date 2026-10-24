@@ -56,7 +56,12 @@ function openRealtime(onMessage: (m: ServerMessage) => void, onStatus: (s: Conne
 export const httpBackend: Backend = {
   getQueue: () => request("/fila"),
   getAudit: () => request("/auditoria"),
+  getPendencies: () => request("/pendencias"),
+  getEquity: () => request("/painel/equidade"),
+  getSummary: () => request("/painel/resumo"),
   reorder: (id, req) => request(`/fila/${id}/reordenar`, { method: "POST", body: JSON.stringify(req) }),
   validate: (id) => request(`/fila/${id}/validar`, { method: "POST" }),
+  resolvePendency: (id, req) => request(`/pendencias/${id}/resolver`, { method: "POST", body: JSON.stringify(req) }),
+  ask: (req) => request("/neco/perguntar", { method: "POST", body: JSON.stringify(req) }),
   subscribe: openRealtime,
 };
