@@ -4,10 +4,11 @@ The mapping is docs/CONTRATO_BACKEND.md §3. Optional fields are omitted when
 the CSV cell is empty (nothing is imputed); `asa` and `pain` go out as text
 because that is how frontend/src/api/types.ts declares them.
 """
-from ..prioritization import FACTOR_MAX
+from ..prioritization import protected
 from ..prioritization.rules import clinical_events
 
-FACTOR_ORDER = ("urgency", "wait", "events", "symptoms")
+#: DPSS = wait * (1 + clinical + social): T/M, c and w*S.
+FACTOR_ORDER = ("wait", "clinical", "social")
 
 
 def _text(value):
@@ -64,11 +65,23 @@ def queue_entry(record, assessment, events, city=None):
     entry["oncologic"] = assessment["oncological"]
 
     entry["urgencyClass"] = assessment["urgency_class"]
-    entry["score"] = round(assessment["score"], 1)
+    score = assessment["score"]
+    entry["score"] = round(score, 3) if score is not None else None
     entry["factors"] = [
-        {"key": key, "value": round(assessment["factors"][key], 1), "max": FACTOR_MAX[key]}
+        {"key": key, "value": round(assessment["factors"][key], 3), "max": assessment["factor_max"][key]}
         for key in FACTOR_ORDER
     ]
+    dpss = assessment["dpss"]
+    entry["priority"] = {
+        "model": "dpss",
+        "version": dpss["version"],
+        "basis": dpss["basis"],
+        "protected": protected(assessment),
+        "dps": dpss["dps"],
+        "socioeconomicVulnerability": dpss["socioeconomic_vulnerability"],
+        "socialSource": dpss["social_source"],
+        "socioeconomicWeight": dpss["socioeconomic_weight"],
+    }
     entry["classReason"] = assessment["class_reason"]
     entry["warnings"] = [dict(w) for w in assessment["warnings"]]
     entry["pendingConfirmation"] = assessment["pending_confirmation"]

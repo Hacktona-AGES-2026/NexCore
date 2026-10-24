@@ -100,7 +100,7 @@ jobs:
         with:
           api-key: ${{ secrets.HOSTINGER_API_KEY }}
           virtual-machine: ${{ secrets.HOSTINGER_VM_ID }}
-          project-name: nexcore
+          project-name: srv1945772.hstgr.cloud
           docker-compose-path: docker-compose.yml
           # repositório privado: a VPS baixa o código com o token do próprio job
           personal-token: ${{ secrets.GITHUB_TOKEN }}

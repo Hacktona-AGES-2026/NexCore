@@ -9,7 +9,6 @@ import re
 import unicodedata
 
 from ..prioritization import CLASS_LABEL, DEADLINE_DAYS
-from ..prioritization.ranking import CLASS_RANK
 
 SUGGESTIONS = [
     "Por que a Gabriela está na posição dela?",
@@ -34,8 +33,8 @@ def _late(e):
 
 
 def _more_urgent(a, b):
-    """True when `a` has a more urgent class than `b` (A1 ranks 0)."""
-    return CLASS_RANK[a["urgencyClass"]] < CLASS_RANK[b["urgencyClass"]]
+    """True when `a` is in the safety band (A1/A2 or cancer) and `b` is not."""
+    return a["priority"]["protected"] and not b["priority"]["protected"]
 
 
 def find_patients(question, entries):
@@ -60,9 +59,9 @@ def explain(e, entries):
     )
     if above:
         text += (
-            f"Logo acima está {above['name']}, que é mais urgente."
+            f"Logo acima está {above['name']}, que está na faixa protegida (A1/A2 ou câncer)."
             if _more_urgent(above, e)
-            else f"Logo acima está {above['name']}, com índice {above['score']} contra {e['score']}."
+            else f"Logo acima está {above['name']}, com DPSS {above['score']} contra {e['score']}."
         )
     if e["warnings"]:
         text += f" Atenção: {e['warnings'][0]['text']}"
@@ -80,13 +79,16 @@ def answer(question, entries, summary, equity, pendencies):
             why = (
                 f"{a['name']} é {CLASS_LABEL[a['urgencyClass']]} ({a['classReason']}), enquanto "
                 f"{b['name']} é {CLASS_LABEL[b['urgencyClass']]} ({b['classReason']}). "
-                "A classe de urgência vem antes do índice."
+                "A faixa protegida (A1/A2 e câncer) vem antes do DPSS."
             )
         else:
-            factor = "tempo de espera" if a["factors"][1]["value"] > b["factors"][1]["value"] else "eventos recentes"
+            factor = (
+                "espera em relação ao prazo" if a["factors"][0]["value"] > b["factors"][0]["value"]
+                else "fator clínico ou vulnerabilidade social"
+            )
             why = (
-                f"Os dois são {CLASS_LABEL[a['urgencyClass']]}. {a['name']} tem índice {a['score']} e "
-                f"{b['name']} {b['score']}; a diferença vem principalmente de {factor}."
+                f"{a['name']} tem DPSS {a['score']} e {b['name']} {b['score']}; "
+                f"a diferença vem principalmente de {factor}."
             )
         return {
             "text": f"{a['name']} está na posição {a['position']} e {b['name']} na {b['position']}. {why}",

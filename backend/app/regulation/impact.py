@@ -37,6 +37,22 @@ def _br(number):
     return f"{number:g}".replace(".", ",")
 
 
+def _dpss_text(entry):
+    """How the DPSS was composed: DPSS = (T/M) * (1 + c + w*S)."""
+    factor = {f["key"]: f["value"] for f in entry["factors"]}
+    priority = entry["priority"]
+    band = "Faixa protegida (A1/A2 ou câncer), ordenada pelo DPSS. " if priority["protected"] else ""
+    if entry["score"] is None:
+        return band + "DPSS não calculado: classe SWALIS não inferida com segurança."
+    social = priority["socioeconomicVulnerability"]
+    return band + (
+        f"DPSS {_br(entry['score'])} = espera/prazo {_br(factor['wait'])} × "
+        f"(1 + fator clínico {_br(factor['clinical'])} + vulnerabilidade social {_br(factor['social'])}"
+        + (f", S={_br(round(social, 3))} com peso {_br(priority['socioeconomicWeight'])}" if social is not None else "")
+        + ")."
+    )
+
+
 def _manual_priority(entry):
     return entry.get("manualPriority") or "vazia"
 
@@ -47,8 +63,7 @@ def justification(entry, signals=None):
     deadline = DEADLINE_DAYS[cls]
     days = entry["daysWaiting"] or 0
     late = days - deadline
-    factor = {f["key"]: f["value"] for f in entry["factors"]}
-    parts = [f"Classe {cls} ({CLASS_LABEL[cls]}, SWALIS adaptado): {entry['classReason']}."]
+    parts = [f"Classe {cls} ({CLASS_LABEL[cls]}, SWALIS inferido pelo DPS): {entry['classReason']}."]
     events = []
     if signals:
         if signals["recent_visits"]:
@@ -63,11 +78,7 @@ def justification(entry, signals=None):
         f"Espera de {days} dias"
         + (f", {late} além do prazo de {deadline}." if late > 0 else f", dentro do prazo de {deadline}.")
     )
-    parts.append(
-        f"Índice {_br(entry['score'])}/97 (urgência {_br(factor['urgency'])}, "
-        f"espera {_br(factor['wait'])}, eventos {_br(factor['events'])}, "
-        f"sintomas {_br(factor['symptoms'])})."
-    )
+    parts.append(_dpss_text(entry))
     parts.extend(w["text"] for w in entry["warnings"])
     if entry.get("locked"):
         parts.append("Posição ajustada manualmente pela regulação; motivo no relatório de auditoria.")

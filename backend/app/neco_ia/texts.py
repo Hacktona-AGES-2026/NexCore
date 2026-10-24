@@ -73,6 +73,7 @@ def _neighbour(entry):
         "classe": entry["urgencyClass"],
         "rotulo_classe": CLASS_LABEL[entry["urgencyClass"]],
         "indice": entry["score"],
+        "faixa_protegida": entry["priority"]["protected"],
         "posicao_manual": entry.get("locked", False),
     }
 
@@ -102,6 +103,7 @@ def patient_facts(entry, above, below, audit_records, suggested_position, total)
         "dias_em_fila": entry["daysWaiting"],
         "dias_alem_do_prazo": max(0, _late(entry)),
         "indice": entry["score"],
+        "faixa_protegida": entry["priority"]["protected"],
         "fatores": {f["key"]: {"valor": f["value"], "maximo": f["max"]} for f in entry["factors"]},
         "prioridade_manual_da_regulacao": entry.get("manualPriority") or "vazia",
         "eventos_recentes": [
@@ -139,12 +141,12 @@ def patient_rules(facts):
     )
     above = facts["logo_acima"]
     if above:
-        if above["classe"] < facts["classe"]:
-            why = "que é mais urgente"
+        if above["faixa_protegida"] and not facts["faixa_protegida"]:
+            why = "que está na faixa protegida (A1/A2 ou câncer)"
         elif above["posicao_manual"]:
             why = "posicionado manualmente"
         else:
-            why = "que tem índice maior"
+            why = "que tem DPSS maior"
         points.append(f"Abaixo de #{above['posicao']} {above['nome']}, {why}.")
     return {"headline": headline, "points": points[:3]}
 
