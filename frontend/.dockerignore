@@ -1,0 +1,7 @@
+node_modules
+dist
+.vite
+*.tsbuildinfo
+# .env local sobrescreveria as VITE_* do build; quem manda na imagem são os ARGs.
+.env
+.env.local

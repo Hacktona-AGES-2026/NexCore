@@ -1,0 +1,40 @@
+# NexCore completo: backend Flask + frontend React servido pelo nginx.
+#
+#   docker compose up --build        → http://localhost:8080  (front, já falando com o backend)
+#                                      http://localhost:5000  (backend direto: /api/health, /ws)
+#
+# O nginx do front faz proxy de /v1 (REST + WebSocket) e /api para o backend, então
+# o navegador só conversa com uma origem. Variáveis opcionais: copie para um .env na
+# raiz (SECRET_KEY, CORS_ORIGINS, HOSPITAL_ID, FRONTEND_PORT, BACKEND_PORT).
+name: nexcore
+
+services:
+  backend:
+    build: ./backend
+    environment:
+      APP_AMBIENTE: producao
+      SECRET_KEY: ${SECRET_KEY:-troque-esta-chave}
+      REFERENCE_DATE: "2026-10-23"
+      HOSPITAL_ID: ${HOSPITAL_ID:-hsl}
+      # O handshake do WebSocket não passa por CORS: o backend confere o Origin.
+      CORS_ORIGINS: ${CORS_ORIGINS:-*}
+    ports:
+      - "${BACKEND_PORT:-5000}:5000"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_USE_MOCK: "false"
+        VITE_API_URL: /v1
+        VITE_WS_URL: /v1/ws
+        VITE_HOSPITAL_ID: ${HOSPITAL_ID:-hsl}
+    environment:
+      BACKEND_UPSTREAM: backend:5000
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped

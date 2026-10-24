@@ -1,0 +1,12 @@
+# Ambiente local e segredos nunca entram na imagem (o compose passa as variáveis).
+.env
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+
+# A suíte roda da raiz do repositório, fora da imagem.
+tests/
+dataset/tests/
