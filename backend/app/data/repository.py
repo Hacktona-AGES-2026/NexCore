@@ -60,9 +60,9 @@ class Repository:
 
     def counts(self):
         return {
-            "fila": len(self.queue),
-            "eventos": len(self.events),
-            "procedimentos": len(self.procedures),
+            "queue": len(self.queue),
+            "events": len(self.events),
+            "procedures": len(self.procedures),
             "swalis": len(self.swalis),
         }
 
@@ -82,39 +82,39 @@ class Repository:
         return [r for r in self.queue if self._matches(r, filters)]
 
     def _matches(self, record, filters):
-        specialty = filters.get("especialidade")
+        specialty = filters.get("specialty")
         if specialty and strip_accents(record.get("especialidade")) != specialty:
             return False
 
-        priority = filters.get("prioridade")
+        priority = filters.get("priority")
         if priority and record.get("prioridade_regulacao_norm") != priority:
             return False
 
-        oncological = filters.get("oncologico")
+        oncological = filters.get("oncological")
         if oncological is not None and bool(record.get("oncologico_cid")) != oncological:
             return False
 
-        procedure_id = filters.get("procedimento_id")
+        procedure_id = filters.get("procedure_id")
         if procedure_id and record.get("procedimento_id") != procedure_id:
             return False
 
-        city = filters.get("municipio")
+        city = filters.get("city")
         if city and strip_accents(record.get("municipio_norm")) != city:
             return False
 
-        min_days = filters.get("dias_minimo")
+        min_days = filters.get("min_days")
         if min_days is not None and (record.get("dias_em_fila") or 0) < min_days:
             return False
 
-        max_days = filters.get("dias_maximo")
+        max_days = filters.get("max_days")
         if max_days is not None and (record.get("dias_em_fila") or 0) > max_days:
             return False
 
-        min_age = filters.get("idade_minima")
+        min_age = filters.get("min_age")
         if min_age is not None and (record.get("idade") or 0) < min_age:
             return False
 
-        term = filters.get("busca")
+        term = filters.get("search")
         if term and term not in self._search_index[record["solicitacao_id"]]:
             return False
 
@@ -139,27 +139,27 @@ class Repository:
             (r.get("paciente_id"), r.get("procedimento_id")) for r in self.queue
         )
         return {
-            "total_solicitacoes": len(self.queue),
-            "oncologicos_por_cid": len(oncological),
-            "flag_oncologica_divergente": len(mismatched),
-            "pares_paciente_procedimento_repetidos": sum(
+            "total_requests": len(self.queue),
+            "oncological_by_cid": len(oncological),
+            "oncological_flag_mismatch": len(mismatched),
+            "repeated_patient_procedure_pairs": sum(
                 1 for n in pairs.values() if n > 1
             ),
-            "espera_dias": {
-                "minima": min(waits) if waits else 0,
-                "maxima": max(waits) if waits else 0,
-                "media": round(sum(waits) / len(waits), 1) if waits else 0,
-                "acima_de_365": sum(1 for d in waits if d > 365),
+            "wait_days": {
+                "min": min(waits) if waits else 0,
+                "max": max(waits) if waits else 0,
+                "mean": round(sum(waits) / len(waits), 1) if waits else 0,
+                "over_365": sum(1 for d in waits if d > 365),
             },
-            "por_prioridade": self._count("prioridade_regulacao_norm"),
-            "por_especialidade": self._count("especialidade"),
-            "eventos_por_tipo": dict(
-                Counter(e.get("tipo_evento_norm") or "indefinido" for e in self.events)
+            "by_priority": self._count("prioridade_regulacao_norm"),
+            "by_specialty": self._count("especialidade"),
+            "events_by_type": dict(
+                Counter(e.get("tipo_evento_norm") or "unknown" for e in self.events)
             ),
         }
 
     def _count(self, field):
-        tally = Counter(r.get(field) or "indefinido" for r in self.queue)
+        tally = Counter(r.get(field) or "unknown" for r in self.queue)
         return dict(sorted(tally.items(), key=lambda pair: -pair[1]))
 
     def specialties(self):

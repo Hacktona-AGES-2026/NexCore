@@ -4,18 +4,18 @@ from . import api
 from ..data import current_repository
 
 
-@api.get("/saude")
+@api.get("/health")
 def health():
     repository = current_repository()
     return jsonify(
         {
             "status": "ok",
-            "data_referencia": current_app.config["REFERENCE_DATE"],
+            "reference_date": current_app.config["REFERENCE_DATE"],
             "dataset": repository.counts(),
         }
     )
 
 
-@api.get("/estatisticas")
+@api.get("/statistics")
 def statistics():
     return jsonify(current_repository().statistics())

@@ -1,10 +1,10 @@
 # Testes
 
-Suíte única para todo o projeto: **185 testes**, rodados com pytest da raiz do repositório.
+Suíte única para todo o projeto: **187 testes**, rodados com pytest da raiz do repositório.
 
 ```bash
 backend/.venv/bin/python -m pytest              # tudo (~25s)
-backend/.venv/bin/python -m pytest -m "not lento"   # 162 testes em ~6s
+backend/.venv/bin/python -m pytest -m "not lento"   # 164 testes em ~4s
 backend/.venv/bin/python -m pytest backend/tests -q # só o backend
 ```
 
@@ -23,7 +23,7 @@ suíte.
 | `backend/tests/test_leitor.py` | 41 | `app/data/reader.py`: conversão de tipos |
 | `backend/tests/test_repositorio.py` | 25 | `app/data/repository.py`: filtros, ordenação, agregações |
 | `backend/tests/test_api.py` | 14 | endpoints sobre o dataset real |
-| `backend/tests/test_api_erros.py` | 28 | 400/404/405/500, CORS, bordas de paginação |
+| `backend/tests/test_api_erros.py` | 30 | 400/404/405/500, CORS, bordas de paginação |
 | `backend/tests/test_config.py` | 18 | configuração, fábrica, falha por dataset ausente |
 | `backend/tests/test_env.py` | 7 | carregamento do `.env` e nomes das chaves |
 | `backend/tests/test_contrato_dataset.py` | 12 | contrato entre o backend e os CSVs reais |
@@ -81,6 +81,14 @@ fila não tem.
 
 ## Idioma
 
-O código do backend é em inglês; os testes seguem em português, e os nomes de colunas do
-dataset (`solicitacao_id`, `dias_em_fila`) aparecem como são nos dois lados — eles são o
+Código, rotas, parâmetros e chaves de envelope do backend são em inglês. Os nomes dos
+testes seguem em português. Nomes de coluna do dataset (`solicitacao_id`, `dias_em_fila`)
+e valores de domínio (`alta`, `media`, `baixa`) aparecem como são nos dois lados — são o
 dado, não identificador nosso.
+
+Essa fronteira é o que vários testes travam de propósito: `test_repositorio.py` monta as
+fixtures com as colunas em português e consulta com filtros em inglês
+(`filter({"min_days": 500})`), então renomear um lado sem o outro quebra a suíte. Foi assim
+que apareceram quatro trocas erradas na migração para endpoints em inglês, em que uma
+substituição automática renomeou `procedimento_id` dentro de uma fixture de CSV e trocou o
+valor de prioridade `media` por `mean`.

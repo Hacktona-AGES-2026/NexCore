@@ -1,8 +1,4 @@
-"""JSON error handlers, so a client never receives an exception page as HTML.
-
-The response body keeps the Portuguese keys the frontend already consumes:
-{"erro": {"mensagem": ..., "status": ..., "detalhes": ...}}.
-"""
+"""JSON error handlers, so a client never receives an exception page as HTML."""
 from werkzeug.exceptions import HTTPException
 
 
@@ -17,9 +13,9 @@ class RequestError(Exception):
 
 
 def _response(message, status, details=None):
-    body = {"erro": {"mensagem": message, "status": status}}
+    body = {"error": {"message": message, "status": status}}
     if details:
-        body["erro"]["detalhes"] = details
+        body["error"]["details"] = details
     return body, status
 
 
@@ -35,4 +31,4 @@ def register(app):
     @app.errorhandler(Exception)
     def _unexpected_error(exc):
         app.logger.exception("unhandled error: %s", exc)
-        return _response("erro interno do servidor", 500)
+        return _response("internal server error", 500)

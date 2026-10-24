@@ -70,7 +70,7 @@ def repo_mini(dataset_sintetico):
 
 def test_contagens(repo_mini):
     assert repo_mini.counts() == {
-        "fila": 3, "eventos": 4, "procedimentos": 1, "swalis": 1
+        "queue": 3, "events": 4, "procedures": 1, "swalis": 1
     }
 
 
@@ -108,46 +108,46 @@ def test_filtro_vazio_devolve_tudo(repo_mini):
 
 
 def test_filtro_oncologico_usa_o_cid_e_ignora_a_flag(repo_mini):
-    assert ids(repo_mini.filter({"oncologico": True})) == ["SOL-A"]
-    assert ids(repo_mini.filter({"oncologico": False})) == ["SOL-B", "SOL-C"]
+    assert ids(repo_mini.filter({"oncological": True})) == ["SOL-A"]
+    assert ids(repo_mini.filter({"oncological": False})) == ["SOL-B", "SOL-C"]
 
 
 def test_filtro_por_especialidade_normalizada(repo_mini):
-    assert ids(repo_mini.filter({"especialidade": "cirurgia geral"})) == ["SOL-B"]
+    assert ids(repo_mini.filter({"specialty": "cirurgia geral"})) == ["SOL-B"]
 
 
 def test_filtro_por_prioridade(repo_mini):
-    assert ids(repo_mini.filter({"prioridade": "media"})) == ["SOL-C"]
+    assert ids(repo_mini.filter({"priority": "media"})) == ["SOL-C"]
 
 
 def test_filtro_por_municipio_e_procedimento(repo_mini):
-    assert ids(repo_mini.filter({"municipio": "pelotas"})) == ["SOL-B"]
-    assert ids(repo_mini.filter({"procedimento_id": "PROC001"})) == ["SOL-C"]
+    assert ids(repo_mini.filter({"city": "pelotas"})) == ["SOL-B"]
+    assert ids(repo_mini.filter({"procedure_id": "PROC001"})) == ["SOL-C"]
 
 
 def test_filtro_por_faixa_de_espera(repo_mini):
-    assert ids(repo_mini.filter({"dias_minimo": 500})) == ["SOL-A", "SOL-B"]
-    assert ids(repo_mini.filter({"dias_maximo": 500})) == ["SOL-C"]
-    assert ids(repo_mini.filter({"dias_minimo": 200, "dias_maximo": 800})) == ["SOL-A"]
+    assert ids(repo_mini.filter({"min_days": 500})) == ["SOL-A", "SOL-B"]
+    assert ids(repo_mini.filter({"max_days": 500})) == ["SOL-C"]
+    assert ids(repo_mini.filter({"min_days": 200, "max_days": 800})) == ["SOL-A"]
 
 
 def test_filtro_por_idade_minima(repo_mini):
-    assert ids(repo_mini.filter({"idade_minima": 70})) == ["SOL-A", "SOL-C"]
+    assert ids(repo_mini.filter({"min_age": 70})) == ["SOL-A", "SOL-C"]
 
 
 def test_filtros_combinam_com_e_logico(repo_mini):
-    assert ids(repo_mini.filter({"oncologico": False, "dias_minimo": 1000})) == ["SOL-B"]
-    assert repo_mini.filter({"oncologico": True, "dias_minimo": 1000}) == []
+    assert ids(repo_mini.filter({"oncological": False, "min_days": 1000})) == ["SOL-B"]
+    assert repo_mini.filter({"oncological": True, "min_days": 1000}) == []
 
 
 def test_busca_cobre_texto_livre_e_cid(repo_mini):
-    assert ids(repo_mini.filter({"busca": "carcinoma"})) == ["SOL-A"]
-    assert ids(repo_mini.filter({"busca": "k40.9"})) == ["SOL-B"]
-    assert ids(repo_mini.filter({"busca": "pac-3"})) == ["SOL-C"]
+    assert ids(repo_mini.filter({"search": "carcinoma"})) == ["SOL-A"]
+    assert ids(repo_mini.filter({"search": "k40.9"})) == ["SOL-B"]
+    assert ids(repo_mini.filter({"search": "pac-3"})) == ["SOL-C"]
 
 
 def test_busca_ignora_acento_do_dado(repo_mini):
-    assert ids(repo_mini.filter({"busca": "bruno sa"})) == ["SOL-B"]
+    assert ids(repo_mini.filter({"search": "bruno sa"})) == ["SOL-B"]
 
 
 # --- ordenação ------------------------------------------------------------
@@ -176,14 +176,14 @@ def test_ordenacao_trata_nulo_sem_quebrar(repo_mini):
 
 def test_estatisticas_do_mini_dataset(repo_mini):
     e = repo_mini.statistics()
-    assert e["total_solicitacoes"] == 3
-    assert e["oncologicos_por_cid"] == 1
-    assert e["flag_oncologica_divergente"] == 2
-    assert e["espera_dias"] == {
-        "minima": 100, "maxima": 1200, "media": 633.3, "acima_de_365": 2
+    assert e["total_requests"] == 3
+    assert e["oncological_by_cid"] == 1
+    assert e["oncological_flag_mismatch"] == 2
+    assert e["wait_days"] == {
+        "min": 100, "max": 1200, "mean": 633.3, "over_365": 2
     }
-    assert e["por_prioridade"] == {"alta": 1, "baixa": 1, "media": 1}
-    assert e["eventos_por_tipo"] == {
+    assert e["by_priority"] == {"alta": 1, "baixa": 1, "media": 1}
+    assert e["events_by_type"] == {
         "biopsia": 1, "pronto_socorro": 1, "hba1c": 1, "falta": 1
     }
 
@@ -195,8 +195,8 @@ def test_pares_repetidos_sao_contados(dataset_sintetico):
         {"solicitacao_id": "SOL-3", "paciente_id": "PAC-2", "procedimento_id": "PROC001"},
     ])
     repo = Repository(destino, "2026-10-23")
-    assert repo.statistics()["pares_paciente_procedimento_repetidos"] == 1
-    assert repo.counts()["fila"] == 3
+    assert repo.statistics()["repeated_patient_procedure_pairs"] == 1
+    assert repo.counts()["queue"] == 3
 
 
 def test_prioridade_vazia_conta_como_indefinido(dataset_sintetico):
@@ -205,14 +205,14 @@ def test_prioridade_vazia_conta_como_indefinido(dataset_sintetico):
         {"solicitacao_id": "SOL-2", "prioridade_regulacao_norm": "alta"},
     ])
     repo = Repository(destino, "2026-10-23")
-    assert repo.statistics()["por_prioridade"] == {"indefinido": 1, "alta": 1}
+    assert repo.statistics()["by_priority"] == {"unknown": 1, "alta": 1}
 
 
 def test_fila_vazia_nao_divide_por_zero(dataset_sintetico):
     repo = Repository(dataset_sintetico(fila=[]), "2026-10-23")
     e = repo.statistics()
-    assert e["total_solicitacoes"] == 0
-    assert e["espera_dias"]["media"] == 0
+    assert e["total_requests"] == 0
+    assert e["wait_days"]["mean"] == 0
     assert repo.specialties() == []
 
 

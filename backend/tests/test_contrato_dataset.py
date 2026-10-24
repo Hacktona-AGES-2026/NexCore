@@ -78,4 +78,4 @@ def test_eventos_orfaos_continuam_no_dataset(repo):
 
 
 def test_duplicatas_nao_foram_removidas(repo):
-    assert repo.statistics()["pares_paciente_procedimento_repetidos"] == 22
+    assert repo.statistics()["repeated_patient_procedure_pairs"] == 22

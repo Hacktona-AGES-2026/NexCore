@@ -3,27 +3,34 @@ from flask import jsonify
 from . import api
 from ..data import current_repository
 
+SORT_FIELDS = [
+    "dias_em_fila",
+    "idade",
+    "data_entrada_fila",
+    "intensidade_dor_eva",
+    "solicitacao_id",
+]
 
-@api.get("/procedimentos")
+
+@api.get("/procedures")
 def procedures():
     repository = current_repository()
-    return jsonify({"dados": repository.procedures, "total": len(repository.procedures)})
+    return jsonify({"data": repository.procedures, "total": len(repository.procedures)})
 
 
-@api.get("/referencias/swalis")
+@api.get("/references/swalis")
 def swalis():
     repository = current_repository()
-    return jsonify({"dados": repository.swalis, "total": len(repository.swalis)})
+    return jsonify({"data": repository.swalis, "total": len(repository.swalis)})
 
 
-@api.get("/referencias/filtros")
+@api.get("/references/filters")
 def filters():
     repository = current_repository()
     return jsonify(
         {
-            "especialidades": repository.specialties(),
-            "prioridades": repository.priorities(),
-            "ordenacoes": ["dias_em_fila", "idade", "data_entrada_fila",
-                           "intensidade_dor_eva", "solicitacao_id"],
+            "specialties": repository.specialties(),
+            "priorities": repository.priorities(),
+            "sort_fields": SORT_FIELDS,
         }
     )

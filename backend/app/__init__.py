@@ -31,9 +31,9 @@ def create_app(environment=None, **overrides):
     def index():
         return jsonify(
             {
-                "nome": "NexCore API",
-                "descricao": "Priorizacao da fila cirurgica — dados sinteticos",
-                "rotas": sorted(
+                "name": "NexCore API",
+                "description": "Surgical queue prioritization — synthetic data",
+                "routes": sorted(
                     str(rule)
                     for rule in app.url_map.iter_rules()
                     if not str(rule).startswith("/static")

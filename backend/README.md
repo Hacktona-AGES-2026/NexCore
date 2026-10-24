@@ -38,7 +38,7 @@ backend/
 │   │   └── repository.py    índices em memória, filtros e agregações
 │   └── api/
 │       ├── params.py        validação de query string e paginação
-│       ├── queue.py         /fila, /fila/<id>, eventos
+│       ├── queue.py         /queue, /queue/<id>, eventos
 │       ├── catalog.py       procedimentos e referências
 │       └── health.py        /saude e /estatisticas
 └── tests/                  leitor, repositório, API, config e contrato
@@ -55,34 +55,37 @@ uma mensagem dizendo o que rodar.
 | Método | Rota | O que faz |
 |---|---|---|
 | GET | `/` | Nome do serviço e lista de rotas registradas |
-| GET | `/api/saude` | Status, data de referência e contagem de cada tabela |
-| GET | `/api/estatisticas` | Agregados da fila: espera, prioridades, especialidades, eventos |
-| GET | `/api/fila` | Fila paginada, com filtros e ordenação |
-| GET | `/api/fila/<solicitacao_id>` | Solicitação + procedimento + eventos ligados |
-| GET | `/api/fila/<solicitacao_id>/eventos` | Eventos da solicitação, em ordem cronológica |
-| GET | `/api/pacientes/<paciente_id>/eventos` | Eventos do paciente (inclui outras solicitações) |
-| GET | `/api/procedimentos` | Catálogo com porte, risco, duração e UTI |
-| GET | `/api/referencias/swalis` | As 5 classes SWALIS com prazo máximo |
-| GET | `/api/referencias/filtros` | Valores aceitos em `especialidade`, `prioridade` e `ordenar_por` |
+| GET | `/api/health` | Status, data de referência e contagem de cada tabela |
+| GET | `/api/statistics` | Agregados da fila: espera, prioridades, especialidades, eventos |
+| GET | `/api/queue` | Fila paginada, com filtros e ordenação |
+| GET | `/api/queue/<request_id>` | Solicitação + procedimento + eventos ligados |
+| GET | `/api/queue/<request_id>/events` | Eventos da solicitação, em ordem cronológica |
+| GET | `/api/patients/<patient_id>/events` | Eventos do paciente (inclui outras solicitações) |
+| GET | `/api/procedures` | Catálogo com porte, risco, duração e UTI |
+| GET | `/api/references/swalis` | As 5 classes SWALIS com prazo máximo |
+| GET | `/api/references/filters` | Valores aceitos em `specialty`, `priority` e `sort_by` |
 
-### Parâmetros de `/api/fila`
+### Parâmetros de `/api/queue`
 
-`especialidade`, `prioridade` (`alta`/`media`/`baixa`), `municipio`, `procedimento_id`,
-`oncologico` (`sim`/`nao`, derivado do CID), `dias_minimo`, `dias_maximo`, `idade_minima`,
-`busca` (id, nome, procedimento, CID, justificativa e observações — ignora acento e caixa),
-`ordenar_por` (padrão `dias_em_fila`), `ordem` (`desc`/`asc`), `pagina`, `tamanho`.
+`specialty`, `priority` (`alta`/`media`/`baixa`), `city`, `procedure_id`,
+`oncological` (`yes`/`no`, derivado do CID), `min_days`, `max_days`, `min_age`,
+`search` (id, nome, procedimento, CID, justificativa e observações — ignora acento e caixa),
+`sort_by` (padrão `dias_em_fila`), `order` (`desc`/`asc`), `page`, `size`.
 
-Texto com acento e caixa variada é aceito nos filtros: `especialidade=oftalmologia` e
-`especialidade=Oftalmologia` dão o mesmo resultado.
+Os **nomes** dos parâmetros são em inglês; os **valores** são os termos do dataset, porque é
+o que está nos dados: `priority=alta`, `sort_by=dias_em_fila`. Texto com acento e caixa
+variada é aceito nos filtros — `specialty=oftalmologia` e `specialty=Oftalmologia` dão o
+mesmo resultado. Em `oncological`, `yes`/`no`, `true`/`false`, `1`/`0` e também `sim`/`nao`
+são aceitos.
 
 ```bash
-curl "localhost:5000/api/fila?oncologico=sim&ordenar_por=dias_em_fila&tamanho=5"
-curl "localhost:5000/api/fila?especialidade=ortopedia&dias_minimo=365"
-curl "localhost:5000/api/fila/SOL-2025-00048"
+curl "localhost:5000/api/queue?oncological=yes&sort_by=dias_em_fila&size=5"
+curl "localhost:5000/api/queue?specialty=ortopedia&min_days=365"
+curl "localhost:5000/api/queue/SOL-2025-00048"
 ```
 
-Respostas de lista vêm como `{"dados": [...], "paginacao": {...}}`. Erros vêm como
-`{"erro": {"mensagem": "...", "status": 400}}`, sempre em JSON.
+Respostas de lista vêm como `{"data": [...], "pagination": {...}}`. Erros vêm como
+`{"error": {"message": "...", "status": 400}}`, sempre em JSON.
 
 ## Decisões que afetam quem consome a API
 
@@ -96,9 +99,11 @@ Respostas de lista vêm como `{"dados": [...], "paginacao": {...}}`. Erros vêm 
   `solicitacao_na_fila`). Remover é decisão de produto, não de transporte de dados.
 - **A data de referência é fixa** em `2026-10-23` (`REFERENCE_DATE`), igual ao dataset.
   `dias_em_fila` vem do CSV; não recalcule contra a data de hoje.
-- **O código é em inglês; a API não.** Identificadores, funções e módulos em inglês;
-  rotas, parâmetros de query e chaves do JSON seguem os termos do dataset
-  (`solicitacao_id`, `dias_em_fila`), para casar com `dataset/dicionario_dados.md`.
+- **Tudo que é nosso está em inglês; o que é do dataset, não.** Código, rotas, parâmetros
+  e chaves de envelope (`data`, `pagination`, `error`) em inglês. Nomes de coluna
+  (`solicitacao_id`, `dias_em_fila`, `oncologico_cid`) e valores de domínio (`alta`,
+  `media`, `baixa`) ficam como estão: são o dado, documentado em
+  `dataset/dicionario_dados.md`. Então `sort_by=dias_em_fila` é o esperado, não um descuido.
 - **O `.env` é lido pelos dois modos de subir.** `wsgi.py` chama `load_dotenv` antes de
   importar `app`, porque `Config` lê `os.environ` no corpo da classe — carregar depois não
   teria efeito. Variável já exportada no shell vence o arquivo.

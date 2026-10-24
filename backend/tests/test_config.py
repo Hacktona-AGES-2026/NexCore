@@ -63,7 +63,7 @@ def test_dataset_ausente_falha_na_criacao_da_aplicacao(tmp_path):
 
 
 def test_repositorio_fica_registrado_nas_extensions(app):
-    assert app.extensions["repository"].counts()["fila"] == 941
+    assert app.extensions["repository"].counts()["queue"] == 941
 
 
 def test_json_nao_escapa_acento(app):
