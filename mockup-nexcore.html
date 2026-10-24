@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NexCore · Neco</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bordo:#7a1c30; --bordo-dark:#5c1222; --bordo-50:#f8eef0; --bordo-100:#f0dde1;
+  --bg:#f7f7f8; --white:#fff; --ink:#1c1c1f; --muted:#6e6e76; --faint:#a1a1a8; --line:#e8e8eb;
+  --ok:#1f7a4d; --ok-50:#e9f5ee; --warn:#9a5b00; --warn-50:#fdf3e2; --red:#b42318; --red-50:#fdecea;
+  --font:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 var(--font);-webkit-font-smoothing:antialiased;font-feature-settings:"tnum" 1,"cv11" 1}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.muted{color:var(--muted)}
+.mono{font-family:var(--mono);font-size:12px}
+.app{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100vh}
+
+/* sidebar */
+.side{background:var(--bordo);color:#fff;display:flex;flex-direction:column;padding:20px 14px;gap:24px;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:10px;padding:0 8px;font-weight:700;font-size:17px;letter-spacing:-.02em}
+.hosp{all:unset;cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:9px 10px;border-radius:8px;background:rgba(0,0,0,.18);font-size:13px;font-weight:500}
+.hosp svg{width:14px;height:14px;opacity:.7}
+.nav{display:grid;gap:2px}
+.nav button{all:unset;cursor:pointer;display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;color:rgba(255,255,255,.78);font-size:14px;font-weight:500}
+.nav button:hover{background:rgba(255,255,255,.08);color:#fff}
+.nav button.on{background:#fff;color:var(--bordo)}
+.nav svg{width:18px;height:18px;flex:none}
+.nav .n{margin-left:auto;font-size:12px;opacity:.7}
+.me{margin-top:auto;display:flex;align-items:center;gap:10px;padding:0 8px;font-size:13px;font-weight:500}
+.me .av{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.16);display:grid;place-items:center;font-size:11px;font-weight:600}
+.me small{display:block;font-weight:400;opacity:.7;font-size:12px}
+
+/* layout */
+main{min-width:0}
+.page{max-width:1080px;margin:0 auto;padding:40px 40px 80px}
+.page[hidden]{display:none}
+h1{font-size:24px;font-weight:600;letter-spacing:-.02em;margin:0}
+h2{font-size:15px;font-weight:600;margin:0}
+.head{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+.sub{color:var(--muted);margin:4px 0 0}
+.card{background:var(--white);border:1px solid var(--line);border-radius:12px}
+.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 14px;font-weight:500;font-size:13.5px;display:inline-flex;align-items:center;gap:8px}
+.btn:hover{border-color:#d4d4d8}
+.btn.primary{background:var(--bordo);border-color:var(--bordo);color:#fff}
+.btn.primary:hover{background:var(--bordo-dark)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn svg{width:16px;height:16px}
+
+/* neco */
+.neco{display:inline-grid;place-items:center;flex:none}
+
+/* home */
+.greet{display:flex;gap:16px;align-items:center;margin-bottom:32px}
+.greet p{margin:2px 0 0;color:var(--muted);max-width:60ch}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
+.stat{padding:20px}
+.stat span{font-size:13px;color:var(--muted)}
+.stat b{display:block;font-size:32px;font-weight:600;letter-spacing:-.03em;margin-top:4px}
+.stat.accent{background:var(--bordo);border-color:var(--bordo);color:#fff}
+.stat.accent span{color:rgba(255,255,255,.75)}
+.cols{display:grid;grid-template-columns:1.3fr 1fr;gap:16px}
+.list-h{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line)}
+.link{all:unset;cursor:pointer;color:var(--bordo);font-size:13px;font-weight:500}
+.item{all:unset;box-sizing:border-box;cursor:pointer;width:100%;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+.item:hover{background:var(--bg)}
+.item b{font-weight:500;display:block}
+.item small{color:var(--muted);font-size:13px}
+.item svg.chev{width:16px;height:16px;color:var(--faint)}
+.act{list-style:none;margin:0;padding:6px 0}
+.act li{display:grid;grid-template-columns:44px 1fr;gap:8px;padding:10px 20px;font-size:13.5px}
+.act time{color:var(--faint);font-size:12.5px}
+.act li.new{animation:flash 2.4s ease}
+@keyframes flash{0%{background:var(--bordo-50)}100%{background:transparent}}
+
+/* queue */
+.bar{display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+.search{flex:1;min-width:220px;display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.search input{border:0;outline:none;width:100%;background:transparent}
+.search svg{width:16px;height:16px;color:var(--faint)}
+.seg{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:8px;padding:3px}
+.seg button{border:0;background:transparent;border-radius:6px;padding:5px 11px;font-size:13px;font-weight:500;color:var(--muted)}
+.seg button.on{background:var(--bordo);color:#fff}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:12px;font-weight:500;color:var(--muted);padding:12px 20px;border-bottom:1px solid var(--line)}
+td{padding:14px 20px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}
+tr.row{cursor:pointer}
+tr.row:hover td{background:var(--bg)}
+tr.row.sel td{background:var(--bordo-50)}
+tr.row.moved td{animation:flash 2.6s ease}
+tr.gap td{padding:4px 20px;font-size:12px;color:var(--faint);text-align:center;background:var(--bg)}
+.pos{font-size:16px;font-weight:600;width:84px;white-space:nowrap}
+.d{font-size:12px;font-weight:600;margin-left:6px}
+.d.up{color:var(--ok)} .d.down{color:var(--red)} .d.man{color:var(--warn)}
+.who b{font-weight:500;display:block}
+.who small{color:var(--muted);font-size:13px}
+.cls{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500}
+.cls i{width:8px;height:8px;border-radius:50%;background:currentColor}
+.cls.A1{color:var(--bordo)} .cls.A2{color:#b0475c} .cls.B{color:var(--warn)} .cls.C{color:#52606d} .cls.D{color:var(--faint)}
+.late{color:var(--red);font-size:12.5px}
+.flag{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--warn);margin-left:8px;vertical-align:2px}
+.rule{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ok);font-weight:500}
+.rule.bad{color:var(--red)}
+.rule svg{width:16px;height:16px}
+.note{font-size:12.5px;color:var(--faint);margin-top:12px}
+
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(20,10,12,.25);opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;height:100vh;width:min(520px,100vw);background:#fff;z-index:21;transform:translateX(102%);transition:transform .25s cubic-bezier(.2,.7,.2,1);display:flex;flex-direction:column}
+.drawer.on{transform:none}
+.dr-h{display:flex;gap:16px;align-items:center;padding:24px 28px 20px}
+.posbox{width:56px;height:56px;border-radius:12px;background:var(--bordo);color:#fff;display:grid;place-items:center;font-size:20px;font-weight:600;flex:none}
+.dr-h h2{font-size:18px}
+.dr-h p{margin:2px 0 0;color:var(--muted);font-size:13px}
+.x{margin-left:auto;align-self:flex-start;border:0;background:transparent;width:32px;height:32px;border-radius:8px;color:var(--muted);font-size:16px}
+.x:hover{background:var(--bg)}
+.dr-b{flex:1;overflow-y:auto;padding:0 28px 28px}
+.dr-f{display:flex;gap:10px;padding:16px 28px;border-top:1px solid var(--line)}
+.dr-f .btn{flex:1;justify-content:center;padding:10px}
+.why{background:var(--bordo-50);border-radius:12px;padding:16px 18px;display:grid;grid-template-columns:auto 1fr;gap:14px}
+.why p{margin:0 0 6px}
+.why p:last-child{margin:0}
+.why .lbl{font-size:12px;font-weight:600;color:var(--bordo);margin-bottom:4px}
+.warn{display:flex;gap:10px;background:var(--warn-50);color:#6b4100;border-radius:10px;padding:12px 14px;font-size:13px;margin-top:12px}
+.warn.red{background:var(--red-50);color:#7a1a12}
+.warn svg{width:16px;height:16px;flex:none;margin-top:2px}
+.ok{display:flex;gap:8px;align-items:center;color:var(--ok);font-size:13px;font-weight:500;margin-top:12px}
+.sect{font-size:12px;font-weight:600;color:var(--muted);margin:28px 0 12px;text-transform:uppercase;letter-spacing:.04em}
+.factor{display:grid;grid-template-columns:1fr auto;gap:6px 12px;margin-bottom:14px}
+.factor b{font-weight:500;font-size:13.5px}
+.factor span{font-size:13px;color:var(--muted)}
+.factor .track{grid-column:1/-1;height:4px;background:var(--line);border-radius:4px;overflow:hidden}
+.factor .track i{display:block;height:100%;background:var(--bordo)}
+details{border-top:1px solid var(--line)}
+details:last-child{border-bottom:1px solid var(--line)}
+summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:14px 0;font-weight:500;font-size:14px}
+summary::-webkit-details-marker{display:none}
+summary:after{content:"+";color:var(--faint);font-size:18px;font-weight:400}
+details[open] summary:after{content:"−"}
+.kv{display:grid;grid-template-columns:140px 1fr;gap:8px 12px;font-size:13.5px;padding-bottom:16px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0}
+.ev{list-style:none;margin:0;padding:0 0 16px}
+.ev li{display:grid;grid-template-columns:84px 1fr;gap:12px;padding:6px 0;font-size:13.5px}
+.ev time{color:var(--muted);font-size:12.5px}
+.ev li.hot b{color:var(--bordo)}
+.ev b{font-weight:500}
+.ev small{display:block;color:var(--muted);font-size:12.5px}
+
+/* modal */
+.modal{position:fixed;inset:0;display:grid;place-items:center;z-index:30;background:rgba(20,10,12,.35);padding:16px}
+.modal[hidden]{display:none}
+.mbox{background:#fff;border-radius:14px;width:min(480px,100%);max-height:92vh;overflow:auto}
+.mbox .hd{padding:22px 24px 4px}
+.mbox .bd{padding:12px 24px 8px}
+.field{display:grid;gap:6px;margin-bottom:16px}
+.field label{font-size:13px;font-weight:500}
+.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:8px;padding:9px 12px;background:#fff;outline:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--bordo);box-shadow:0 0 0 3px var(--bordo-50)}
+.field textarea{min-height:90px;resize:vertical}
+.field small{color:var(--faint);font-size:12px;text-align:right}
+.prev{display:flex;gap:12px;align-items:flex-start;font-size:13px;background:var(--bg);border-radius:10px;padding:12px 14px}
+.prev.bad{background:var(--red-50);color:#7a1a12}
+
+/* audit */
+.log{list-style:none;margin:0;padding:0}
+.log li{display:grid;grid-template-columns:56px 1fr auto;gap:16px;padding:16px 20px;border-bottom:1px solid var(--line);align-items:start}
+.log li:last-child{border-bottom:0}
+.log time{color:var(--muted);font-size:13px;padding-top:1px}
+.log .t{font-weight:500}
+.log .t em{font-style:normal;color:var(--muted);font-weight:400}
+.log p{margin:4px 0 0;color:var(--muted);font-size:13.5px;max-width:70ch}
+.log .h{font-family:var(--mono);font-size:11px;color:var(--faint);text-align:right;padding-top:2px}
+.badge{display:inline-block;font-size:11.5px;font-weight:500;padding:2px 8px;border-radius:20px;margin-right:6px;vertical-align:1px}
+.badge.man{background:var(--warn-50);color:var(--warn)}
+.badge.auto,.badge.api{background:var(--bordo-50);color:var(--bordo)}
+.badge.val{background:var(--ok-50);color:var(--ok)}
+.chain{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted);margin-top:12px}
+.chain svg{width:16px;height:16px;color:var(--ok)}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,20px);opacity:0;background:var(--ink);color:#fff;padding:10px 16px 10px 10px;border-radius:10px;display:flex;gap:10px;align-items:center;font-size:13.5px;z-index:40;transition:.2s;max-width:calc(100vw - 32px)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:900px){.cols{grid-template-columns:1fr}}
+@media (max-width:760px){
+  .app{grid-template-columns:1fr}
+  .side{position:static;height:auto;flex-direction:row;align-items:center;padding:10px 12px;gap:8px}
+  .brand span:last-child,.hosp,.me{display:none}
+  .nav{display:flex}
+  .nav .n{display:none}
+  .page{padding:24px 16px 60px}
+  .stats{grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .stat{padding:14px}.stat b{font-size:24px}
+  td,th{padding:12px}
+  .hide-sm{display:none}
+  .log li{grid-template-columns:44px 1fr}.log .h{display:none}
+  .kv{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><span id="brand-neco"></span><span>NexCore</span></div>
+    <button class="hosp" title="Trocar hospital">Hospital São Lucas <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 10l5 5 5-5"/></svg></button>
+    <nav class="nav" id="nav">
+      <button data-go="home" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Início</button>
+      <button data-go="fila"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 6h12M9 12h12M9 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>Fila<span class="n" id="nav-total">941</span></button>
+      <button data-go="audit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg>Auditoria</button>
+    </nav>
+    <div class="me"><div class="av">MA</div><div>Marina Albuquerque<small>Regulação</small></div></div>
+  </aside>
+
+  <main>
+    <!-- HOME -->
+    <section class="page" data-page="home">
+      <div class="greet">
+        <span id="hero-neco"></span>
+        <div><h1>Bom dia, Marina</h1><p id="hero-msg"></p></div>
+      </div>
+      <div class="stats">
+        <div class="card stat"><span>Na fila</span><b id="k-total">941</b></div>
+        <div class="card stat"><span>Urgentes (A1)</span><b>29</b></div>
+        <div class="card stat accent"><span>Para revisar</span><b id="k-rev">0</b></div>
+      </div>
+      <div class="cols">
+        <div class="card">
+          <div class="list-h"><h2>Precisam da sua revisão</h2><button class="link" data-go="fila">Ver fila</button></div>
+          <div id="review"></div>
+        </div>
+        <div class="card">
+          <div class="list-h"><h2>Atividade</h2><button class="link" id="sim-home">Simular evento</button></div>
+          <ul class="act" id="feed"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- FILA -->
+    <section class="page" data-page="fila" hidden>
+      <div class="head">
+        <div><h1>Fila priorizada</h1><p class="sub">Clique em um paciente para ver por que ele está nessa posição.</p></div>
+        <div style="display:flex;gap:16px;align-items:center"><span class="rule" id="rule"></span><button class="btn" id="sim-fila">Simular evento</button></div>
+      </div>
+      <div class="bar">
+        <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" placeholder="Buscar paciente, solicitação ou CID"></label>
+        <div class="seg" id="seg"></div>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th>Posição</th><th>Paciente</th><th>Urgência</th><th class="hide-sm">Espera</th></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <p class="note">Mockup com uma amostra do dataset sintético nas posições reais da fila.</p>
+    </section>
+
+    <!-- AUDIT -->
+    <section class="page" data-page="audit" hidden>
+      <div class="head">
+        <div><h1>Auditoria</h1><p class="sub">Toda mudança na fila, com autor e motivo.</p></div>
+        <button class="btn" id="export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Exportar CSV</button>
+      </div>
+      <div class="bar"><div class="seg" id="aseg"></div></div>
+      <div class="card"><ul class="log" id="log"></ul></div>
+      <div class="chain"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span id="chain-txt"></span></div>
+    </section>
+  </main>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Detalhe do paciente"></aside>
+
+<div class="modal" id="modal" hidden>
+  <div class="mbox">
+    <div class="hd"><h2 style="font-size:17px">Mudar posição</h2><p class="sub" id="m-sub" style="font-size:13px"></p></div>
+    <div class="bd">
+      <div class="field"><label for="m-pos">Nova posição</label><input id="m-pos" type="number" min="1"></div>
+      <div class="field"><label for="m-cat">Motivo</label>
+        <select id="m-cat">
+          <option value="">Selecione</option>
+          <option>Informação clínica nova</option>
+          <option>Critério clínico não considerado</option>
+          <option>Erro no dado de origem</option>
+          <option>Determinação judicial ou do gestor</option>
+        </select>
+      </div>
+      <div class="field"><label for="m-txt">Justificativa</label><textarea id="m-txt" placeholder="O que você verificou e por que a posição deve mudar"></textarea><small id="m-count">0 / 40</small></div>
+      <div class="prev" id="m-prev"></div>
+    </div>
+    <div class="dr-f"><button class="btn" data-close>Cancelar</button><button class="btn primary" id="m-ok" disabled>Confirmar</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="toast-neco"></span><span id="toast-txt"></span></div>
+
+<script>
+const DATA = {"total": 941, "classes": {"A1": 29, "A2": 171, "B": 202, "C": 247, "D": 292}, "rows": [{"id": "SOL-2026-00098", "pac": "PAC-00761", "nome": "Eliane Lima Peixoto", "sexo": "F", "idade": 42, "mun": "Porto Alegre", "km": "14", "proc": "Histerectomia", "esp": "Ginecologia", "cid": "C54.1", "cidd": "Neoplasia maligna do endometrio", "asa": "1", "com": "nenhuma", "dor": "9", "lim": "nenhuma", "just": "Carcinoma de endometrio, AP confirmado por histeroscopia. Estadiamento clinico I.", "obs": "ENFERMAGEM: PCT COM EMAGRECIMENTO VISIVEL NA CONSULTA.", "entrada": "2026-02-01", "dias": 264, "prio": "media", "onco": true, "classe": "A1", "score": 92.2, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 40, "d": "Classe A1: prazo máximo de 15 dias."}, {"m": "Tempo de espera vs. prazo", "v": 25, "d": "264 dias em fila = 17.6× o prazo da classe A1."}, {"m": "Eventos clínicos recentes", "v": 20, "d": "3 ida(s) ao PS/internação nos últimos 180 dias; exame de imagem com progressão"}, {"m": "Sintomas e função", "v": 7.2, "d": "Dor EVA 9; limitação nenhuma."}], "alerts": [], "eventos": [{"d": "2025-12-12", "t": "biopsia", "r": "positivo", "v": "", "desc": "AP: adenocarcinoma moderadamente diferenciado.", "o": "laboratorio de patologia"}, {"d": "2026-08-06", "t": "internacao", "r": "alta", "v": "4", "desc": "Internacao por 4 dias (sangramento uterino intenso).", "o": "Hospital Sao Lucas"}, {"d": "2026-09-11", "t": "exame_imagem", "r": "progressao", "v": "", "desc": "TC: surgimento de linfonodomegalias regionais.", "o": "radiologia"}, {"d": "2026-09-19", "t": "exame_imagem", "r": "estavel", "v": "", "desc": "TC de controle: lesao estavel.", "o": "radiologia"}, {"d": "2026-10-09", "t": "pronto_socorro", "r": "observacao", "v": "", "desc": "Atendimento em PS por sangramento uterino intenso.", "o": "PS municipal"}, {"d": "2026-10-16", "t": "pronto_socorro", "r": "observacao", "v": "", "desc": "Atendimento em PS por sangramento uterino intenso.", "o": "PS municipal"}], "pos": 1}, {"id": "SOL-2026-00229", "pac": "PAC-00917", "nome": "Iara Schmidt Mendes", "sexo": "F", "idade": 51, "mun": "Passo Fundo", "km": "", "proc": "Gastrectomia", "esp": "Cirurgia Oncologica", "cid": "C16.2", "cidd": "Neoplasia maligna do corpo do estomago", "asa": "2", "com": "HAS", "dor": "5", "lim": "moderada", "just": "Adenocarcinoma gastrico, EDA + AP confirmados. Disfagia e perda ponderal de 5 kg. Melena recorrente, Hb 9,1, ja transfundida 2 CH.", "obs": "", "entrada": "2026-03-20", "dias": 217, "prio": "baixa", "onco": true, "classe": "A1", "score": 91.5, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 40, "d": "Classe A1: prazo máximo de 15 dias."}, {"m": "Tempo de espera vs. prazo", "v": 25, "d": "217 dias em fila = 14.5× o prazo da classe A1."}, {"m": "Eventos clínicos recentes", "v": 20, "d": "2 ida(s) ao PS/internação nos últimos 180 dias; 1 relato(s) de piora; exame de imagem com progressão"}, {"m": "Sintomas e função", "v": 6.5, "d": "Dor EVA 5; limitação moderada."}], "alerts": [], "eventos": [{"d": "2026-05-28", "t": "falta", "r": "exame", "v": "", "desc": "Paciente nao compareceu.", "o": "ambulatorio"}, {"d": "2026-06-30", "t": "pronto_socorro", "r": "atendido_liberado", "v": "", "desc": "Atendimento em PS por hematemese / vomitos.", "o": "PS Hospital Sao Lucas"}, {"d": "2026-07-04", "t": "exame_imagem", "r": "estavel", "v": "", "desc": "TC de controle sem sinais de progressao.", "o": "radiologia"}, {"d": "2026-07-05", "t": "pronto_socorro", "r": "observacao", "v": "", "desc": "Atendimento em PS por hematemese / vomitos.", "o": "Emergencia HPS"}, {"d": "2026-08-30", "t": "exame_imagem", "r": "progressao", "v": "", "desc": "RNM: crescimento da lesao e invasao de estruturas adjacentes.", "o": "radiologia"}, {"d": "2026-09-11", "t": "consulta_reavaliacao", "r": "piora", "v": "", "desc": "Reavaliacao ambulatorial: perda ponderal, dor em piora, ECOG 2. Solicito antecipacao.", "o": "ambulatorio oncologia"}], "pos": 2}, {"id": "SOL-2026-00781", "pac": "PAC-00284", "nome": "Nair Fagundes Moraes", "sexo": "F", "idade": 59, "mun": "Porto Alegre", "km": "10", "proc": "Lobectomia pulmonar", "esp": "Cirurgia Toracica", "cid": "C34.1", "cidd": "Neoplasia maligna do lobo superior, bronquio ou pulmao", "asa": "2", "com": "obesidade", "dor": "6", "lim": "leve", "just": "Nodulo pulmonar direito de 2,0 cm, PET-CT com captacao, biopsia transtoracica: adenocarcinoma. IMC elevado.", "obs": "", "entrada": "2026-08-17", "dias": 67, "prio": "alta", "onco": true, "classe": "A1", "score": 90.8, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 40, "d": "Classe A1: prazo máximo de 15 dias."}, {"m": "Tempo de espera vs. prazo", "v": 25, "d": "67 dias em fila = 4.5× o prazo da classe A1."}, {"m": "Eventos clínicos recentes", "v": 20, "d": "2 ida(s) ao PS/internação nos últimos 180 dias; exame de imagem com progressão"}, {"m": "Sintomas e função", "v": 5.8, "d": "Dor EVA 6; limitação leve."}], "alerts": [], "eventos": [{"d": "2026-07-11", "t": "biopsia", "r": "positivo", "v": "", "desc": "AP: melanoma, Breslow 1,2 mm.", "o": "laboratorio de patologia"}, {"d": "2026-08-27", "t": "pronto_socorro", "r": "atendido_liberado", "v": "", "desc": "Atendimento em PS por dispneia / hemoptise.", "o": "UPA Moacyr Scliar"}, {"d": "2026-09-12", "t": "exame_imagem", "r": "progressao", "v": "", "desc": "TC: surgimento de linfonodomegalias regionais.", "o": "radiologia"}, {"d": "2026-09-28", "t": "pronto_socorro", "r": "observacao", "v": "", "desc": "Atendimento em PS por dispneia / hemoptise.", "o": "UPA Lomba do Pinheiro"}], "pos": 3}, {"id": "SOL-2026-00340", "pac": "PAC-00531", "nome": "Cleusa Machado Vargas", "sexo": "F", "idade": 54, "mun": "Viamao", "km": "22", "proc": "Colectomia", "esp": "Cirurgia Oncologica", "cid": "C19", "cidd": "Neoplasia maligna da juncao retossigmoide", "asa": "2", "com": "tabagismo", "dor": "6", "lim": "leve", "just": "Adenocarcinoma de juncao retossigmoide, colonoscopia + AP confirmados. TC sem metastases a distancia.", "obs": "", "entrada": "2026-04-22", "dias": 184, "prio": "alta", "onco": true, "classe": "A1", "score": 90.8, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 40, "d": "Classe A1: prazo máximo de 15 dias."}, {"m": "Tempo de espera vs. prazo", "v": 25, "d": "184 dias em fila = 12.3× o prazo da classe A1."}, {"m": "Eventos clínicos recentes", "v": 20, "d": "2 ida(s) ao PS/internação nos últimos 180 dias; 1 relato(s) de piora; exame de imagem com progressão"}, {"m": "Sintomas e função", "v": 5.8, "d": "Dor EVA 6; limitação leve."}], "alerts": [], "eventos": [{"d": "2026-03-26", "t": "biopsia", "r": "positivo", "v": "", "desc": "Anatomopatologico POSITIVO para malignidade.", "o": "laboratorio de patologia"}, {"d": "2026-07-22", "t": "exame_imagem", "r": "estavel", "v": "", "desc": "TC de estadiamento sem metastases.", "o": "radiologia"}, {"d": "2026-09-16", "t": "pronto_socorro", "r": "observacao", "v": "", "desc": "Atendimento em PS por dor abdominal / suboclusao.", "o": "PS municipal"}, {"d": "2026-09-26", "t": "exame_imagem", "r": "progressao", "v": "", "desc": "TC: surgimento de linfonodomegalias regionais.", "o": "radiologia"}, {"d": "2026-10-06", "t": "consulta_reavaliacao", "r": "piora", "v": "", "desc": "Reavaliacao ambulatorial: perda ponderal, dor em piora, ECOG 2. Solicito antecipacao.", "o": "ambulatorio oncologia"}, {"d": "2026-10-13", "t": "internacao", "r": "alta", "v": "3", "desc": "Internacao por 3 dias (dor abdominal / suboclusao).", "o": "Hospital Sao Lucas"}], "pos": 4}, {"id": "SOL-2026-00563", "pac": "PAC-00396", "nome": "Claudia Bortolini Cardoso", "sexo": "F", "idade": 55, "mun": "Taquara", "km": "", "proc": "Colectomia", "esp": "Cirurgia Oncologica", "cid": "C18.7", "cidd": "Neoplasia maligna do colon sigmoide", "asa": "2", "com": "HAS", "dor": "6", "lim": "nenhuma", "just": "Tumor de sigmoide, AP adenocarcinoma moderadamente diferenciado, CEA 7,8. Enterorragia recorrente com queda de Hb para 8,9. Suboclusao intestinal no ultimo mes. Hipertensa em uso de losartana.", "obs": "Familiar liga informando internacao recente.", "entrada": "2026-06-27", "dias": 118, "prio": "baixa", "onco": true, "classe": "A1", "score": 89.8, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 40, "d": "Classe A1: prazo máximo de 15 dias."}, {"m": "Tempo de espera vs. prazo", "v": 25, "d": "118 dias em fila = 7.9× o prazo da classe A1."}, {"m": "Eventos clínicos recentes", "v": 20, "d": "2 ida(s) ao PS/internação nos últimos 180 dias; 1 relato(s) de piora; exame de imagem com progressão"}, {"m": "Sintomas e função", "v": 4.8, "d": "Dor EVA 6; limitação nenhuma."}], "alerts": [], "eventos": [{"d": "2026-05-25", "t": "biopsia", "r": "positivo", "v": "", "desc": "Anatomopatologico POSITIVO para malignidade.", "o": "laboratorio de patologia"}, {"d": "2026-08-21", "t": "internacao", "r": "alta", "v": "5", "desc": "Internacao por 5 dias (dor abdominal / suboclusao).", "o": "Hospital Sao Lucas"}, {"d": "2026-09-02", "t": "exame_imagem", "r": "progressao", "v": "", "desc": "TC: progressao da lesao primaria, aumento de 40%.", "o": "radiologia"}, {"d": "2026-09-20", "t": "pronto_socorro", "r": "observacao", "v": "", "desc": "Atendimento em PS por dor abdominal / suboclusao.", "o": "UPA Zona Norte"}, {"d": "2026-09-28", "t": "consulta_reavaliacao", "r": "piora", "v": "", "desc": "Reavaliacao ambulatorial: perda ponderal, dor em piora, ECOG 2. Solicito antecipacao.", "o": "ambulatorio oncologia"}], "pos": 5}, {"id": "SOL-2025-00011", "pac": "PAC-00090", "nome": "Vera Pereira Carvalho", "sexo": "F", "idade": 42, "mun": "Porto Alegre", "km": "19", "proc": "Mastectomia / setorectomia de mama", "esp": "Mastologia", "cid": "C50.9", "cidd": "Neoplasia maligna da mama, nao especificada", "asa": "2", "com": "HAS; anticoagulacao oral", "dor": "6", "lim": "nenhuma", "just": "Carcinoma ductal invasivo de mama esquerda, 4,1 cm, AP confirmado. Estadiamento IIA. Lesao ulcerada de mama com secrecao, crescimento rapido, linfonodo axilar fixo. HAS controlada.", "obs": "", "entrada": "2025-01-13", "dias": 648, "prio": "alta", "onco": true, "classe": "A1", "score": 89.8, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 40, "d": "Classe A1: prazo máximo de 15 dias."}, {"m": "Tempo de espera vs. prazo", "v": 25, "d": "648 dias em fila = 43.2× o prazo da classe A1."}, {"m": "Eventos clínicos recentes", "v": 20, "d": "2 ida(s) ao PS/internação nos últimos 180 dias; exame de imagem com progressão"}, {"m": "Sintomas e função", "v": 4.8, "d": "Dor EVA 6; limitação nenhuma."}], "alerts": [], "eventos": [{"d": "2024-11-28", "t": "biopsia", "r": "positivo", "v": "", "desc": "AP: carcinoma ductal invasivo, grau 2.", "o": "laboratorio de patologia"}, {"d": "2025-12-10", "t": "contato_telefonico", "r": "atendeu", "v": "", "desc": "Contato de confirmacao de interesse. Pct mantem desejo de operar.", "o": "call center"}, {"d": "2026-04-13", "t": "exame_imagem", "r": "estavel", "v": "", "desc": "TC de controle: lesao estavel.", "o": "radiologia"}, {"d": "2026-07-02", "t": "pronto_socorro", "r": "observacao", "v": "", "desc": "Atendimento em PS por dor e secrecao em mama.", "o": "PS municipal"}, {"d": "2026-08-10", "t": "internacao", "r": "alta", "v": "4", "desc": "Internacao por 4 dias (dor e secrecao em mama).", "o": "Hospital Sao Lucas"}, {"d": "2026-09-24", "t": "exame_imagem", "r": "progressao", "v": "", "desc": "TC: surgimento de linfonodomegalias regionais.", "o": "radiologia"}], "pos": 6}, {"id": "SOL-2026-00129", "pac": "PAC-00070", "nome": "Iara Peixoto Kunz", "sexo": "F", "idade": 55, "mun": "Alvorada", "km": "16", "proc": "Histerectomia", "esp": "Ginecologia", "cid": "C53.9", "cidd": "Neoplasia maligna do colo do utero, nao especificado", "asa": "2", "com": "asma", "dor": "6", "lim": "nenhuma", "just": "Neoplasia de colo uterino IIA, AP carcinoma epidermoide. Encaminhada para histerectomia. Risco cirurgico em anexo.", "obs": "Medico assistente pede urgencia.", "entrada": "2026-02-13", "dias": 252, "prio": "baixa", "onco": true, "classe": "A1", "score": 89.8, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 40, "d": "Classe A1: prazo máximo de 15 dias."}, {"m": "Tempo de espera vs. prazo", "v": 25, "d": "252 dias em fila = 16.8× o prazo da classe A1."}, {"m": "Eventos clínicos recentes", "v": 20, "d": "2 ida(s) ao PS/internação nos últimos 180 dias; exame de imagem com progressão"}, {"m": "Sintomas e função", "v": 4.8, "d": "Dor EVA 6; limitação nenhuma."}], "alerts": [], "eventos": [{"d": "2026-08-02", "t": "internacao", "r": "alta", "v": "5", "desc": "Internacao por 5 dias (sangramento uterino intenso).", "o": "Hospital Sao Lucas"}, {"d": "2026-09-14", "t": "pronto_socorro", "r": "atendido_liberado", "v": "", "desc": "Atendimento em PS por sangramento uterino intenso.", "o": "UPA Moacyr Scliar"}, {"d": "2026-10-14", "t": "exame_imagem", "r": "progressao", "v": "", "desc": "TC: surgimento de linfonodomegalias regionais.", "o": "radiologia"}], "pos": 7}, {"id": "SOL-2026-00879", "pac": "PAC-00246", "nome": "Gilberto Pires Borges", "sexo": "M", "idade": 59, "mun": "Charqueadas", "km": "66", "proc": "Gastrectomia", "esp": "Cirurgia Oncologica", "cid": "D37.1", "cidd": "Neoplasia de comportamento incerto do estomago", "asa": "2", "com": "HAS", "dor": "4", "lim": "grave", "just": "Conforme laudo anexo.", "obs": "", "entrada": "2026-09-02", "dias": 51, "prio": "alta", "onco": false, "classe": "A2", "score": 76.2, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 34, "d": "Classe A2: prazo máximo de 21 dias."}, {"m": "Tempo de espera vs. prazo", "v": 25, "d": "51 dias em fila = 2.4× o prazo da classe A2."}, {"m": "Eventos clínicos recentes", "v": 10, "d": "1 relato(s) de piora; biópsia positiva com CID ainda benigno"}, {"m": "Sintomas e função", "v": 7.2, "d": "Dor EVA 4; limitação grave."}], "alerts": [], "eventos": [{"d": "2026-09-02", "t": "biopsia", "r": "inconclusivo", "v": "", "desc": "AP inconclusivo, material insuficiente. Repetir biopsia.", "o": "laboratorio de patologia"}, {"d": "2026-09-27", "t": "biopsia", "r": "positivo", "v": "", "desc": "AP: carcinoma ductal invasivo, grau 2.", "o": "laboratorio de patologia"}, {"d": "2026-10-20", "t": "consulta_reavaliacao", "r": "piora", "v": "", "desc": "AP positivo para malignidade. Necessario atualizar CID e prioridade.", "o": "ambulatorio"}], "pos": 30}, {"id": "SOL-2026-00610", "pac": "PAC-00679", "nome": "Carla Rocha Flores", "sexo": "F", "idade": 61, "mun": "Porto Alegre", "km": "21", "proc": "Histerectomia", "esp": "Ginecologia", "cid": "D25.9", "cidd": "Leiomioma do utero, nao especificado", "asa": "4", "com": "HAS; DRC; asma", "dor": "6", "lim": "leve", "just": "LEIOMIOMATOSE UTERINA VOLUMOSA. DOR PELVICA E SINTOMAS COMPRESSIVOS (POLACIURIA). PROLE CONSTITUIDA. Biopsia realizada, resultado pendente.", "obs": "", "entrada": "2026-07-07", "dias": 108, "prio": "media", "onco": false, "classe": "A2", "score": 74.8, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 34, "d": "Classe A2: prazo máximo de 21 dias."}, {"m": "Tempo de espera vs. prazo", "v": 25, "d": "108 dias em fila = 5.1× o prazo da classe A2."}, {"m": "Eventos clínicos recentes", "v": 10, "d": "1 relato(s) de piora; biópsia positiva com CID ainda benigno"}, {"m": "Sintomas e função", "v": 5.8, "d": "Dor EVA 6; limitação leve."}], "alerts": [], "eventos": [{"d": "2026-09-20", "t": "biopsia", "r": "positivo", "v": "", "desc": "Biopsia: carcinoma epidermoide invasor.", "o": "laboratorio de patologia"}, {"d": "2026-10-09", "t": "consulta_reavaliacao", "r": "piora", "v": "", "desc": "AP positivo para malignidade. Necessario atualizar CID e prioridade.", "o": "ambulatorio"}], "pos": 31}, {"id": "SOL-2026-00037", "pac": "PAC-00108", "nome": "Vera Zanella Pacheco", "sexo": "F", "idade": 54, "mun": "Ijui", "km": "391", "proc": "Colectomia", "esp": "Cirurgia Oncologica", "cid": "C18.7", "cidd": "Neoplasia maligna do colon sigmoide", "asa": "2", "com": "HAS; fibrilacao atrial", "dor": "5", "lim": "leve", "just": "NEOPLASIA DE SIGMOIDE. LESAO SUBESTENOSANTE. PERDA PONDERAL. ENCAMINHADA PARA COLECTOMIA. Encaminho para avaliacao anestesica.", "obs": "Medico assistente solicitou reavaliacao da prioridade em 01/06/2026.", "entrada": "2026-01-13", "dias": 283, "prio": "media", "onco": true, "classe": "A2", "score": 72.0, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 34, "d": "Classe A2: prazo máximo de 21 dias."}, {"m": "Tempo de espera vs. prazo", "v": 25, "d": "283 dias em fila = 13.5× o prazo da classe A2."}, {"m": "Eventos clínicos recentes", "v": 8, "d": "2 relato(s) de piora"}, {"m": "Sintomas e função", "v": 5.0, "d": "Dor EVA 5; limitação leve."}], "alerts": [], "eventos": [{"d": "2026-03-18", "t": "exame_imagem", "r": "estavel", "v": "", "desc": "US/RNM: sem novas lesoes.", "o": "radiologia"}, {"d": "2026-08-05", "t": "contato_telefonico", "r": "relata_piora", "v": "", "desc": "Pct refere piora dos sintomas e pergunta sobre data da cirurgia.", "o": "call center"}, {"d": "2026-09-23", "t": "consulta_reavaliacao", "r": "piora", "v": "", "desc": "Oncologia: solicita reavaliacao da prioridade. Doenca em evolucao.", "o": "ambulatorio oncologia"}], "pos": 32}, {"id": "SOL-2025-00478", "pac": "PAC-00199", "nome": "Ari Moraes Rodrigues", "sexo": "M", "idade": 77, "mun": "Eldorado Do Sul", "km": "", "proc": "Colectomia", "esp": "Cirurgia Oncologica", "cid": "D12.6", "cidd": "Neoplasia benigna do colon, nao especificado", "asa": "2", "com": "DM2; obesidade", "dor": "2", "lim": "leve", "just": "Polipo de colon colon ascendente nao ressecavel por colonoscopia, AP: adenoma tubuloviloso com displasia de alto grau. IMC elevado.", "obs": "", "entrada": "2025-12-17", "dias": 310, "prio": "baixa", "onco": false, "classe": "A2", "score": 71.6, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 34, "d": "Classe A2: prazo máximo de 21 dias."}, {"m": "Tempo de espera vs. prazo", "v": 25, "d": "310 dias em fila = 14.8× o prazo da classe A2."}, {"m": "Eventos clínicos recentes", "v": 10, "d": "1 relato(s) de piora; biópsia positiva com CID ainda benigno"}, {"m": "Sintomas e função", "v": 2.6, "d": "Dor EVA 2; limitação leve."}], "alerts": [], "eventos": [{"d": "2025-10-29", "t": "biopsia", "r": "negativo", "v": "", "desc": "LAUDO AP: PROCESSO INFLAMATORIO CRONICO. SEM ATIPIAS.", "o": "laboratorio de patologia"}, {"d": "2026-03-18", "t": "biopsia", "r": "inconclusivo", "v": "", "desc": "Biopsia com atipias indeterminadas. Revisao de laminas solicitada.", "o": "laboratorio de patologia"}, {"d": "2026-05-10", "t": "hba1c", "r": "resultado", "v": "7.3", "desc": "HbA1c 7,3%.", "o": "laboratorio"}, {"d": "2026-08-17", "t": "biopsia", "r": "positivo", "v": "", "desc": "AP: melanoma, Breslow 1,2 mm.", "o": "laboratorio de patologia"}, {"d": "2026-10-01", "t": "consulta_reavaliacao", "r": "piora", "v": "", "desc": "AP positivo para malignidade. Necessario atualizar CID e prioridade.", "o": "ambulatorio"}], "pos": 33}, {"id": "SOL-2026-00380", "pac": "PAC-00386", "nome": "Andre Oliveira Severo", "sexo": "M", "idade": 62, "mun": "Viamao", "km": "28", "proc": "Colectomia", "esp": "Cirurgia Oncologica", "cid": "K57.3", "cidd": "Doenca diverticular do colon sem perfuracao ou abscesso", "asa": "2", "com": "obesidade", "dor": "3", "lim": "nenhuma", "just": "Doenca diverticular com episodios de diverticulite de repeticao (4 episodios). Indicada sigmoidectomia eletiva. Obeso.", "obs": "Paciente pede cirurgia no periodo de ferias.", "entrada": "2026-05-11", "dias": 165, "prio": "baixa", "onco": false, "classe": "A2", "score": 71.4, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 34, "d": "Classe A2: prazo máximo de 21 dias."}, {"m": "Tempo de espera vs. prazo", "v": 25, "d": "165 dias em fila = 7.9× o prazo da classe A2."}, {"m": "Eventos clínicos recentes", "v": 10, "d": "1 relato(s) de piora; biópsia positiva com CID ainda benigno"}, {"m": "Sintomas e função", "v": 2.4, "d": "Dor EVA 3; limitação nenhuma."}], "alerts": [], "eventos": [{"d": "2026-06-08", "t": "biopsia", "r": "inconclusivo", "v": "", "desc": "AP inconclusivo, material insuficiente. Repetir biopsia.", "o": "laboratorio de patologia"}, {"d": "2026-10-02", "t": "biopsia", "r": "positivo", "v": "", "desc": "AP: adenocarcinoma moderadamente diferenciado.", "o": "laboratorio de patologia"}, {"d": "2026-10-14", "t": "consulta_reavaliacao", "r": "piora", "v": "", "desc": "AP positivo para malignidade. Necessario atualizar CID e prioridade.", "o": "ambulatorio"}], "pos": 34}, {"id": "SOL-2026-00232", "pac": "PAC-00472", "nome": "Leticia Freitas Vieira", "sexo": "F", "idade": 50, "mun": "Alegrete", "km": "505", "proc": "Exerese de tumor de pele com reconstrucao", "esp": "Cirurgia Oncologica", "cid": "D22.9", "cidd": "Nevo melanocitico, nao especificado", "asa": "", "com": "nenhuma", "dor": "2", "lim": "nenhuma", "just": "Paciente com indicacao de exerese de tumor de pele com reconstrucao.", "obs": "Necessita TFD (tratamento fora de domicilio) para deslocamento.", "entrada": "2026-03-20", "dias": 217, "prio": "baixa", "onco": false, "classe": "A2", "score": 70.6, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 34, "d": "Classe A2: prazo máximo de 21 dias."}, {"m": "Tempo de espera vs. prazo", "v": 25, "d": "217 dias em fila = 10.3× o prazo da classe A2."}, {"m": "Eventos clínicos recentes", "v": 10, "d": "1 relato(s) de piora; biópsia positiva com CID ainda benigno"}, {"m": "Sintomas e função", "v": 1.6, "d": "Dor EVA 2; limitação nenhuma."}], "alerts": ["ASA não informado."], "eventos": [{"d": "2026-01-31", "t": "biopsia", "r": "negativo", "v": "", "desc": "Biopsia negativa para neoplasia. Fibroadenoma.", "o": "laboratorio de patologia"}, {"d": "2026-04-13", "t": "biopsia", "r": "inconclusivo", "v": "", "desc": "AP inconclusivo, material insuficiente. Repetir biopsia.", "o": "laboratorio de patologia"}, {"d": "2026-10-08", "t": "consulta_reavaliacao", "r": "piora", "v": "", "desc": "AP positivo para malignidade. Necessario atualizar CID e prioridade.", "o": "ambulatorio"}, {"d": "2026-10-10", "t": "biopsia", "r": "positivo", "v": "", "desc": "AP: carcinoma ductal invasivo, grau 2.", "o": "laboratorio de patologia"}], "pos": 35}, {"id": "SOL-2025-00280", "pac": "PAC-00260", "nome": "Antonio Severo Schmidt", "sexo": "M", "idade": 70, "mun": "Porto Alegre", "km": "8", "proc": "Artroplastia total de quadril", "esp": "Ortopedia", "cid": "M16.0", "cidd": "Coxartrose primaria bilateral", "asa": "", "com": "tabagismo", "dor": "8", "lim": "moderada", "just": "Coxartrose direita avancada, dor em repouso, uso de muletas. Rx: perda total do espaco articular. Tabagista 37 macos/ano.", "obs": "Familiar informa internacao recente na UPA.", "entrada": "2025-09-16", "dias": 402, "prio": "alta", "onco": false, "classe": "B", "score": 75.9, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 22, "d": "Classe B: prazo máximo de 60 dias."}, {"m": "Tempo de espera vs. prazo", "v": 25, "d": "402 dias em fila = 6.7× o prazo da classe B."}, {"m": "Eventos clínicos recentes", "v": 20, "d": "4 ida(s) ao PS/internação nos últimos 180 dias"}, {"m": "Sintomas e função", "v": 8.9, "d": "Dor EVA 8; limitação moderada."}], "alerts": ["Flag oncológica do cadastro ('sim') diverge do CID M16.0. NeCo usou o CID.", "ASA não informado."], "eventos": [{"d": "2026-06-15", "t": "pronto_socorro", "r": "atendido_liberado", "v": "", "desc": "Atendimento em PS por dor incapacitante em quadril.", "o": "Emergencia HPS"}, {"d": "2026-06-26", "t": "pronto_socorro", "r": "observacao", "v": "", "desc": "Atendimento em PS por dor incapacitante em quadril.", "o": "PS municipal"}, {"d": "2026-10-01", "t": "internacao", "r": "alta", "v": "4", "desc": "Internacao por 4 dias (dor incapacitante em quadril).", "o": "Hospital Sao Lucas"}, {"d": "2026-10-04", "t": "pronto_socorro", "r": "observacao", "v": "", "desc": "Atendimento em PS por dor incapacitante em quadril.", "o": "UPA Lomba do Pinheiro"}], "pos": 201}, {"id": "SOL-2025-00504", "pac": "PAC-00211", "nome": "Camila Bitencourt Prestes", "sexo": "F", "idade": 52, "mun": "Porto Alegre", "km": "23", "proc": "Safenectomia / tratamento cirurgico de varizes", "esp": "Cirurgia Vascular", "cid": "I83.1", "cidd": "Varizes dos membros inferiores com inflamacao", "asa": "2", "com": "obesidade", "dor": "6", "lim": "grave", "just": "Varizes bilaterais, episodios de tromboflebite superficial recorrente. Obesa.", "obs": "Familiar informa internacao recente na UPA.", "entrada": "2025-12-26", "dias": 301, "prio": "alta", "onco": false, "classe": "B", "score": 75.8, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 22, "d": "Classe B: prazo máximo de 60 dias."}, {"m": "Tempo de espera vs. prazo", "v": 25, "d": "301 dias em fila = 5.0× o prazo da classe B."}, {"m": "Eventos clínicos recentes", "v": 20, "d": "4 ida(s) ao PS/internação nos últimos 180 dias"}, {"m": "Sintomas e função", "v": 8.8, "d": "Dor EVA 6; limitação grave."}], "alerts": [], "eventos": [{"d": "2026-01-08", "t": "contato_telefonico", "r": "atendeu", "v": "", "desc": "Contato de confirmacao de interesse. Pct mantem desejo de operar.", "o": "call center"}, {"d": "2026-08-04", "t": "internacao", "r": "alta", "v": "5", "desc": "Internacao por 5 dias (celulite em ulcera venosa).", "o": "Hospital Sao Lucas"}, {"d": "2026-09-02", "t": "pronto_socorro", "r": "observacao", "v": "", "desc": "Atendimento em PS por celulite em ulcera venosa.", "o": "Emergencia HPS"}, {"d": "2026-09-06", "t": "pronto_socorro", "r": "atendido_liberado", "v": "", "desc": "Atendimento em PS por celulite em ulcera venosa.", "o": "Emergencia HPS"}, {"d": "2026-10-12", "t": "pronto_socorro", "r": "atendido_liberado", "v": "", "desc": "Atendimento em PS por celulite em ulcera venosa.", "o": "UPA Zona Norte"}], "pos": 202}, {"id": "SOL-2026-00127", "pac": "PAC-00663", "nome": "Osmar Weber Kunz", "sexo": "M", "idade": 64, "mun": "Porto Alegre", "km": "15", "proc": "Artroplastia total de joelho", "esp": "Ortopedia", "cid": "M17.0", "cidd": "Gonartrose primaria bilateral", "asa": "2", "com": "HAS; DM2", "dor": "9", "lim": "moderada", "just": "Gonartrose direita tricompartimental, deformidade em varo, dor incapacitante, nao sobe escadas. Candidato a ATJ. HAS controlada.", "obs": "", "entrada": "2026-02-13", "dias": 252, "prio": "alta", "onco": false, "classe": "B", "score": 74.7, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 22, "d": "Classe B: prazo máximo de 60 dias."}, {"m": "Tempo de espera vs. prazo", "v": 25, "d": "252 dias em fila = 4.2× o prazo da classe B."}, {"m": "Eventos clínicos recentes", "v": 18, "d": "3 ida(s) ao PS/internação nos últimos 180 dias"}, {"m": "Sintomas e função", "v": 9.7, "d": "Dor EVA 9; limitação moderada."}], "alerts": [], "eventos": [{"d": "2026-07-13", "t": "pronto_socorro", "r": "observacao", "v": "", "desc": "Atendimento em PS por queda / dor em joelho.", "o": "Emergencia HPS"}, {"d": "2026-09-16", "t": "pronto_socorro", "r": "observacao", "v": "", "desc": "Atendimento em PS por queda / dor em joelho.", "o": "UPA Lomba do Pinheiro"}, {"d": "2026-10-02", "t": "hba1c", "r": "resultado", "v": "8.3", "desc": "HbA1c 8,3%.", "o": "laboratorio"}, {"d": "2026-10-06", "t": "pronto_socorro", "r": "atendido_liberado", "v": "", "desc": "Atendimento em PS por queda / dor em joelho.", "o": "UPA Zona Norte"}, {"d": "2026-10-07", "t": "contato_telefonico", "r": "atendeu", "v": "", "desc": "Contato de confirmacao de interesse. Pct mantem desejo de operar.", "o": "call center"}], "pos": 203}, {"id": "SOL-2026-00128", "pac": "PAC-00459", "nome": "Dirce Bitencourt Lenz", "sexo": "F", "idade": 55, "mun": "Porto Alegre", "km": "5", "proc": "Artroplastia total de quadril", "esp": "Ortopedia", "cid": "M16.9", "cidd": "Coxartrose nao especificada", "asa": "2", "com": "tabagismo", "dor": "8", "lim": "moderada", "just": "Necrose asseptica de cabeca femoral direita, dor intensa, deambula com dificuldade. Paciente acamada ha 3 meses pela dor, ja apresenta ulcera de pressao sacral inicial. Tabagista 10 macos/ano.", "obs": "Enfermagem: paciente com dor importante na consulta de hoje.", "entrada": "2026-02-13", "dias": 252, "prio": "baixa", "onco": false, "classe": "B", "score": 73.9, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 22, "d": "Classe B: prazo máximo de 60 dias."}, {"m": "Tempo de espera vs. prazo", "v": 25, "d": "252 dias em fila = 4.2× o prazo da classe B."}, {"m": "Eventos clínicos recentes", "v": 18, "d": "3 ida(s) ao PS/internação nos últimos 180 dias"}, {"m": "Sintomas e função", "v": 8.9, "d": "Dor EVA 8; limitação moderada."}], "alerts": [], "eventos": [{"d": "2026-06-23", "t": "pronto_socorro", "r": "atendido_liberado", "v": "", "desc": "Atendimento em PS por dor incapacitante em quadril.", "o": "PS Hospital Sao Lucas"}, {"d": "2026-07-24", "t": "pronto_socorro", "r": "observacao", "v": "", "desc": "Atendimento em PS por dor incapacitante em quadril.", "o": "PS municipal"}, {"d": "2026-08-21", "t": "internacao", "r": "alta", "v": "1", "desc": "Internacao por 1 dias (dor incapacitante em quadril).", "o": "Hospital Sao Lucas"}], "pos": 204}, {"id": "SOL-2026-00274", "pac": "PAC-00916", "nome": "Rosane Lopes Schneider", "sexo": "F", "idade": 33, "mun": "Porto Alegre", "km": "20", "proc": "Liberacao do tunel do carpo", "esp": "Ortopedia", "cid": "G56.0", "cidd": "Sindrome do tunel do carpo", "asa": "", "com": "nenhuma", "dor": "5", "lim": "moderada", "just": "STC direita confirmada por ENMG (grau moderado). Parestesias noturnas.", "obs": "", "entrada": "2026-04-05", "dias": 201, "prio": "alta", "onco": false, "classe": "B", "score": 73.5, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 22, "d": "Classe B: prazo máximo de 60 dias."}, {"m": "Tempo de espera vs. prazo", "v": 25, "d": "201 dias em fila = 3.4× o prazo da classe B."}, {"m": "Eventos clínicos recentes", "v": 20, "d": "3 ida(s) ao PS/internação nos últimos 180 dias; 1 relato(s) de piora"}, {"m": "Sintomas e função", "v": 6.5, "d": "Dor EVA 5; limitação moderada."}], "alerts": ["ASA não informado."], "eventos": [{"d": "2026-06-21", "t": "pronto_socorro", "r": "atendido_liberado", "v": "", "desc": "Atendimento em PS por dor intensa em mao.", "o": "PS municipal"}, {"d": "2026-06-28", "t": "pronto_socorro", "r": "observacao", "v": "", "desc": "Atendimento em PS por dor intensa em mao.", "o": "Emergencia HPS"}, {"d": "2026-10-12", "t": "consulta_reavaliacao", "r": "piora", "v": "", "desc": "Reavaliacao: quadro em piora, solicito reclassificacao de prioridade.", "o": "ambulatorio"}, {"d": "2026-10-21", "t": "pronto_socorro", "r": "atendido_liberado", "v": "", "desc": "Atendimento em PS por dor intensa em mao.", "o": "UPA Lomba do Pinheiro"}], "pos": 205}, {"id": "SOL-2026-00597", "pac": "PAC-00292", "nome": "Carlos Pereira Quadros", "sexo": "M", "idade": 70, "mun": "Novo Hamburgo", "km": "50", "proc": "Revascularizacao do miocardio", "esp": "Cirurgia Cardiaca", "cid": "I20.8", "cidd": "Outras formas de angina pectoris", "asa": "3", "com": "HAS; cardiopatia isquemica", "dor": "5", "lim": "moderada", "just": "DAC triarterial, angina CCS II, FE 47%. Cateterismo: lesoes >70% em DA, CX e CD. Sincope ao esforco. Lesao de tronco 80%. Hipertenso em uso de losartana.", "obs": "PCT REFERE PIORA. SOLICITA AGILIZAR.", "entrada": "2026-07-05", "dias": 110, "prio": "alta", "onco": false, "classe": "B", "score": 69.4, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 22, "d": "Classe B: prazo máximo de 60 dias."}, {"m": "Tempo de espera vs. prazo", "v": 22.9, "d": "110 dias em fila = 1.8× o prazo da classe B."}, {"m": "Eventos clínicos recentes", "v": 18, "d": "3 ida(s) ao PS/internação nos últimos 180 dias"}, {"m": "Sintomas e função", "v": 6.5, "d": "Dor EVA 5; limitação moderada."}], "alerts": [], "eventos": [{"d": "2026-07-15", "t": "pronto_socorro", "r": "observacao", "v": "", "desc": "Atendimento em PS por dor toracica / angina.", "o": "Emergencia HPS"}, {"d": "2026-08-24", "t": "pronto_socorro", "r": "atendido_liberado", "v": "", "desc": "Atendimento em PS por dor toracica / angina.", "o": "UPA Moacyr Scliar"}, {"d": "2026-10-12", "t": "pronto_socorro", "r": "observacao", "v": "", "desc": "Atendimento em PS por dor toracica / angina.", "o": "UPA Lomba do Pinheiro"}], "pos": 220}, {"id": "SOL-2025-00292", "pac": "PAC-00291", "nome": "Leticia Rodrigues Peixoto", "sexo": "F", "idade": 84, "mun": "Porto Alegre", "km": "22", "proc": "Facectomia com implante de lente intraocular", "esp": "Oftalmologia", "cid": "H25.1", "cidd": "Catarata senil nuclear", "asa": "2", "com": "HAS; tabagismo; fibrilacao atrial", "dor": "3", "lim": "nenhuma", "just": "Pct com catarata direita, av CD 1m, mora sozinha, ja teve 1 queda em casa por baixa visao. Hipertensa em uso de losartana.", "obs": "Familiar informa internacao recente na UPA.", "entrada": "2025-09-19", "dias": 399, "prio": "baixa", "onco": false, "classe": "C", "score": 49.4, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 12, "d": "Classe C: prazo máximo de 180 dias."}, {"m": "Tempo de espera vs. prazo", "v": 25, "d": "399 dias em fila = 2.2× o prazo da classe C."}, {"m": "Eventos clínicos recentes", "v": 10, "d": "1 ida(s) ao PS/internação nos últimos 180 dias; 1 relato(s) de piora"}, {"m": "Sintomas e função", "v": 2.4, "d": "Dor EVA 3; limitação nenhuma."}], "alerts": [], "eventos": [{"d": "2026-08-09", "t": "pronto_socorro", "r": "atendido_liberado", "v": "", "desc": "Atendimento em PS por dor ocular / PIO elevada.", "o": "UPA Zona Norte"}, {"d": "2026-09-18", "t": "consulta_reavaliacao", "r": "piora", "v": "", "desc": "Reavaliacao: quadro em piora, solicito reclassificacao de prioridade.", "o": "ambulatorio"}], "pos": 403}, {"id": "SOL-2025-00274", "pac": "PAC-00442", "nome": "Gabriela Ramos Quadros", "sexo": "F", "idade": 67, "mun": "Porto Alegre", "km": "14", "proc": "Revascularizacao do miocardio", "esp": "Cirurgia Cardiaca", "cid": "I20.0", "cidd": "Angina instavel", "asa": "3", "com": "HAS; ICC; cardiopatia isquemica", "dor": "6", "lim": "leve", "just": "Angina instavel, internacao recente, lesao de tronco de coronaria esquerda. Cirurgia com prioridade.", "obs": "Pct relata que foi ao PS 2x no ultimo mes por dor.", "entrada": "2025-09-09", "dias": 409, "prio": "alta", "onco": false, "classe": "C", "score": 48.8, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 12, "d": "Classe C: prazo máximo de 180 dias."}, {"m": "Tempo de espera vs. prazo", "v": 25, "d": "409 dias em fila = 2.3× o prazo da classe C."}, {"m": "Eventos clínicos recentes", "v": 6, "d": "1 ida(s) ao PS/internação nos últimos 180 dias"}, {"m": "Sintomas e função", "v": 5.8, "d": "Dor EVA 6; limitação leve."}], "alerts": [], "eventos": [{"d": "2025-05-29", "t": "internacao", "r": "alta", "v": "7", "desc": "Internacao por 7 dias (dor toracica / angina), anterior a inclusao na fila.", "o": "Hospital Sao Lucas"}, {"d": "2026-10-02", "t": "pronto_socorro", "r": "atendido_liberado", "v": "", "desc": "Atendimento em PS por dor toracica / angina.", "o": "UPA Lomba do Pinheiro"}], "pos": 404}, {"id": "SOL-2025-00272", "pac": "PAC-00018", "nome": "Claudio Bitencourt Lopes", "sexo": "M", "idade": 65, "mun": "Santa Maria", "km": "271", "proc": "Herniorrafia umbilical / incisional", "esp": "Cirurgia Geral", "cid": "K43.9", "cidd": "Hernia da parede abdominal anterior sem obstrucao ou gangrena", "asa": "3", "com": "HAS; DRC; anticoagulacao oral", "dor": "2", "lim": "nenhuma", "just": "Hernia incisional em cicatriz de laparotomia previa, volumosa, com dor e desconforto.", "obs": "", "entrada": "2025-09-09", "dias": 409, "prio": "baixa", "onco": false, "classe": "C", "score": 48.6, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 12, "d": "Classe C: prazo máximo de 180 dias."}, {"m": "Tempo de espera vs. prazo", "v": 25, "d": "409 dias em fila = 2.3× o prazo da classe C."}, {"m": "Eventos clínicos recentes", "v": 10, "d": "1 ida(s) ao PS/internação nos últimos 180 dias; 1 relato(s) de piora"}, {"m": "Sintomas e função", "v": 1.6, "d": "Dor EVA 2; limitação nenhuma."}], "alerts": [], "eventos": [{"d": "2026-06-21", "t": "pronto_socorro", "r": "observacao", "v": "", "desc": "Atendimento em PS por hernia encarcerada, reducao manual.", "o": "PS municipal"}, {"d": "2026-10-06", "t": "consulta_reavaliacao", "r": "piora", "v": "", "desc": "Reavaliacao: quadro em piora, solicito reclassificacao de prioridade.", "o": "ambulatorio"}], "pos": 405}, {"id": "SOL-2025-00072", "pac": "PAC-00601", "nome": "Elza Machado Rocha", "sexo": "F", "idade": 64, "mun": "Bage", "km": "437", "proc": "Artroplastia total de joelho", "esp": "Ortopedia", "cid": "M17.1", "cidd": "Outras gonartroses primarias", "asa": "3", "com": "obesidade; asma", "dor": "6", "lim": "moderada", "just": "Gonartrose esquerda, dor moderada, mantem atividades com limitacao. Rx grau III. IMC elevado.", "obs": "", "entrada": "2025-03-15", "dias": 587, "prio": "baixa", "onco": false, "classe": "C", "score": 48.3, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 12, "d": "Classe C: prazo máximo de 180 dias."}, {"m": "Tempo de espera vs. prazo", "v": 25, "d": "587 dias em fila = 3.3× o prazo da classe C."}, {"m": "Eventos clínicos recentes", "v": 4, "d": "1 relato(s) de piora"}, {"m": "Sintomas e função", "v": 7.3, "d": "Dor EVA 6; limitação moderada."}], "alerts": [], "eventos": [{"d": "2026-09-11", "t": "contato_telefonico", "r": "relata_piora", "v": "", "desc": "Familiar relata piora da limitacao, pct nao sai mais de casa.", "o": "call center"}], "pos": 406}, {"id": "SOL-2024-00183", "pac": "PAC-00093", "nome": "Diego Goncalves Souza", "sexo": "M", "idade": 82, "mun": "Sao Gabriel", "km": "349", "proc": "Colecistectomia videolaparoscopica", "esp": "Cirurgia Geral", "cid": "K80.2", "cidd": "Calculose da vesicula biliar sem colecistite", "asa": "3", "com": "HAS; obesidade; DPOC", "dor": "6", "lim": "moderada", "just": "Paciente com colelitiase e polipo vesicular de 1,5 cm em US. Indicada colecistectomia. DPOC em uso de broncodilatador.", "obs": "", "entrada": "2024-12-17", "dias": 675, "prio": "baixa", "onco": false, "classe": "C", "score": 48.3, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 12, "d": "Classe C: prazo máximo de 180 dias."}, {"m": "Tempo de espera vs. prazo", "v": 25, "d": "675 dias em fila = 3.8× o prazo da classe C."}, {"m": "Eventos clínicos recentes", "v": 4, "d": "1 relato(s) de piora"}, {"m": "Sintomas e função", "v": 7.3, "d": "Dor EVA 6; limitação moderada."}], "alerts": [], "eventos": [{"d": "2025-02-23", "t": "falta", "r": "consulta", "v": "", "desc": "Paciente nao compareceu - informou falta de transporte.", "o": "ambulatorio"}, {"d": "2025-05-01", "t": "contato_telefonico", "r": "atendeu", "v": "", "desc": "Contato de confirmacao de interesse. Pct mantem desejo de operar.", "o": "call center"}, {"d": "2026-10-20", "t": "contato_telefonico", "r": "relata_piora", "v": "", "desc": "Familiar relata piora da limitacao, pct nao sai mais de casa.", "o": "call center"}], "pos": 407}, {"id": "SOL-2024-00063", "pac": "PAC-00460", "nome": "Carla Freitas Rodrigues", "sexo": "F", "idade": 42, "mun": "Passo Fundo", "km": "333", "proc": "Septoplastia / turbinectomia", "esp": "Otorrinolaringologia", "cid": "J34.2", "cidd": "Desvio do septo nasal", "asa": "3", "com": "HAS; DM2; tabagismo; anticoagulacao oral", "dor": "2", "lim": "leve", "just": "DESVIO SEPTAL + HIPERTROFIA DE CORNETOS. OBSTRUCAO NASAL BILATERAL. RINITE ASSOCIADA. Apneia obstrutiva grave associada, dessaturacao noturna ate 78%.", "obs": "Enfermagem: pct com aspecto debilitada na consulta.", "entrada": "2024-06-04", "dias": 871, "prio": "baixa", "onco": false, "classe": "D", "score": 35.6, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 4, "d": "Classe D: prazo máximo de 360 dias."}, {"m": "Tempo de espera vs. prazo", "v": 25, "d": "871 dias em fila = 2.4× o prazo da classe D."}, {"m": "Eventos clínicos recentes", "v": 4, "d": "1 relato(s) de piora"}, {"m": "Sintomas e função", "v": 2.6, "d": "Dor EVA 2; limitação leve."}], "alerts": [], "eventos": [{"d": "2024-10-11", "t": "contato_telefonico", "r": "atendeu", "v": "", "desc": "Contato de confirmacao de interesse. Pct mantem desejo de operar.", "o": "call center"}, {"d": "2026-10-14", "t": "consulta_reavaliacao", "r": "piora", "v": "", "desc": "Reavaliacao: quadro clinico preocupante, ver justificativa.", "o": "ambulatorio"}], "pos": 650}, {"id": "SOL-2024-00014", "pac": "PAC-00818", "nome": "Sergio Muller Kerber", "sexo": "M", "idade": 53, "mun": "Porto Alegre", "km": "12", "proc": "Herniorrafia inguinal", "esp": "Cirurgia Geral", "cid": "K40.9", "cidd": "Hernia inguinal unilateral, sem obstrucao ou gangrena", "asa": "2", "com": "HAS; tabagismo", "dor": "2", "lim": "leve", "just": "HERNIA INGUINAL BILATERAL VOLUMOSA, DOR AOS ESFORCOS. TRABALHADOR BRACAL, AFASTADO DO TRABALHO. Solicito agendamento.", "obs": "Pct confirma que ainda deseja a cirurgia.", "entrada": "2024-02-11", "dias": 985, "prio": "media", "onco": false, "classe": "D", "score": 35.6, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 4, "d": "Classe D: prazo máximo de 360 dias."}, {"m": "Tempo de espera vs. prazo", "v": 25, "d": "985 dias em fila = 2.7× o prazo da classe D."}, {"m": "Eventos clínicos recentes", "v": 4, "d": "1 relato(s) de piora"}, {"m": "Sintomas e função", "v": 2.6, "d": "Dor EVA 2; limitação leve."}], "alerts": [], "eventos": [{"d": "2026-04-25", "t": "contato_telefonico", "r": "relata_melhora", "v": "", "desc": "Pct refere melhora dos sintomas com tratamento clinico.", "o": "call center"}, {"d": "2026-10-22", "t": "consulta_reavaliacao", "r": "piora", "v": "", "desc": "Reavaliacao anual.", "o": "ambulatorio"}], "pos": 651}, {"id": "SOL-2024-00088", "pac": "PAC-00072", "nome": "Rafael Machado Weber", "sexo": "M", "idade": 77, "mun": "Gravatai", "km": "29", "proc": "Exerese de tumor de pele com reconstrucao", "esp": "Cirurgia Oncologica", "cid": "L72.0", "cidd": "Cisto epidermico", "asa": "2", "com": "DM2; obesidade", "dor": "2", "lim": "nenhuma", "just": "Cisto epidermico dorso, 3,5 cm, episodios de infeccao.", "obs": "Reconfirmado interesse em 12/08/2026.", "entrada": "2024-07-21", "dias": 824, "prio": "media", "onco": false, "classe": "D", "score": 34.6, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 4, "d": "Classe D: prazo máximo de 360 dias."}, {"m": "Tempo de espera vs. prazo", "v": 25, "d": "824 dias em fila = 2.3× o prazo da classe D."}, {"m": "Eventos clínicos recentes", "v": 4, "d": "1 relato(s) de piora"}, {"m": "Sintomas e função", "v": 1.6, "d": "Dor EVA 2; limitação nenhuma."}], "alerts": [], "eventos": [{"d": "2026-02-17", "t": "hba1c", "r": "resultado", "v": "7.3", "desc": "HbA1c 7,3%.", "o": "laboratorio"}, {"d": "2026-07-08", "t": "contato_telefonico", "r": "atendeu", "v": "", "desc": "Reconfirmacao anual de interesse. Pct mantem desejo de operar.", "o": "call center"}, {"d": "2026-07-20", "t": "consulta_reavaliacao", "r": "piora", "v": "", "desc": "Reavaliacao anual.", "o": "ambulatorio"}], "pos": 652}, {"id": "SOL-2024-00166", "pac": "PAC-00816", "nome": "Daniela Prestes Kunz", "sexo": "F", "idade": 77, "mun": "Porto Alegre", "km": "6", "proc": "Facectomia com implante de lente intraocular", "esp": "Oftalmologia", "cid": "H25.8", "cidd": "Outras cataratas senis", "asa": "2", "com": "cardiopatia isquemica; fibrilacao atrial", "dor": "0", "lim": "leve", "just": "Catarata madura direita. Visao CD 1m. Nao consegue mais ler nem reconhecer rostos. Dependente de familiares. Catarata hipermadura com risco de glaucoma facomorfico, PIO 28 mmHg.", "obs": "Enfermagem: pct com aspecto debilitada na consulta.", "entrada": "2024-11-21", "dias": 701, "prio": "media", "onco": false, "classe": "D", "score": 33.3, "mods": [{"m": "Classe de urgência (SWALIS adaptado)", "v": 4, "d": "Classe D: prazo máximo de 360 dias."}, {"m": "Tempo de espera vs. prazo", "v": 24.3, "d": "701 dias em fila = 1.9× o prazo da classe D."}, {"m": "Eventos clínicos recentes", "v": 4, "d": "1 relato(s) de piora"}, {"m": "Sintomas e função", "v": 1.0, "d": "Dor EVA 0; limitação leve."}], "alerts": [], "eventos": [{"d": "2025-01-05", "t": "falta", "r": "exame", "v": "", "desc": "Paciente nao compareceu.", "o": "ambulatorio"}, {"d": "2026-09-05", "t": "consulta_reavaliacao", "r": "piora", "v": "", "desc": "Reavaliacao: quadro clinico preocupante, ver justificativa.", "o": "ambulatorio"}], "pos": 653}]};
+const PRAZO = {A1:15,A2:21,B:60,C:180,D:360};
+const RANK = {A1:5,A2:4,B:3,C:2,D:1};
+const CLS = {A1:"Muito urgente",A2:"Urgente",B:"Prioritário",C:"Moderado",D:"Eletivo"};
+let TOTAL = DATA.total;
+let rows = DATA.rows.map(r => ({...r, delta:0, manual:false, pending:false}));
+const audit = [], feed = [];
+let selId = null, filter = "todas", afilter = "todos";
+
+// Neco: um quadrado bordô com dois olhos.
+function neco(size = 32, mood = "ok", invert = false) {
+  const bg = invert ? "#fff" : "#7a1c30", fg = invert ? "#7a1c30" : "#fff";
+  const eyes = mood === "think" ? [[13,13.5],[23,13.5]] : [[13,18],[23,18]];
+  const e = mood === "alert"
+    ? `<rect x="10" y="17" width="6" height="2.6" rx="1.3" fill="${fg}"/><rect x="20" y="17" width="6" height="2.6" rx="1.3" fill="${fg}"/>`
+    : eyes.map(([x,y]) => `<circle cx="${x}" cy="${y}" r="2.6" fill="${fg}"/>`).join("");
+  return `<svg class="neco" viewBox="0 0 36 36" width="${size}" height="${size}" role="img" aria-label="Neco"><rect width="36" height="36" rx="10" fill="${bg}"/>${e}</svg>`;
+}
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmtDate = d => d ? d.split("-").reverse().join("/") : "—";
+const nowTime = () => new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+const sorted = () => [...rows].sort((a,b) => a.pos - b.pos);
+const first = n => n.split(" ")[0];
+const EVT = {biopsia:"Biópsia",hba1c:"HbA1c",pronto_socorro:"Pronto-socorro",internacao:"Internação",exame_imagem:"Exame de imagem",consulta_reavaliacao:"Reavaliação",contato_telefonico:"Contato telefônico",falta:"Falta"};
+const RES = {positivo:"positiva",negativo:"negativa",inconclusivo:"inconclusiva",atendido_liberado:"liberado",observacao:"em observação",alta:"alta",estavel:"estável",progressao:"progressão",piora:"piora",melhora:"melhora",atendeu:"atendeu",nao_atendeu:"não atendeu",relata_piora:"relata piora",relata_melhora:"relata melhora",informou_cirurgia_outro_servico:"operou em outro serviço",desistiu:"desistiu",consulta:"consulta",exame:"exame",avaliacao_pre_anestesica:"pré-anestésica",resultado:""};
+const hot = e => ["positivo","progressao","piora","relata_piora","observacao"].includes(e.r) || e.t === "internacao";
+function hash(s){let h=0x811c9dc5;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,0x01000193)}return (h>>>0).toString(16).padStart(8,"0")}
+
+function goldenRule() {
+  const s = sorted();
+  for (let i = 0; i < s.length; i++) if (s[i].onco) for (let j = 0; j < i; j++) if (s[j].classe === "D") return {ok:false, onco:s[i], d:s[j]};
+  return {ok:true};
+}
+function relocate(r, to) {
+  const from = r.pos; if (to === from) return;
+  rows.forEach(o => { if (o !== r && o.pos > from) o.pos--; });
+  rows.forEach(o => { if (o !== r && o.pos >= to) o.pos++; });
+  r.pos = to;
+}
+function logAudit(e) {
+  const prev = audit.length ? audit[0].hash : "00000000";
+  e.t = e.t || nowTime(); e.prevHash = prev;
+  e.hash = hash(prev + JSON.stringify([e.t,e.autor,e.tipo,e.id,e.de,e.para,e.just]));
+  audit.unshift(e); renderAudit();
+}
+
+// ---------- justificativa ----------
+function reason(r) {
+  const d = Number(r.dor);
+  switch (r.classe) {
+    case "A1": return `câncer confirmado pelo CID ${esc(r.cid)} com piora recente`;
+    case "A2": return r.onco ? `câncer confirmado pelo CID ${esc(r.cid)}` : `há biópsia positiva, embora o CID ${esc(r.cid)} ainda não indique câncer`;
+    case "B": return d >= 7 ? `dor intensa (${d}/10)` : r.lim === "grave" ? "limitação funcional grave" : /^D(3[7-9]|4[0-8])|^R91/.test(r.cid.replace(".","")) ? "lesão de comportamento incerto" : "idas repetidas ao pronto-socorro";
+    case "C": return d >= 4 ? `dor moderada (${d}/10)` : r.lim === "moderada" ? "limitação funcional moderada" : "uma ida recente ao pronto-socorro";
+    default: return "sem dor, limitação ou piora relevantes";
+  }
+}
+function narrative(r) {
+  const late = r.dias - PRAZO[r.classe];
+  const s = sorted(), above = s[s.indexOf(r) - 1];
+  let html = `<p><b>${CLS[r.classe]} (${r.classe})</b>: ${reason(r)}.</p>`;
+  html += `<p>${late > 0 ? `Espera há ${r.dias} dias, <b>${late} dias além</b> do prazo de ${PRAZO[r.classe]} dias.` : `Espera há ${r.dias} dias, dentro do prazo de ${PRAZO[r.classe]} dias.`}</p>`;
+  if (above) html += `<p class="muted">Abaixo de #${above.pos} ${esc(first(above.nome))}, ${RANK[above.classe] > RANK[r.classe] ? "que é mais urgente" : above.manual ? "posicionado manualmente" : "que tem índice maior"}.</p>`;
+  return html;
+}
+function warnings(r) {
+  const a = [];
+  if (r.pending) a.push(["red","Call center informou cirurgia em outro serviço. Confirme antes de retirar da fila."]);
+  if (/^I20/.test(r.cid)) a.push(["","Angina pode ser caso muito urgente. Não recebi eventos que confirmem; vale revisar."]);
+  r.alerts.filter(t => t.startsWith("Flag")).forEach(() => a.push(["", `O cadastro marca câncer, mas o CID ${r.cid} não indica. Usei o CID.`]));
+  return a;
+}
+const needsReview = r => warnings(r).length > 0;
+
+// ---------- fila ----------
+function renderSeg() {
+  $("#seg").innerHTML = [["todas","Todas"],["A1","A1"],["A2","A2"],["B","B"],["C","C"],["D","D"]].map(([k,l]) => `<button class="${filter===k?"on":""}" data-f="${k}">${l}</button>`).join("");
+}
+function renderQueue() {
+  const q = $("#q").value.trim().toLowerCase();
+  let html = "", last = 0;
+  for (const r of sorted()) {
+    if (filter !== "todas" && r.classe !== filter) continue;
+    if (q && !(r.nome + r.id + r.cid + r.proc).toLowerCase().includes(q)) continue;
+    if (r.pos - last > 1 && !q && filter === "todas") html += `<tr class="gap"><td colspan="4">${r.pos - last - 1} solicitações</td></tr>`;
+    last = r.pos;
+    const late = r.dias - PRAZO[r.classe], d = r.delta;
+    const delta = !d ? "" : `<span class="d ${r.manual ? "man" : d > 0 ? "up" : "down"}">${d > 0 ? "↑" : "↓"}${Math.abs(d)}</span>`;
+    html += `<tr class="row ${selId===r.id?"sel":""} ${r._flash?"moved":""}" data-id="${r.id}">
+      <td class="pos">${r.pos}${delta}</td>
+      <td class="who"><b>${esc(r.nome)}${needsReview(r) ? '<span class="flag" title="Precisa de revisão"></span>' : ""}</b><small>${esc(r.proc)}</small></td>
+      <td><span class="cls ${r.classe}"><i></i>${CLS[r.classe]}</span></td>
+      <td class="hide-sm">${r.dias} dias${late > 0 ? `<br><span class="late">+${late} do prazo</span>` : ""}</td>
+    </tr>`;
+    r._flash = false;
+  }
+  if (TOTAL - last > 0 && !q && filter === "todas") html += `<tr class="gap"><td colspan="4">${TOTAL - last} solicitações</td></tr>`;
+  $("#tbody").innerHTML = html || `<tr><td colspan="4" class="muted" style="text-align:center;padding:32px">Nada encontrado.</td></tr>`;
+  const g = goldenRule();
+  $("#rule").className = "rule" + (g.ok ? "" : " bad");
+  $("#rule").innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/>${g.ok ? '<path d="M9 12l2 2 4-4"/>' : ""}</svg>${g.ok ? "Regra de ouro ok" : "Regra de ouro violada"}`;
+  $("#nav-total").textContent = TOTAL; $("#k-total").textContent = TOTAL;
+}
+
+// ---------- drawer ----------
+function openDrawer(id) {
+  selId = id; const r = rows.find(x => x.id === id);
+  const w = warnings(r), max = [40,25,20,12];
+  const short = ["Urgência clínica","Tempo de espera","Eventos recentes","Dor e limitação"];
+  const val = audit.find(a => a.id === r.id && a.tipo === "val");
+  $("#drawer").innerHTML = `
+    <div class="dr-h">
+      <div class="posbox">${r.pos}</div>
+      <div><h2>${esc(r.nome)}</h2><p>${esc(r.proc)} · ${r.idade} anos</p></div>
+      <button class="x" id="dr-x" aria-label="Fechar">✕</button>
+    </div>
+    <div class="dr-b">
+      <div class="why">${neco(32, w.length ? "think" : "ok")}<div><div class="lbl">Por que está aqui</div>${narrative(r)}</div></div>
+      ${w.map(([c,t]) => `<div class="warn ${c}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>${esc(t)}</div>`).join("")}
+      ${val ? `<div class="ok">✓ Validado por ${esc(val.autor)} às ${val.t}</div>` : ""}
+      <div class="sect">Como o índice foi composto</div>
+      ${r.mods.map((m,i) => `<div class="factor"><b>${short[i]}</b><span>${String(m.v).replace(".",",")} de ${max[i]}</span><div class="track"><i style="width:${m.v/max[i]*100}%"></i></div></div>`).join("")}
+      <details><summary>Dados clínicos</summary>
+        <dl class="kv">
+          <dt>Solicitação</dt><dd class="mono">${r.id}</dd>
+          <dt>CID</dt><dd>${esc(r.cid)} · ${esc(r.cidd)}</dd>
+          <dt>Dor / limitação</dt><dd>${esc(r.dor || "—")}/10 · ${esc(r.lim || "—")}</dd>
+          <dt>ASA</dt><dd>${esc(r.asa || "—")}</dd>
+          <dt>Comorbidades</dt><dd>${esc(r.com || "—")}</dd>
+          <dt>Entrada na fila</dt><dd>${fmtDate(r.entrada)}</dd>
+          <dt>Prioridade manual</dt><dd style="text-transform:capitalize">${esc(r.prio || "vazia")}</dd>
+          <dt>Texto do médico</dt><dd>${esc(r.just)}</dd>
+          ${r.obs ? `<dt>Observações</dt><dd>${esc(r.obs)}</dd>` : ""}
+        </dl>
+      </details>
+      <details><summary>Eventos (${r.eventos.length})</summary>
+        ${r.eventos.length ? `<ul class="ev">${[...r.eventos].reverse().map(e => `<li class="${hot(e)?"hot":""}"><time>${fmtDate(e.d)}</time><div><b>${EVT[e.t]||e.t}${RES[e.r] ? " " + RES[e.r] : ""}${e.v ? ` · ${e.t==="hba1c" ? e.v+"%" : e.v+" dias"}` : ""}</b><small>${esc(e.desc)}</small></div></li>`).join("")}</ul>` : `<p class="muted" style="margin:0 0 16px">Sem eventos.</p>`}
+      </details>
+    </div>
+    <div class="dr-f">
+      <button class="btn" id="dr-move">Mudar posição</button>
+      <button class="btn primary" id="dr-ok" ${val ? "disabled" : ""}>Concordo</button>
+    </div>`;
+  $("#drawer").classList.add("on"); $("#scrim").classList.add("on");
+  $("#dr-x").onclick = closeDrawer;
+  $("#dr-ok").onclick = () => {
+    logAudit({autor:"Marina Albuquerque", tipo:"val", id:r.id, nome:r.nome, de:r.pos, para:r.pos, just:"Justificativa do Neco revisada e considerada plausível."});
+    toast("Validação registrada."); openDrawer(r.id); renderHome();
+  };
+  $("#dr-move").onclick = () => openModal(r);
+  renderQueue();
+}
+function closeDrawer() { selId = null; $("#drawer").classList.remove("on"); $("#scrim").classList.remove("on"); renderQueue(); }
+
+// ---------- modal ----------
+let mRow = null;
+function openModal(r) {
+  mRow = r;
+  $("#m-sub").textContent = `${r.nome} está na posição ${r.pos}.`;
+  $("#m-pos").value = ""; $("#m-pos").max = TOTAL; $("#m-cat").value = ""; $("#m-txt").value = "";
+  $("#modal").hidden = false; validateModal(); $("#m-pos").focus();
+}
+function validateModal() {
+  const r = mRow, raw = parseInt($("#m-pos").value), to = Math.max(1, Math.min(TOTAL, raw || r.pos));
+  const txt = $("#m-txt").value.trim(), cat = $("#m-cat").value;
+  $("#m-count").textContent = `${txt.length} / 40`;
+  const snap = rows.map(o => o.pos); relocate(r, to); const g = goldenRule(); rows.forEach((o,i) => o.pos = snap[i]);
+  let msg, mood = "think", bad = false;
+  if (!g.ok) { bad = true; mood = "alert"; msg = `Não é possível: ${esc(g.onco.nome)} tem câncer e ficaria atrás de quem não tem urgência.`; }
+  else if (!raw || to === r.pos) msg = "Informe a nova posição.";
+  else msg = `${to < r.pos ? "Sobe" : "Desce"} de ${r.pos} para ${to}. A posição fica travada e o registro vai para a auditoria.`;
+  $("#m-prev").className = "prev" + (bad ? " bad" : "");
+  $("#m-prev").innerHTML = `${neco(24, mood)}<span>${msg}</span>`;
+  $("#m-ok").disabled = bad || !raw || to === r.pos || !cat || txt.length < 40;
+}
+function confirmModal() {
+  const r = mRow, to = Math.max(1, Math.min(TOTAL, parseInt($("#m-pos").value))), from = r.pos;
+  const before = new Map(rows.map(o => [o.id, o.pos]));
+  relocate(r, to);
+  rows.forEach(o => { if (o !== r && o.pos !== before.get(o.id)) o.delta = before.get(o.id) - o.pos; });
+  r.delta = from - to; r.manual = true; r._flash = true;
+  logAudit({autor:"Marina Albuquerque", tipo:"man", id:r.id, nome:r.nome, de:from, para:to, just:`${$("#m-cat").value}. ${$("#m-txt").value.trim()}`});
+  pushFeed(`Você moveu ${first(r.nome)} de ${from} para ${to}`);
+  $("#modal").hidden = true; toast(`Movido de ${from} para ${to}.`); openDrawer(r.id);
+}
+
+// ---------- API simulada ----------
+function move(r, reasonTxt) {
+  const from = r.pos, before = new Map(rows.map(o => [o.id, o.pos]));
+  let prev = null;
+  for (const o of sorted()) if (o !== r && (RANK[o.classe] > RANK[r.classe] || (RANK[o.classe] === RANK[r.classe] && o.score >= r.score))) prev = o;
+  let to = prev ? prev.pos + 1 : 1; if (to > from) to--;
+  relocate(r, to);
+  rows.forEach(o => { if (o.pos !== before.get(o.id)) o.delta = before.get(o.id) - o.pos; });
+  r._flash = true;
+  logAudit({autor:"Neco", tipo:"auto", id:r.id, nome:r.nome, de:from, para:to, just:reasonTxt});
+  pushFeed(`${first(r.nome)} subiu de ${from} para ${to} após ida ao PS`);
+  return r;
+}
+const SCRIPT = [
+  () => { const r = rows.find(x => x.cid === "K80.2"); if (!r) return;
+    r.eventos.push({d:"2026-10-23",t:"pronto_socorro",r:"observacao",v:"",desc:"Dor em hipocôndrio direito, suspeita de colecistite aguda.",o:"PS Hospital Sao Lucas"});
+    r.classe = "B";
+    r.mods = [{m:"",v:22,d:""},{m:"",v:25,d:""},{m:"",v:10,d:""},r.mods[3]];
+    r.score = +r.mods.reduce((s,m) => s + m.v, 0).toFixed(1);
+    return move(r, "Pronto-socorro hoje com suspeita de colecistite aguda. Reclassificado de Moderado (C) para Prioritário (B).");
+  },
+  () => { const r = {id:"SOL-2026-00942",pac:"PAC-00901",nome:"Rosa Maria Dutra",sexo:"F",idade:58,mun:"Canoas",km:"18",proc:"Mastectomia / setorectomia de mama",esp:"Mastologia",cid:"C50.9",cidd:"Neoplasia maligna da mama",asa:"2",com:"HAS",dor:"3",lim:"leve",just:"Nódulo em mama esquerda, core biopsy com carcinoma ductal invasivo.",obs:"",entrada:"2026-10-23",dias:0,prio:"",onco:true,classe:"A2",score:37.4,
+      mods:[{v:34},{v:0},{v:0},{v:3.4}],alerts:[],eventos:[{d:"2026-10-15",t:"biopsia",r:"positivo",v:"",desc:"Carcinoma ductal invasivo grau 2.",o:"patologia"}],delta:0,manual:false,pending:false};
+    const to = sorted().filter(o => o.classe === "A2").pop().pos + 1;
+    rows.forEach(o => { if (o.pos >= to) { o.pos++; o.delta = -1; } });
+    r.pos = to; r._flash = true; rows.push(r); TOTAL++;
+    logAudit({autor:"Neco", tipo:"api", id:r.id, nome:r.nome, de:null, para:to, just:"Nova entrada com câncer de mama confirmado por biópsia. Classificada como Urgente (A2), acima de todos os casos sem câncer."});
+    pushFeed(`Nova entrada: ${first(r.nome)} na posição ${to}`);
+    return r;
+  },
+  () => { const r = rows.find(x => x.cid === "K40.9"); if (!r) return;
+    r.pending = true;
+    r.eventos.push({d:"2026-10-23",t:"contato_telefonico",r:"informou_cirurgia_outro_servico",v:"",desc:"Familiar informa que paciente operou em hospital privado.",o:"call center"});
+    logAudit({autor:"Neco", tipo:"auto", id:r.id, nome:r.nome, de:r.pos, para:r.pos, just:"Informou cirurgia em outro serviço. Posição mantida até confirmação humana: o Neco não retira pacientes da fila."});
+    pushFeed(`${first(r.nome)} pode ter operado em outro serviço`);
+    return r;
+  }
+];
+let step = 0;
+function simulate() {
+  if (step >= SCRIPT.length) { toast("Nenhum evento novo na API."); return; }
+  rows.forEach(o => { if (!o.manual) o.delta = 0; });
+  const r = SCRIPT[step++]();
+  renderQueue(); renderHome();
+  if (r) toast(`Fila atualizada: ${first(r.nome)}.`);
+}
+function pushFeed(txt) { feed.unshift({txt, t: nowTime(), fresh: true}); renderFeed(); }
+function renderFeed() {
+  $("#feed").innerHTML = feed.slice(0, 5).map(f => `<li class="${f.fresh ? "new" : ""}"><time>${f.t}</time><span>${f.txt}</span></li>`).join("");
+  feed.forEach(f => f.fresh = false);
+}
+
+// ---------- home ----------
+function renderHome() {
+  const rev = sorted().filter(r => needsReview(r) && !audit.some(a => a.id === r.id && (a.tipo === "val" || a.tipo === "man")));
+  $("#k-rev").textContent = rev.length;
+  $("#hero-msg").textContent = rev.length
+    ? `A fila está atualizada. Separei ${rev.length} ${rev.length === 1 ? "caso" : "casos"} em que vale a sua revisão.`
+    : "A fila está atualizada e não há casos pendentes de revisão.";
+  $("#review").innerHTML = rev.slice(0, 5).map(r => `<button class="item" data-open="${r.id}">${neco(28, "think")}<span><b>${esc(r.nome)}</b><small>Posição ${r.pos} · ${esc(warnings(r)[0][1])}</small></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></button>`).join("")
+    || `<p class="muted" style="padding:20px;margin:0">Tudo revisado.</p>`;
+}
+
+// ---------- auditoria ----------
+function renderAudit() {
+  const label = {auto:"Neco",api:"API",man:"Manual",val:"Validação"};
+  const list = audit.filter(a => afilter === "todos" || a.tipo === afilter || (afilter === "auto" && a.tipo === "api"));
+  $("#log").innerHTML = list.map(a => {
+    const what = a.tipo === "val" ? `validou a posição ${a.para}` : a.de == null ? `incluiu na posição ${a.para}` : a.de === a.para ? `manteve na posição ${a.para}` : `moveu de ${a.de} para ${a.para}`;
+    return `<li><time>${a.t}</time><div><div class="t"><span class="badge ${a.tipo}">${label[a.tipo]}</span>${esc(a.autor)} <em>${what} ·</em> ${esc(a.nome)}</div><p>${esc(a.just)}</p></div><div class="h" title="hash ${a.hash} ← ${a.prevHash}">#${a.hash}</div></li>`;
+  }).join("") || `<li><span></span><span class="muted">Nenhum registro.</span></li>`;
+  $("#aseg").innerHTML = [["todos","Todos"],["auto","Neco"],["man","Manuais"],["val","Validações"]].map(([k,l]) => `<button class="${afilter===k?"on":""}" data-a="${k}">${l}</button>`).join("");
+  let ok = true; for (let i = 0; i < audit.length - 1; i++) if (audit[i].prevHash !== audit[i+1].hash) ok = false;
+  $("#chain-txt").textContent = ok ? `${audit.length} registros encadeados por hash. Nenhuma alteração detectada.` : "Cadeia quebrada: um registro foi alterado.";
+}
+function exportCSV() {
+  const lines = ["horario,autor,tipo,solicitacao_id,de,para,justificativa,hash,hash_anterior"].concat([...audit].reverse().map(a => [a.t,a.autor,a.tipo,a.id,a.de ?? "",a.para,`"${a.just.replace(/"/g,'""')}"`,a.hash,a.prevHash].join(",")));
+  const url = URL.createObjectURL(new Blob([lines.join("\n")], {type:"text/csv"}));
+  const el = document.createElement("a"); el.href = url; el.download = "auditoria_fila.csv"; el.click(); URL.revokeObjectURL(url);
+}
+
+let tt;
+function toast(msg) { $("#toast-neco").innerHTML = neco(24, "ok", true); $("#toast-txt").textContent = msg; $("#toast").classList.add("on"); clearTimeout(tt); tt = setTimeout(() => $("#toast").classList.remove("on"), 2800); }
+function go(p) {
+  document.querySelectorAll(".page").forEach(s => s.hidden = s.dataset.page !== p);
+  document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("on", b.dataset.go === p));
+  window.scrollTo(0, 0);
+}
+
+// ---------- seed ----------
+(function seed() {
+  const s = sorted();
+  [
+    {t:"06:02", autor:"Neco", tipo:"api", id:"LOTE-0001", nome:"Carga inicial", de:null, para:941, just:"941 solicitações recebidas e priorizadas. 44 marcações de câncer do cadastro não batiam com o CID; usei o CID."},
+    {t:"06:12", autor:"Neco", tipo:"auto", id:s[2].id, nome:s[2].nome, de:5, para:3, just:"Tomografia com progressão da doença."},
+    {t:"08:05", autor:"Marina Albuquerque", tipo:"val", id:s[0].id, nome:s[0].nome, de:1, para:1, just:"Justificativa do Neco revisada e considerada plausível."},
+  ].forEach(e => { const prev = audit.length ? audit[0].hash : "00000000"; e.prevHash = prev; e.hash = hash(prev + JSON.stringify([e.t,e.autor,e.tipo,e.id,e.de,e.para,e.just])); audit.unshift(e); });
+  feed.push({txt:`Você validou a posição de ${first(s[0].nome)}`, t:"08:05"}, {txt:`${first(s[2].nome)} subiu de 5 para 3`, t:"06:12"}, {txt:"Fila carregada com 941 solicitações", t:"06:02"});
+})();
+
+document.addEventListener("click", e => {
+  const g = e.target.closest("[data-go]"); if (g) go(g.dataset.go);
+  const tr = e.target.closest("tr.row"); if (tr) openDrawer(tr.dataset.id);
+  const o = e.target.closest("[data-open]"); if (o) { go("fila"); openDrawer(o.dataset.open); }
+  const f = e.target.closest("[data-f]"); if (f) { filter = f.dataset.f; renderSeg(); renderQueue(); }
+  const a = e.target.closest("[data-a]"); if (a) { afilter = a.dataset.a; renderAudit(); }
+  if (e.target.closest("[data-close]")) $("#modal").hidden = true;
+});
+$("#scrim").onclick = closeDrawer;
+document.addEventListener("keydown", e => { if (e.key === "Escape") { if (!$("#modal").hidden) $("#modal").hidden = true; else closeDrawer(); } });
+$("#q").oninput = renderQueue;
+["#m-pos","#m-cat","#m-txt"].forEach(s => $(s).addEventListener("input", validateModal));
+$("#m-ok").onclick = confirmModal;
+$("#sim-home").onclick = simulate; $("#sim-fila").onclick = simulate;
+$("#export").onclick = exportCSV;
+$("#brand-neco").innerHTML = neco(28, "ok", true);
+$("#hero-neco").innerHTML = neco(56);
+renderSeg(); renderQueue(); renderAudit(); renderFeed(); renderHome();
+</script>
+</body>
+</html>
