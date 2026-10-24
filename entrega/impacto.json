@@ -1,0 +1,131 @@
+{
+ "total": 941,
+ "baseline": "Fila de hoje: prioridade manual da regulação (alta, média, baixa), com desempate pelo maior tempo de espera.",
+ "verifier": {
+  "neco": {
+   "ok": true,
+   "output": "Arquivo: entrega\\fila_priorizada.csv  |  941 posições  |  fila: 941 solicitações\n- posição mediana dos oncológicos: 112 de 941\n- oncológicos no primeiro terço: 100%\n- pacientes com PS/internação nos últimos 180 dias na primeira metade: 87%\n- pacientes sem urgência clínica no último terço: 97%\n\n\nRESULTADO: OK — regra de ouro respeitada e formato válido",
+   "violacoes": 0,
+   "medianaOnco": 112,
+   "oncoPrimeiroTerco": 100,
+   "psPrimeiraMetade": 87,
+   "calmosUltimoTerco": 97
+  },
+  "manual": {
+   "ok": false,
+   "output": "Arquivo: entrega\\comparacao\\fila_manual_referencia.csv  |  941 posições  |  fila: 941 solicitações\n- posição mediana dos oncológicos: 287 de 941\n- oncológicos no primeiro terço: 53%\n- pacientes com PS/internação nos últimos 180 dias na primeira metade: 38%\n- pacientes sem urgência clínica no último terço: 49%\n\nERRO:  REGRA DE OURO VIOLADA: 177 paciente(s) oncológico(s) abaixo do primeiro paciente sem urgência clínica (posição 12). Exemplos: SOL-2025-00011 (C50.9, pos 13), SOL-2025-00324 (C34.3, pos 38), SOL-2026-00036 (C73, pos 57), SOL-2026-00155 (C61, pos 68), SOL-2026-00191 (C44.9, pos 75)\n\nRESULTADO: 1 erro(s)",
+   "violacoes": 177,
+   "medianaOnco": 287,
+   "oncoPrimeiroTerco": 53,
+   "psPrimeiraMetade": 38,
+   "calmosUltimoTerco": 49
+  }
+ },
+ "matrix": [
+  {
+   "cls": "A1",
+   "alta": 6,
+   "media": 8,
+   "baixa": 14,
+   "vazia": 1
+  },
+  {
+   "cls": "A2",
+   "alta": 93,
+   "media": 46,
+   "baixa": 32,
+   "vazia": 0
+  },
+  {
+   "cls": "B",
+   "alta": 75,
+   "media": 46,
+   "baixa": 78,
+   "vazia": 3
+  },
+  {
+   "cls": "C",
+   "alta": 59,
+   "media": 110,
+   "baixa": 73,
+   "vazia": 5
+  },
+  {
+   "cls": "D",
+   "alta": 66,
+   "media": 60,
+   "baixa": 164,
+   "vazia": 2
+  }
+ ],
+ "headline": {
+  "a1Total": 29,
+  "a1Low": 15,
+  "urgentTotal": 200,
+  "urgentLow": 47,
+  "dTotal": 292,
+  "dHigh": 66
+ },
+ "movers": [
+  {
+   "id": "SOL-2026-00808",
+   "initials": "M.L.C.",
+   "procedure": "Mastectomia / setorectomia de mama",
+   "cls": "A1",
+   "reason": "neoplasia maligna (CID C50.9) com piora recente",
+   "manualPriority": "baixa",
+   "manualPosition": 927,
+   "necoPosition": 16
+  },
+  {
+   "id": "SOL-2024-00165",
+   "initials": "V.P.R.",
+   "procedure": "Exerese de tumor de pele com reconstrucao",
+   "cls": "A1",
+   "reason": "neoplasia maligna (CID C44.3) com piora recente",
+   "manualPriority": "vazia",
+   "manualPosition": 933,
+   "necoPosition": 25
+  },
+  {
+   "id": "SOL-2026-00719",
+   "initials": "D.L.D.",
+   "procedure": "Exerese de tumor de pele com reconstrucao",
+   "cls": "A1",
+   "reason": "neoplasia maligna (CID C44.3) com piora recente",
+   "manualPriority": "baixa",
+   "manualPosition": 921,
+   "necoPosition": 17
+  },
+  {
+   "id": "SOL-2026-00563",
+   "initials": "C.B.C.",
+   "procedure": "Colectomia",
+   "cls": "A1",
+   "reason": "neoplasia maligna (CID C18.7) com piora recente",
+   "manualPriority": "baixa",
+   "manualPosition": 910,
+   "necoPosition": 7
+  },
+  {
+   "id": "SOL-2026-00647",
+   "initials": "N.B.B.",
+   "procedure": "Tireoidectomia",
+   "cls": "A2",
+   "reason": "biópsia positiva com CID D44.0 ainda não maligno",
+   "manualPriority": "baixa",
+   "manualPosition": 918,
+   "necoPosition": 40
+  },
+  {
+   "id": "SOL-2026-00396",
+   "initials": "O.O.S.",
+   "procedure": "Mastectomia / setorectomia de mama",
+   "cls": "A1",
+   "reason": "neoplasia maligna (CID C50.4) com piora recente",
+   "manualPriority": "baixa",
+   "manualPosition": 892,
+   "necoPosition": 22
+  }
+ ]
+}

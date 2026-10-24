@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:backend": "vite --mode backend",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -b"

@@ -28,7 +28,7 @@ declare global {
         decorativo?: "" | undefined;
         rotulo?: string;
         "movimento-reduzido"?: "" | undefined;
-        className?: string;
+        class?: string;
         style?: CSSProperties;
       };
     }

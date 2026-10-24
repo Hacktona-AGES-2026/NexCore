@@ -1,17 +1,20 @@
-import { config, type Backend } from "./backend";
-import type { ConnectionStatus, ServerMessage } from "./types";
+import { ApiError, config, type Backend } from "./backend";
+import type { ConnectionStatus, ImpactReport, ServerMessage } from "./types";
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
+async function send(path: string, init?: RequestInit) {
   const res = await fetch(`${config.apiUrl}/hospitais/${config.hospitalId}${path}`, {
     ...init,
-    headers: { "Content-Type": "application/json", ...init?.headers },
+    // Só com corpo: um GET sem cabeçalhos extras não exige preflight de CORS.
+    headers: init?.body ? { "Content-Type": "application/json", ...init.headers } : init?.headers,
   });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    throw new Error(body.detail ?? `Erro ${res.status} em ${path}`);
+    throw new ApiError(body.detail ?? `Erro ${res.status} em ${path}`, res.status);
   }
-  return res.json() as Promise<T>;
+  return res;
 }
+const request = async <T,>(path: string, init?: RequestInit) => (await send(path, init)).json() as Promise<T>;
+const missing = (err: unknown) => err instanceof ApiError && err.status === 404;
 
 /**
  * WebSocket com reconexão (backoff exponencial até 15 s).
@@ -59,6 +62,15 @@ export const httpBackend: Backend = {
   getPendencies: () => request("/pendencias"),
   getEquity: () => request("/painel/equidade"),
   getSummary: () => request("/painel/resumo"),
+  // Enquanto o backend não tiver /painel/impacto, usa o relatório gerado por
+  // entrega/gerar_entrega.py com o verificador oficial (mesmo dataset).
+  getImpact: () => request<ImpactReport>("/painel/impacto").catch(async (err) => {
+    if (!missing(err)) throw err;
+    const ref = (await import("../mock/impacto.json")).default as ImpactReport;
+    return { ...ref, source: "referencia" as const };
+  }),
+  // Sem /fila/exportar, a tela de Impacto monta o CSV a partir da fila ao vivo.
+  exportQueueCsv: async () => (await send("/fila/exportar")).text(),
   reorder: (id, req) => request(`/fila/${id}/reordenar`, { method: "POST", body: JSON.stringify(req) }),
   validate: (id) => request(`/fila/${id}/validar`, { method: "POST" }),
   resolvePendency: (id, req) => request(`/pendencias/${id}/resolver`, { method: "POST", body: JSON.stringify(req) }),

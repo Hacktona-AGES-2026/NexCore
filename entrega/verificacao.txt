@@ -1,0 +1,8 @@
+Arquivo: entrega\fila_priorizada.csv  |  941 posições  |  fila: 941 solicitações
+- posição mediana dos oncológicos: 112 de 941
+- oncológicos no primeiro terço: 100%
+- pacientes com PS/internação nos últimos 180 dias na primeira metade: 87%
+- pacientes sem urgência clínica no último terço: 97%
+
+
+RESULTADO: OK — regra de ouro respeitada e formato válido

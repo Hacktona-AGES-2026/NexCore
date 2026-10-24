@@ -280,7 +280,7 @@
      "o": "UPA Lomba do Pinheiro"
     }
    ],
-   "pos": 3
+   "pos": 4
   },
   {
    "id": "SOL-2026-00340",
@@ -379,7 +379,7 @@
      "o": "Hospital Sao Lucas"
     }
    ],
-   "pos": 4
+   "pos": 3
   },
   {
    "id": "SOL-2026-00563",
@@ -470,7 +470,7 @@
      "o": "ambulatorio oncologia"
     }
    ],
-   "pos": 5
+   "pos": 7
   },
   {
    "id": "SOL-2025-00011",
@@ -569,7 +569,7 @@
      "o": "radiologia"
     }
    ],
-   "pos": 6
+   "pos": 5
   },
   {
    "id": "SOL-2026-00129",
@@ -644,7 +644,7 @@
      "o": "radiologia"
     }
    ],
-   "pos": 7
+   "pos": 6
   },
   {
    "id": "SOL-2026-00879",
@@ -1875,7 +1875,7 @@
      "o": "call center"
     }
    ],
-   "pos": 406
+   "pos": 407
   },
   {
    "id": "SOL-2024-00183",
@@ -1950,7 +1950,7 @@
      "o": "call center"
     }
    ],
-   "pos": 407
+   "pos": 406
   },
   {
    "id": "SOL-2024-00063",
@@ -2017,7 +2017,7 @@
      "o": "ambulatorio"
     }
    ],
-   "pos": 650
+   "pos": 651
   },
   {
    "id": "SOL-2024-00014",
@@ -2084,7 +2084,7 @@
      "o": "ambulatorio"
     }
    ],
-   "pos": 651
+   "pos": 650
   },
   {
    "id": "SOL-2024-00088",

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ChevronRight } from "../components/icons";
 import { Neco } from "../components/Neco";
@@ -9,7 +10,12 @@ export function Home() {
   const { total, entries, activity, backend, patches } = useQueue();
   const review = useReviewList();
   const navigate = useNavigate();
-  const urgent = entries.filter((e) => e.urgencyClass === "A1").length;
+  const [a1, setA1] = useState<number | null>(null);
+  // A contagem por classe vem do resumo do servidor (a fila do mock é só uma amostra).
+  useEffect(() => {
+    backend.getSummary().then((s) => setA1(s.byClass.find((c) => c.cls === "A1")?.total ?? null)).catch(console.error);
+  }, [backend, total]);
+  const urgent = a1 ?? entries.filter((e) => e.urgencyClass === "A1").length;
 
   return (
     <section className="page">
@@ -23,8 +29,7 @@ export function Home() {
 
       <div className="stats">
         <div className="card stat"><span>Na fila</span><b>{total}</b></div>
-        {/* TODO: o backend deve mandar a contagem por classe; a amostra do mock não tem todos os A1. */}
-        <div className="card stat"><span>Urgentes (A1)</span><b>{Math.max(urgent, 29)}</b></div>
+        <div className="card stat"><span>Urgentes (A1)</span><b>{urgent}</b></div>
         <div className="card stat accent"><span>Para revisar</span><b>{review.length}</b></div>
       </div>
 

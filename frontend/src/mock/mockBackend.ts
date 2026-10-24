@@ -2,13 +2,14 @@
 // o front funcionar antes do servidor existir (VITE_USE_MOCK=true).
 import type { Backend } from "../api/backend";
 import type {
-  AuditEntry, AuditKind, ClinicalEvent, ConnectionStatus, EquityReport, Pendency, QueueEntry, QueueSummary, ScoreFactor,
+  AuditEntry, AuditKind, ClinicalEvent, ConnectionStatus, EquityReport, ImpactReport, Pendency, QueueEntry, QueueSummary, ScoreFactor,
   ServerMessage, UrgencyClass, Warning,
 } from "../api/types";
 import { CLASS_RANK, goldenRuleViolation, relocate } from "../domain/queue";
 import { extractHighlights } from "./highlights";
 import { answer } from "./neco";
 import seed from "./seed.json";
+import impact from "./impacto.json";
 import stats from "./stats.json";
 
 type SeedRow = (typeof seed.rows)[number];
@@ -174,6 +175,9 @@ export function createMockBackend(): Backend {
     getPendencies: async () => [...pendencies],
     getEquity: async () => equity,
     getSummary: async () => summary(),
+    getImpact: async () => impact as ImpactReport,
+    // Carregado só quando pedido: o CSV oficial tem as 941 justificativas.
+    exportQueueCsv: async () => (await import("./fila_priorizada.csv?raw")).default,
     async resolvePendency(id, req) {
       const p = pendencies.find((x) => x.id === id);
       if (!p) throw new Error("Pendência não encontrada");

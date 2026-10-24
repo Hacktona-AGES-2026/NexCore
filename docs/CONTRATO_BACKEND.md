@@ -10,6 +10,20 @@ Para o front usar o servidor real: `frontend/.env` com `VITE_USE_MOCK=false`, `V
 
 ---
 
+## Status da integração (24/10)
+
+O front roda contra o backend real com `npm run dev:backend`. Testado ponta a ponta: fila completa (941), reordenação com regra de ouro (422), validação, auditoria encadeada, pendências, resumo, equidade, Pergunte ao Neco e WebSocket (`queue.snapshot`, `queue.patch`, `audit.appended`, `pendency.resolved`, `activity`). Todos os formatos batem com `types.ts`.
+
+Ainda faltam no backend:
+
+| Rota | Hoje o front faz |
+|---|---|
+| `GET /painel/impacto` | usa o relatório fixo de `entrega/impacto.json` |
+| `GET /fila/exportar` | monta o CSV com a fila ao vivo (passa no verificador oficial) |
+| `POST /fila/entradas`, `POST /fila/eventos` | nada: sem ingestão, a fila só muda por ação humana. É o que faz a demonstração "ao vivo" funcionar |
+
+---
+
 ## 1. Arquitetura da comunicação
 
 | Canal | Para quê |
@@ -47,6 +61,8 @@ Regras gerais:
 | POST | `/pendencias/{id}/resolver` | `ResolveRequest` | `AuditEntry` |
 | GET | `/painel/equidade` | — | `EquityReport` |
 | GET | `/painel/resumo` | — | `QueueSummary` |
+| GET | `/painel/impacto` | — | `ImpactReport` |
+| GET | `/fila/exportar` | — | `text/csv`: o `fila_priorizada.csv` oficial |
 | POST | `/neco/perguntar` | `AskRequest` | `NecoAnswer` |
 | POST | `/fila/entradas` | nova solicitação | `QueueEntry` criada *(ingestão; o front não chama)* |
 | POST | `/fila/eventos` | evento clínico | `202` *(ingestão; o front não chama)* |
@@ -277,6 +293,13 @@ Achado atual dos dados (bom para o pitch): quem mora a mais de 200 km espera em 
 
 ---
 
+### `GET /painel/impacto` → `ImpactReport` e `GET /fila/exportar`
+
+Já existe uma implementação de referência em Python: [`entrega/gerar_entrega.py`](../entrega/gerar_entrega.py) com o cálculo em [`entrega/neco.py`](../entrega/neco.py) (só biblioteca padrão). Ela gera exatamente o `impacto.json` e o `fila_priorizada.csv` que o front consome.
+
+- `/fila/exportar`: CSV com `solicitacao_id,posicao,justificativa` da fila **atual** (respeitando reordenações manuais).
+- `/painel/impacto`: roda o verificador oficial (`verificar_fila_priorizada.py`) na fila do Neco e na fila manual de referência (prioridade manual, desempate por espera) e devolve os indicadores, a matriz classe × prioridade manual, os números de destaque e quem mais subiu. Pode ser calculado na subida e recalculado a cada mudança.
+
 ## 9. Pergunte ao Neco
 
 `POST /neco/perguntar` com `{ "question": "Por que a Gabriela está na posição dela?" }` → 
@@ -298,7 +321,7 @@ Achado atual dos dados (bom para o pitch): quem mora a mais de 200 km espera em 
 |---|---|---|
 | **P0** | `GET /fila` com cálculo do Neco (seções 3 e 4.1–4.4), WebSocket com `queue.snapshot`, `reordenar`, `validar`, `GET /auditoria` com hash | É o fluxo principal da demonstração |
 | **P1** | Ingestão (`/fila/entradas`, `/fila/eventos`) com recálculo e `queue.patch` / `audit.appended` / `activity` | Mostra a fila "viva" |
-| **P2** | `/pendencias` + resolver, `/painel/resumo`, `/painel/equidade` | Pendências, telão e equidade |
+| **P2** | `/pendencias` + resolver, `/painel/resumo`, `/painel/equidade`, `/painel/impacto`, `/fila/exportar` | Pendências, telão, equidade e impacto (este já tem script de referência) |
 | **P3** | `/neco/perguntar` com LLM, `highlights` mais espertos que regex | Diferencial; o front já funciona com o mock enquanto isso |
 
 Hoje a troca é tudo ou nada (`VITE_USE_MOCK`): ou o front usa o mock inteiro, ou o servidor inteiro. Se quiserem integrar por partes, me avisem que eu faço o front cair no mock só nas rotas que ainda não existirem.

@@ -1,0 +1,9 @@
+Arquivo: entrega\comparacao\fila_manual_referencia.csv  |  941 posições  |  fila: 941 solicitações
+- posição mediana dos oncológicos: 287 de 941
+- oncológicos no primeiro terço: 53%
+- pacientes com PS/internação nos últimos 180 dias na primeira metade: 38%
+- pacientes sem urgência clínica no último terço: 49%
+
+ERRO:  REGRA DE OURO VIOLADA: 177 paciente(s) oncológico(s) abaixo do primeiro paciente sem urgência clínica (posição 12). Exemplos: SOL-2025-00011 (C50.9, pos 13), SOL-2025-00324 (C34.3, pos 38), SOL-2026-00036 (C73, pos 57), SOL-2026-00155 (C61, pos 68), SOL-2026-00191 (C44.9, pos 75)
+
+RESULTADO: 1 erro(s)

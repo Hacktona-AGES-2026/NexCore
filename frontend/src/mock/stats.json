@@ -585,14 +585,6 @@
    },
    {
     "position": 3,
-    "id": "SOL-2026-00781",
-    "initials": "N.F.M.",
-    "procedure": "Lobectomia pulmonar",
-    "cls": "A1",
-    "days": 67
-   },
-   {
-    "position": 4,
     "id": "SOL-2026-00340",
     "initials": "C.M.V.",
     "procedure": "Colectomia",
@@ -600,15 +592,15 @@
     "days": 184
    },
    {
-    "position": 5,
-    "id": "SOL-2026-00563",
-    "initials": "C.B.C.",
-    "procedure": "Colectomia",
+    "position": 4,
+    "id": "SOL-2026-00781",
+    "initials": "N.F.M.",
+    "procedure": "Lobectomia pulmonar",
     "cls": "A1",
-    "days": 118
+    "days": 67
    },
    {
-    "position": 6,
+    "position": 5,
     "id": "SOL-2025-00011",
     "initials": "V.P.C.",
     "procedure": "Mastectomia / setorectomia de mama",
@@ -616,12 +608,20 @@
     "days": 648
    },
    {
-    "position": 7,
+    "position": 6,
     "id": "SOL-2026-00129",
     "initials": "I.P.K.",
     "procedure": "Histerectomia",
     "cls": "A1",
     "days": 252
+   },
+   {
+    "position": 7,
+    "id": "SOL-2026-00563",
+    "initials": "C.B.C.",
+    "procedure": "Colectomia",
+    "cls": "A1",
+    "days": 118
    },
    {
     "position": 8,
@@ -649,19 +649,19 @@
    },
    {
     "position": 11,
-    "id": "SOL-2026-00881",
-    "initials": "F.H.S.",
-    "procedure": "Exerese de tumor de pele com reconstrucao",
-    "cls": "A1",
-    "days": 50
-   },
-   {
-    "position": 12,
     "id": "SOL-2026-00331",
     "initials": "M.M.B.",
     "procedure": "Prostatectomia radical",
     "cls": "A1",
     "days": 188
+   },
+   {
+    "position": 12,
+    "id": "SOL-2026-00881",
+    "initials": "F.H.S.",
+    "procedure": "Exerese de tumor de pele com reconstrucao",
+    "cls": "A1",
+    "days": 50
    }
   ]
  },

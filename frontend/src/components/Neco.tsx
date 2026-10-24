@@ -76,7 +76,7 @@ export function Neco({ size = 32, mood = "ok", invert = false, idle = true, busy
   return (
     <sabia-selo
       ref={ref}
-      className="neco"
+      class="neco"
       tamanho={size}
       ocioso={idle ? "" : undefined}
       rotulo="Neco, assistente de priorização"

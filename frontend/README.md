@@ -8,7 +8,16 @@ npm run dev      # http://localhost:5173
 npm run build
 ```
 
-Por padrão roda com o backend simulado (`src/mock`), sem servidor. Para apontar para o backend real, copie `.env.example` para `.env` e use `VITE_USE_MOCK=false`.
+Por padrão roda com o backend simulado (`src/mock`), sem servidor.
+
+Com o backend real (Flask em `backend/`, porta 5000):
+
+```bash
+cd backend && python wsgi.py          # outro terminal
+cd frontend && npm run dev:backend    # usa .env.backend
+```
+
+Enquanto o backend não tiver `/painel/impacto` e `/fila/exportar`, o front usa o relatório de `entrega/impacto.json` e monta o `fila_priorizada.csv` a partir da fila ao vivo (o resultado passa no verificador oficial). No modo backend não há "Simular evento": as atualizações em tempo real vêm das ações dos administradores e, quando existir, da ingestão (`/fila/eventos`).
 
 ## Estrutura
 
@@ -36,6 +45,8 @@ Base: `VITE_API_URL` + `/hospitais/{hospital}`.
 | POST | `/pendencias/{id}/resolver` | body `ResolveRequest` (`action`, `note?`), retorna `AuditEntry` do tipo `data` |
 | GET | `/painel/equidade` | `EquityReport`: municípios (com lat/lon) e grupos por distância, idade e sexo |
 | GET | `/painel/resumo` | `QueueSummary` para o telão; o topo da fila vem só com iniciais |
+| GET | `/painel/impacto` | `ImpactReport`: verificador oficial na fila do Neco e na manual, matriz e quem mais subiu |
+| GET | `/fila/exportar` | `text/csv` com o `fila_priorizada.csv` oficial |
 | POST | `/neco/perguntar` | body `{question}`, retorna `NecoAnswer` (`text`, `entryIds?`, `suggestions?`) |
 
 WebSocket em `VITE_WS_URL?hospital={hospital}`. O servidor só envia; ações do usuário vão por REST. Mensagens (JSON, campo `type`):
@@ -52,10 +63,10 @@ O "Pergunte ao Neco" deve ser um LLM com ferramentas de consulta à fila no back
 
 ## Telas
 
-- `/` início · `/fila` e `/fila/:id` · `/pendencias` · `/equidade` · `/auditoria`
+- `/` início · `/fila` e `/fila/:id` · `/pendencias` · `/equidade` · `/impacto` · `/auditoria`
 - `/telao`: painel para TV, sem nomes completos. Abra em outra janela e use tela cheia. No modo mock, as ações feitas na aba principal são repetidas no telão (BroadcastChannel).
 - Ctrl+K abre o "Pergunte ao Neco" em qualquer tela.
 
-Os agregados do mock (`src/mock/stats.json`) foram gerados a partir do dataset completo (941 solicitações).
+Os agregados do mock (`src/mock/stats.json`) foram gerados a partir do dataset completo (941 solicitações). `impacto.json` e `fila_priorizada.csv` vêm de `python entrega/gerar_entrega.py --front`.
 
 Tipos completos em [src/api/types.ts](src/api/types.ts).

@@ -6,6 +6,7 @@ import { ToastProvider } from "./components/Toast";
 import { Audit } from "./pages/Audit";
 import { Equity } from "./pages/Equity";
 import { Home } from "./pages/Home";
+import { Impact } from "./pages/Impact";
 import { Pendencies } from "./pages/Pendencies";
 import { Queue } from "./pages/Queue";
 import { Screen } from "./pages/Screen";
@@ -26,6 +27,7 @@ createRoot(document.getElementById("root")!).render(
               <Route path="fila/:id" element={<Queue />} />
               <Route path="pendencias" element={<Pendencies />} />
               <Route path="equidade" element={<Equity />} />
+              <Route path="impacto" element={<Impact />} />
               <Route path="auditoria" element={<Audit />} />
             </Route>
           </Routes>

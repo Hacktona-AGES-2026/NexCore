@@ -13,4 +13,5 @@ export const InfoIcon = () => <svg {...base} strokeWidth={2}><circle cx="12" cy=
 export const AlertIcon = () => <svg {...base}><path d="M10.3 3.9L2 18a2 2 0 0 0 1.7 3h16.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" /><path d="M12 9v4M12 17h.01" /></svg>;
 export const MapIcon = () => <svg {...base}><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z" /><circle cx="12" cy="9.5" r="2.5" /></svg>;
 export const ScreenIcon = () => <svg {...base}><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M8 20h8M12 16v4" /></svg>;
+export const ChartIcon = () => <svg {...base}><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></svg>;
 export const CheckIcon = () => <svg {...base} strokeWidth={2.2}><path d="M20 6L9 17l-5-5" /></svg>;

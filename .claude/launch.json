@@ -4,8 +4,26 @@
     {
       "name": "frontend",
       "runtimeExecutable": "C:\\Program Files\\nodejs\\node.exe",
-      "runtimeArgs": ["frontend/node_modules/vite/bin/vite.js", "frontend", "--port", "5173"],
+      "runtimeArgs": [
+        "frontend/node_modules/vite/bin/vite.js",
+        "frontend",
+        "--port",
+        "5173"
+      ],
       "port": 5173
+    },
+    {
+      "name": "frontend-backend",
+      "runtimeExecutable": "C:\\Program Files\\nodejs\\node.exe",
+      "runtimeArgs": [
+        "frontend/node_modules/vite/bin/vite.js",
+        "frontend",
+        "--mode",
+        "backend",
+        "--port",
+        "5180"
+      ],
+      "port": 5180
     }
   ]
 }

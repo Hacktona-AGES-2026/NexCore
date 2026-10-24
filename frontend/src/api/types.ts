@@ -155,6 +155,34 @@ export interface QueueSummary {
   top: { position: number; id: string; initials: string; procedure: string; cls: UrgencyClass; days: number }[];
 }
 
+// ---------- impacto (Neco x fila manual) ----------
+export interface VerifierRun {
+  ok: boolean;
+  /** Saída do verificador oficial do desafio (verificar_fila_priorizada.py). */
+  output: string;
+  violacoes: number;
+  medianaOnco: number | null;
+  oncoPrimeiroTerco: number | null;
+  psPrimeiraMetade: number | null;
+  calmosUltimoTerco: number | null;
+}
+
+export interface ImpactReport {
+  /** "referencia" quando o backend ainda não calcula e o front usa o relatório da entrega. */
+  source?: "backend" | "referencia";
+  total: number;
+  /** Como a fila manual de referência foi montada. */
+  baseline: string;
+  verifier: { neco: VerifierRun; manual: VerifierRun };
+  /** Classe do Neco (linhas) x prioridade manual (colunas). */
+  matrix: { cls: UrgencyClass; alta: number; media: number; baixa: number; vazia: number }[];
+  headline: { a1Total: number; a1Low: number; urgentTotal: number; urgentLow: number; dTotal: number; dHigh: number };
+  movers: {
+    id: string; initials: string; procedure: string; cls: UrgencyClass; reason: string;
+    manualPriority: string; manualPosition: number; necoPosition: number;
+  }[];
+}
+
 // ---------- Pergunte ao Neco ----------
 export interface AskRequest {
   question: string;

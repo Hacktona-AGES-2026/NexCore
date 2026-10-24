@@ -1,7 +1,7 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useQueue } from "../state/QueueContext";
 import { AskNeco } from "./AskNeco";
-import { AlertIcon, ChevronDown, HomeIcon, ListIcon, MapIcon, ScreenIcon, ShieldIcon } from "./icons";
+import { AlertIcon, ChartIcon, ChevronDown, HomeIcon, ListIcon, MapIcon, ScreenIcon, ShieldIcon } from "./icons";
 import { Neco } from "./Neco";
 
 const STATUS_LABEL = { connecting: "Conectando", open: "Tempo real", closed: "Reconectando" };
@@ -18,6 +18,7 @@ export function Layout() {
           <NavLink to="/fila"><ListIcon />Fila<span className="n">{total || ""}</span></NavLink>
           <NavLink to="/pendencias"><AlertIcon />Pendências<span className="n">{pendencies.length || ""}</span></NavLink>
           <NavLink to="/equidade"><MapIcon />Equidade</NavLink>
+          <NavLink to="/impacto"><ChartIcon />Impacto</NavLink>
           <NavLink to="/auditoria"><ShieldIcon />Auditoria</NavLink>
         </nav>
         <a className="screen-link" href="/telao" target="_blank" rel="noreferrer"><ScreenIcon />Abrir telão</a>

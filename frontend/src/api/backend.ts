@@ -1,5 +1,5 @@
 import type {
-  AskRequest, AuditEntry, ConnectionStatus, EquityReport, NecoAnswer, Pendency, QueueSnapshot, QueueSummary, ReorderRequest,
+  AskRequest, AuditEntry, ConnectionStatus, EquityReport, ImpactReport, NecoAnswer, Pendency, QueueSnapshot, QueueSummary, ReorderRequest,
   ResolveRequest, ServerMessage,
 } from "./types";
 
@@ -9,6 +9,9 @@ export interface Backend {
   getPendencies(): Promise<Pendency[]>;
   getEquity(): Promise<EquityReport>;
   getSummary(): Promise<QueueSummary>;
+  getImpact(): Promise<ImpactReport>;
+  /** fila_priorizada.csv oficial (solicitacao_id, posicao, justificativa). */
+  exportQueueCsv(): Promise<string>;
   reorder(entryId: string, req: ReorderRequest): Promise<AuditEntry>;
   validate(entryId: string): Promise<AuditEntry>;
   resolvePendency(id: string, req: ResolveRequest): Promise<AuditEntry>;
@@ -17,6 +20,13 @@ export interface Backend {
   subscribe(onMessage: (m: ServerMessage) => void, onStatus: (s: ConnectionStatus) => void): () => void;
   /** Só existe no mock: injeta o próximo evento roteirizado. */
   simulateEvent?: () => void;
+}
+
+/** Erro HTTP do backend; `message` é o `detail` em português. */
+export class ApiError extends Error {
+  constructor(message: string, readonly status: number) {
+    super(message);
+  }
 }
 
 const env = import.meta.env;
