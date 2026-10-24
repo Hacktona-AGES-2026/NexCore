@@ -17,7 +17,7 @@ ENV_EXEMPLO = BACKEND / ".env.example"
 
 # Chaves que a aplicação realmente consome: app/config.py mais as do próprio Flask.
 CHAVES_ACEITAS = {
-    "SECRET_KEY", "DATASET_DIR", "REFERENCE_DATE", "DEFAULT_PAGE_SIZE",
+    "SECRET_KEY", "DATASET_DIR", "VERIFIER_DATASET_DIR", "REFERENCE_DATE", "DEFAULT_PAGE_SIZE",
     "MAX_PAGE_SIZE", "CORS_ORIGINS", "WS_PATH", "AUTO_REFRESH_DATASET", "HOSPITAL_ID",
     "APP_AMBIENTE", "FLASK_APP", "FLASK_DEBUG",
 }

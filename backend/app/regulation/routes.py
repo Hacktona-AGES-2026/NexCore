@@ -5,8 +5,11 @@ calls QueueState and returns what the front's `httpBackend` expects. The
 ingestion routes (/fila/entradas, /fila/eventos) are not here yet: the front
 does not call them.
 """
-from flask import Blueprint, current_app, g, request
+from functools import partial
 
+from flask import Blueprint, Response, current_app, g, request
+
+from . import verifier
 from .errors import API_PREFIX, ContractError, register
 
 regulation = Blueprint("regulation", __name__, url_prefix=f"{API_PREFIX}/hospitais/<hospital>")
@@ -77,6 +80,25 @@ def summary():
 @regulation.get("/painel/equidade")
 def equity():
     return current_state().equity()
+
+
+@regulation.get("/painel/impacto")
+def impact():
+    verify = partial(verifier.run, dataset_dir=current_app.config["VERIFIER_DATASET_DIR"])
+    try:
+        return current_state().impact(verify)
+    except verifier.VerifierUnavailable as exc:
+        current_app.logger.error("official verifier unavailable: %s", exc)
+        raise ContractError("O verificador oficial não está disponível neste servidor.", 503) from exc
+
+
+@regulation.get("/fila/exportar")
+def export_queue():
+    return Response(
+        current_state().export_csv(),
+        mimetype="text/csv",
+        headers={"Content-Disposition": f'attachment; filename="{verifier.FILE_NAME}"'},
+    )
 
 
 @regulation.post("/neco/perguntar")

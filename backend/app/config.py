@@ -21,6 +21,10 @@ class Config:
     DATASET_DIR = Path(
         os.environ.get("DATASET_DIR", BACKEND_ROOT / "dataset" / "normalizado")
     )
+    # O verificador oficial lê os CSVs DE ORIGEM, não os normalizados.
+    VERIFIER_DATASET_DIR = Path(
+        os.environ.get("VERIFIER_DATASET_DIR", BACKEND_ROOT / "dataset")
+    )
     REFERENCE_DATE = os.environ.get("REFERENCE_DATE", DEFAULT_REFERENCE_DATE)
     AUTO_REFRESH_DATASET = _bool(os.environ.get("AUTO_REFRESH_DATASET"), True)
     DEFAULT_PAGE_SIZE = int(os.environ.get("DEFAULT_PAGE_SIZE", "50"))

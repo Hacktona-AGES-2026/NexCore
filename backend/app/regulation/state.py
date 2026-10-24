@@ -15,7 +15,7 @@ import threading
 
 from ..data.reader import strip_accents
 from ..prioritization import CLASS_LABEL, assess, golden_rule_violation, rank, relocate
-from . import ask, panels, pendencies, serializers
+from . import ask, impact, panels, pendencies, serializers
 from .audit import AuditLog, utc_now
 from .errors import ContractError
 from .hub import Hub
@@ -65,6 +65,7 @@ class QueueState:
         self.locked = set()
         self.previous = {}
         self.pendencies = {p["id"]: p for p in pendencies.detect(repository, self.assessments)}
+        self._impact = None  # (order, report): the verifier is slow, so one run per order
         self._initial_audit()
 
     # --- reads ---------------------------------------------------------
@@ -99,6 +100,32 @@ class QueueState:
 
     def equity(self):
         return panels.equity(self.entries(), self.records, self.coordinates)
+
+    def export_csv(self):
+        """fila_priorizada.csv of the queue as it stands, manual moves included."""
+        with self._lock:
+            signals = {rid: self.assessments[rid]["signals"] for rid in self.order}
+            return impact.official_csv(self.entries(), signals)
+
+    def impact(self, verify):
+        """ImpactReport; `verify(csv_text) -> (ok, output)` runs the official verifier.
+
+        The verifier only sees positions, so its runs are cached by the order and
+        run outside the lock: a slow check never holds up the admin's actions.
+        """
+        with self._lock:
+            order = tuple(self.order)
+            if self._impact and self._impact[0] == order:
+                return self._impact[1]
+            entries = self.entries()
+            neco_csv = self.export_csv()
+            manual = impact.manual_order(entries, list(self.records))
+        neco_run = impact.verifier_run(*verify(neco_csv))
+        manual_run = impact.verifier_run(*verify(impact.manual_csv(entries, manual)))
+        report = impact.report(entries, manual, neco_run, manual_run)
+        with self._lock:
+            self._impact = (order, report)
+        return report
 
     def ask(self, question):
         with self._lock:

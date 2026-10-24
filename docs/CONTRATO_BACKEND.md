@@ -18,8 +18,6 @@ Ainda faltam no backend:
 
 | Rota | Hoje o front faz |
 |---|---|
-| `GET /painel/impacto` | usa o relatório fixo de `entrega/impacto.json` |
-| `GET /fila/exportar` | monta o CSV com a fila ao vivo (passa no verificador oficial) |
 | `POST /fila/entradas`, `POST /fila/eventos` | nada: sem ingestão, a fila só muda por ação humana. É o que faz a demonstração "ao vivo" funcionar |
 
 ---
@@ -299,6 +297,8 @@ Já existe uma implementação de referência em Python: [`entrega/gerar_entrega
 
 - `/fila/exportar`: CSV com `solicitacao_id,posicao,justificativa` da fila **atual** (respeitando reordenações manuais).
 - `/painel/impacto`: roda o verificador oficial (`verificar_fila_priorizada.py`) na fila do Neco e na fila manual de referência (prioridade manual, desempate por espera) e devolve os indicadores, a matriz classe × prioridade manual, os números de destaque e quem mais subiu. Pode ser calculado na subida e recalculado a cada mudança.
+
+**Implementado** em `backend/app/regulation/impact.py` (cálculo puro) e `verifier.py` (roda o verificador por subprocess, sem importar). O relatório sai com `source: "backend"`, fica em cache até a ordem da fila mudar e, se o verificador não puder rodar (ex.: servidor sem pandas), a rota responde `503` com `detail`. O verificador lê os CSVs **de origem**: `VERIFIER_DATASET_DIR`, padrão `backend/dataset/`.
 
 ## 9. Pergunte ao Neco
 
