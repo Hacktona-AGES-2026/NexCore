@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { AuditEntry, AuditKind } from "../api/types";
 import { CheckIcon, DownloadIcon } from "../components/icons";
+import { downloadText } from "../lib/download";
 import { useQueue } from "../state/QueueContext";
 
 const BADGE: Record<AuditKind, string> = { recalc: "Neco", intake: "API", manual: "Manual", validation: "Validação", data: "Dados" };
@@ -24,10 +25,8 @@ function exportCsv(audit: AuditEntry[]) {
   const q = (s: string) => `"${s.replace(/"/g, '""')}"`;
   const lines = ["horario,autor,tipo,solicitacao_id,de,para,justificativa,hash,hash_anterior",
     ...[...audit].reverse().map((a) => [a.at, q(a.author), a.kind, a.entryId, a.from ?? "", a.to, q(a.justification), a.hash, a.prevHash].join(","))];
-  const url = URL.createObjectURL(new Blob([lines.join("\n")], { type: "text/csv" }));
-  const link = Object.assign(document.createElement("a"), { href: url, download: "auditoria_fila.csv" });
-  link.click();
-  URL.revokeObjectURL(url);
+  // Com BOM: este relatório é para abrir no Excel.
+  downloadText("auditoria_fila.csv", lines.join("\r\n") + "\r\n", { bom: true });
 }
 
 export function Audit() {

@@ -6,6 +6,7 @@ import { CheckIcon, DownloadIcon } from "../components/icons";
 import { Neco } from "../components/Neco";
 import { useToast } from "../components/Toast";
 import { officialCsv } from "../domain/officialCsv";
+import { downloadText } from "../lib/download";
 import { CLASS_LABEL } from "../domain/queue";
 import { useQueue } from "../state/QueueContext";
 
@@ -69,9 +70,7 @@ export function Impact() {
         if (!(err instanceof ApiError && err.status === 404) || entries.length !== total) throw err;
         csv = officialCsv(entries);
       }
-      const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
-      Object.assign(document.createElement("a"), { href: url, download: "fila_priorizada.csv" }).click();
-      URL.revokeObjectURL(url);
+      downloadText("fila_priorizada.csv", csv);
       toast("fila_priorizada.csv baixado.");
     } catch (err) {
       toast(err instanceof Error ? err.message : "Não foi possível exportar.");
