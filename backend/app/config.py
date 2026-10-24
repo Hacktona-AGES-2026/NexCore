@@ -2,7 +2,8 @@
 from pathlib import Path
 import os
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+# backend/app/config.py -> backend/ : dataset/ vive dentro de backend/.
+BACKEND_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_REFERENCE_DATE = "2026-10-23"
 
 
@@ -18,7 +19,7 @@ class Config:
     JSON_SORT_KEYS = False
 
     DATASET_DIR = Path(
-        os.environ.get("DATASET_DIR", PROJECT_ROOT / "dataset" / "normalizado")
+        os.environ.get("DATASET_DIR", BACKEND_ROOT / "dataset" / "normalizado")
     )
     REFERENCE_DATE = os.environ.get("REFERENCE_DATE", DEFAULT_REFERENCE_DATE)
     DEFAULT_PAGE_SIZE = int(os.environ.get("DEFAULT_PAGE_SIZE", "50"))

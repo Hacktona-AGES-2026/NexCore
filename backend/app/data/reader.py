@@ -1,7 +1,7 @@
 """Reads the normalized CSVs, converting types and tolerating empty fields.
 
 Column names come from the dataset and stay in Portuguese: they are the data,
-documented in dataset/dicionario_dados.md.
+documented in backend/dataset/dicionario_dados.md.
 """
 from datetime import date, datetime
 from pathlib import Path
@@ -119,7 +119,7 @@ def load(directory):
     if not directory.is_dir():
         raise DatasetUnavailable(
             f"diretorio do dataset nao encontrado: {directory}. "
-            "Rode `python dataset/normalizar_dataset.py` ou ajuste DATASET_DIR."
+            "Rode `python backend/dataset/normalizar_dataset.py` ou ajuste DATASET_DIR."
         )
     return {name: read_csv(directory / file) for name, file in FILES.items()}
 

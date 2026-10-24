@@ -44,7 +44,7 @@ backend/
 └── tests/                  leitor, repositório, API, config e contrato
 ```
 
-A fonte de dados é `dataset/normalizado/` (gerada por `dataset/normalizar_dataset.py`).
+A fonte de dados é `backend/dataset/normalizado/` (gerada por `backend/dataset/normalizar_dataset.py`).
 São menos de mil solicitações, então os quatro CSVs são carregados uma vez na criação da
 aplicação e servidos a partir de dicionários por id — sem banco e sem pandas. Trocar o
 diretório é só ajustar `DATASET_DIR`; se ele não existir, a aplicação falha na subida com
@@ -103,7 +103,7 @@ Respostas de lista vêm como `{"data": [...], "pagination": {...}}`. Erros vêm 
   e chaves de envelope (`data`, `pagination`, `error`) em inglês. Nomes de coluna
   (`solicitacao_id`, `dias_em_fila`, `oncologico_cid`) e valores de domínio (`alta`,
   `media`, `baixa`) ficam como estão: são o dado, documentado em
-  `dataset/dicionario_dados.md`. Então `sort_by=dias_em_fila` é o esperado, não um descuido.
+  `backend/dataset/dicionario_dados.md`. Então `sort_by=dias_em_fila` é o esperado, não um descuido.
 - **O `.env` é lido pelos dois modos de subir.** `wsgi.py` chama `load_dotenv` antes de
   importar `app`, porque `Config` lê `os.environ` no corpo da classe — carregar depois não
   teria efeito. Variável já exportada no shell vence o arquivo.
@@ -115,7 +115,7 @@ Respostas de lista vêm como `{"data": [...], "pagination": {...}}`. Erros vêm 
 O **algoritmo de priorização** e o `fila_priorizada.csv` não estão aqui. Esta camada entrega
 os dados limpos, consultáveis e com as inconsistências visíveis; escolher pesos, classes de
 urgência e o formato da justificativa é a próxima etapa, e a regra de ouro precisa ser
-verificada com `dataset/verificar_fila_priorizada.py` antes de entregar.
+verificada com `backend/dataset/verificar_fila_priorizada.py` antes de entregar.
 
 Quando entrar, o lugar natural é um módulo `app/prioritization/` com a regra em função pura
 (recebe fila + eventos, devolve posição + justificativa) e uma rota `POST /api/priorizacao`
