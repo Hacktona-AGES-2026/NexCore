@@ -1,5 +1,6 @@
 :root{
   --bordo:#7a1c30; --bordo-dark:#5c1222; --bordo-50:#f8eef0; --bordo-100:#f0dde1;
+  --sabia-claro:#f6ecec;
   --bg:#f7f7f8; --white:#fff; --ink:#1c1c1f; --muted:#6e6e76; --faint:#a1a1a8; --line:#e8e8eb;
   --ok:#1f7a4d; --ok-50:#e9f5ee; --warn:#9a5b00; --warn-50:#fdf3e2; --red:#b42318; --red-50:#fdecea;
   --font:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;

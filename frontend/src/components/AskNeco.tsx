@@ -58,7 +58,7 @@ export function AskNeco() {
       </button>
       <div className={`ask ${open ? "on" : ""}`} role="dialog" aria-label="Pergunte ao Neco">
         <div className="ask-h">
-          <Neco size={28} mood={thinking ? "think" : "ok"} />
+          <Neco size={40} busy={thinking} />
           <div><b>Pergunte ao Neco</b><small>Consulta a fila e explica. Não muda posições.</small></div>
           <button className="x" onClick={() => setOpen(false)} aria-label="Fechar">✕</button>
         </div>

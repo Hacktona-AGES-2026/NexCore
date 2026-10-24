@@ -44,7 +44,7 @@ export function Pendencies() {
           })}
         </div>
       </div>
-      <p className="hint"><Neco size={20} mood="think" />{current.hint}</p>
+      <p className="hint"><Neco size={20} />{current.hint}</p>
       <div className="card">
         {list.length ? list.map((p) => (
           <div className="pend" key={p.id}>

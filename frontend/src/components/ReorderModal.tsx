@@ -66,7 +66,7 @@ export function ReorderModal({ entry, onClose }: { entry: QueueEntry; onClose: (
             <small>{text.trim().length} / {MIN_TEXT}</small>
           </div>
           <div className={`prev ${violation ? "bad" : ""}`}>
-            <Neco size={24} mood={violation ? "alert" : "think"} />
+            <Neco size={40} mood={violation ? "alert" : "ok"} />
             <span>
               {violation
                 ? `Não é possível: ${violation.oncologic.name} tem câncer e ficaria atrás de quem não tem urgência.`

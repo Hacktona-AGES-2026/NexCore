@@ -11,6 +11,8 @@ interface State {
   loaded: boolean;
   total: number;
   entries: QueueEntry[];
+  /** Quantas atualizações da fila chegaram (anima o Neco). */
+  patches: number;
   /** Variação de posição da última atualização, por solicitação. */
   deltas: Record<string, number>;
   audit: AuditEntry[];
@@ -24,7 +26,7 @@ type Action =
   | { type: "pendencies.loaded"; pendencies: Pendency[] }
   | { type: "message"; message: ServerMessage };
 
-const initial: State = { status: "connecting", loaded: false, total: 0, entries: [], deltas: {}, audit: [], pendencies: [], activity: [] };
+const initial: State = { status: "connecting", loaded: false, total: 0, entries: [], patches: 0, deltas: {}, audit: [], pendencies: [], activity: [] };
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
@@ -51,7 +53,7 @@ function reducer(state: State, action: Action): State {
             byId.set(e.id, e);
           }
           m.removed?.forEach((id) => byId.delete(id));
-          return { ...state, total: m.total, entries: [...byId.values()], deltas };
+          return { ...state, total: m.total, entries: [...byId.values()], deltas, patches: state.patches + 1 };
         }
         case "audit.appended":
           return state.audit.some((a) => a.id === m.entry.id) ? state : { ...state, audit: [m.entry, ...state.audit] };

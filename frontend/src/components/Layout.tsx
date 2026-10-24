@@ -7,11 +7,11 @@ import { Neco } from "./Neco";
 const STATUS_LABEL = { connecting: "Conectando", open: "Tempo real", closed: "Reconectando" };
 
 export function Layout() {
-  const { total, status, pendencies } = useQueue();
+  const { total, status, pendencies, patches } = useQueue();
   return (
     <div className="app">
       <aside className="side">
-        <div className="brand"><Neco size={28} invert /><span>NexCore</span></div>
+        <div className="brand"><Neco size={40} invert analyze={patches} /><span>NexCore</span></div>
         <button className="hosp" title="Trocar hospital">Hospital São Lucas <ChevronDown /></button>
         <nav className="nav">
           <NavLink to="/" end><HomeIcon />Início</NavLink>

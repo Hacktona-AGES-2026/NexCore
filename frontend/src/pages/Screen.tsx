@@ -14,7 +14,7 @@ const hhmm = (d: Date | string) => new Date(d).toLocaleTimeString("pt-BR", { hou
 
 /** Telão para TV do hospital: sem nomes completos, sem interação, legível de longe. */
 export function Screen() {
-  const { backend, total, status, activity } = useQueue();
+  const { backend, total, status, activity, patches } = useQueue();
   const [summary, setSummary] = useState<QueueSummary | null>(null);
   const [equity, setEquity] = useState<EquityReport | null>(null);
   const now = useClock();
@@ -33,7 +33,7 @@ export function Screen() {
   return (
     <div className="tv">
       <header className="tv-h">
-        <Neco size={44} invert />
+        <Neco size={64} invert analyze={patches} />
         <div><b>Fila cirúrgica</b><span>Hospital São Lucas · priorizada pelo Neco</span></div>
         <div className={`tv-live ${status}`}><i />{status === "open" ? "Ao vivo" : "Reconectando"}</div>
         <time>{hhmm(now)}</time>

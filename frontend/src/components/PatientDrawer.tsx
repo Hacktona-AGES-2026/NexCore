@@ -79,7 +79,7 @@ export function PatientDrawer({ entryId, onClose }: { entryId: string | null; on
               <button className="x" onClick={onClose} aria-label="Fechar">✕</button>
             </div>
             <div className="dr-b">
-              <div className="why"><Neco size={32} mood={e.warnings.length ? "think" : "ok"} /><Explanation entry={e} above={above} /></div>
+              <div className="why"><Neco size={44} cheer={validation ? 1 : 0} /><Explanation entry={e} above={above} /></div>
               {e.warnings.map((w) => (
                 <div key={w.text} className={`warn ${w.level === "critical" ? "red" : ""}`}><InfoIcon />{w.text}</div>
               ))}

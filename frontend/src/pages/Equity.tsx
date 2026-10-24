@@ -40,7 +40,7 @@ export function Equity() {
       </div>
 
       <div className="insight">
-        <Neco size={32} mood={gap > 30 ? "think" : "ok"} />
+        <Neco size={44} />
         <p>
           {gap > 30
             ? <>Quem mora a <b>mais de 200 km</b> espera em média <b>{gap} dias a mais</b> ({far.avgWait} contra {near.avgWait}), e {far.overduePct}% já passaram do prazo. A prioridade clínica não usa a distância, então essa diferença vem do acesso e merece atenção da gestão.</>
