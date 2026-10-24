@@ -57,6 +57,8 @@ WebSocket em `VITE_WS_URL?hospital={hospital}`. O servidor só envia; ações do
 - `pendency.resolved`: pendência resolvida (por qualquer administrador).
 - `activity`: frase curta para o feed da home.
 
+Textos do Neco por IA: o painel do paciente pede `GET /fila/{id}/explicacao` e mostra o texto local até a resposta chegar; só troca quando vem `source: "ia"` (com o selo "IA · conferido"). Equidade e impacto pedem o comentário em `/painel/equidade/comentario` e `/painel/impacto/comentario`. Em todos os casos o Neco pensa enquanto a API responde e depois escreve o texto (da IA ou, se falhar, o por regras) com a mesma animação.
+
 Cada `QueueEntry` traz `highlights`: trechos do texto livre (`clinicalNote`/`regulationNote`, com `start`/`end`) que o Neco usou, classificados como `urgency`, `events`, `symptoms` ou `red_flag`.
 
 O "Pergunte ao Neco" deve ser um LLM com ferramentas de consulta à fila no backend (a chave nunca vai para o front). Ele explica e consulta; não altera posições.

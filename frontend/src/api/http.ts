@@ -62,6 +62,9 @@ export const httpBackend: Backend = {
   getPendencies: () => request("/pendencias"),
   getEquity: () => request("/painel/equidade"),
   getSummary: () => request("/painel/resumo"),
+  getExplanation: (id) => request(`/fila/${id}/explicacao`),
+  getEquityInsight: () => request("/painel/equidade/comentario"),
+  getImpactInsight: () => request("/painel/impacto/comentario"),
   // Enquanto o backend não tiver /painel/impacto, usa o relatório gerado por
   // entrega/gerar_entrega.py com o verificador oficial (mesmo dataset).
   getImpact: () => request<ImpactReport>("/painel/impacto").catch(async (err) => {
@@ -74,6 +77,7 @@ export const httpBackend: Backend = {
   reorder: (id, req) => request(`/fila/${id}/reordenar`, { method: "POST", body: JSON.stringify(req) }),
   validate: (id) => request(`/fila/${id}/validar`, { method: "POST" }),
   resolvePendency: (id, req) => request(`/pendencias/${id}/resolver`, { method: "POST", body: JSON.stringify(req) }),
+  simulatePendency: (id, req) => request(`/pendencias/${id}/simular`, { method: "POST", body: JSON.stringify(req) }),
   ask: (req) => request("/neco/perguntar", { method: "POST", body: JSON.stringify(req) }),
   subscribe: openRealtime,
 };

@@ -27,6 +27,9 @@ cp .env.example .env                     # e troque a SECRET_KEY
 python wsgi.py                           # http://127.0.0.1:5000 · ws://127.0.0.1:5000/ws
 ```
 
+Textos do Neco por IA: coloque `GEMINI_API_KEY` no `.env` (chave do Google AI Studio). Sem
+chave, tudo funciona com os textos por regras. Detalhes em `docs/CONTRATO_BACKEND.md` §9.1.
+
 Não precisa gerar o dataset: `dataset/normalizado/` é versionado. Se ele não existir, a
 aplicação falha na subida dizendo o que rodar (`python dataset/normalizar_dataset.py`).
 

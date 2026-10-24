@@ -222,3 +222,65 @@ i.hl.red_flag{box-shadow:inset 0 -3px 0 var(--red)}
 .mv-prio{font-size:12.5px;color:var(--muted);text-transform:none}
 @media (max-width:1000px){.verdicts,.impact-grid{grid-template-columns:1fr}.movers li{grid-template-columns:1fr auto}.mv-prio{display:none}}
 .neco{flex:none}
+
+/* ---------- textos do Neco por IA ---------- */
+.ai-badge{display:inline-block;margin-left:8px;padding:1px 7px;border-radius:20px;background:#fff;border:1px solid var(--bordo-100);color:var(--bordo);font-size:10.5px;font-weight:600;letter-spacing:.02em;vertical-align:1px;text-transform:none}
+
+/* ---------- Neco pensando e escrevendo ---------- */
+.neco-wrap{display:inline-flex;flex:none;line-height:0}
+.neco-wrap.thinking{animation:neco-think 1.6s ease-in-out infinite;transform-origin:50% 90%}
+@keyframes neco-think{
+  0%,100%{transform:translateY(0) rotate(0)}
+  25%{transform:translateY(-3px) rotate(-6deg)}
+  50%{transform:translateY(0) rotate(0)}
+  75%{transform:translateY(-2px) rotate(5deg)}
+}
+.dots{display:inline-flex;align-items:flex-end;gap:4px;height:14px;padding:0 2px}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--bordo);opacity:.35;animation:dot-hop 1.1s ease-in-out infinite}
+.dots i:nth-child(2){animation-delay:.15s}
+.dots i:nth-child(3){animation-delay:.3s}
+@keyframes dot-hop{0%,60%,100%{transform:translateY(0);opacity:.35}30%{transform:translateY(-7px);opacity:1}}
+.caret{display:inline-block;width:2px;height:1em;margin-left:1px;background:var(--bordo);vertical-align:-2px;animation:caret 0.9s steps(1) infinite}
+@keyframes caret{50%{opacity:0}}
+.thinking-row{display:flex;align-items:center;gap:10px}
+.bubble.neco.waiting{display:flex;align-items:center;gap:10px;padding:8px 12px}
+@media (prefers-reduced-motion:reduce){.neco-wrap.thinking,.dots i,.caret{animation:none}.dots i{opacity:.7}}
+/* O Neco fica no canto superior esquerdo do comentário, não centralizado na altura do texto. */
+.why,.insight{align-items:start}
+.why > .neco-wrap,.insight > .neco-wrap{align-self:flex-start;align-items:flex-start}
+
+/* ---------- pendências: lista única e painel de correção ---------- */
+.pend-row{all:unset;box-sizing:border-box;cursor:pointer;width:100%;display:grid;grid-template-columns:auto 1fr auto auto;gap:14px;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line)}
+.pend-row:last-child{border-bottom:0}
+.pend-row:hover{background:var(--bg)}
+.pend-row svg.chev{width:16px;height:16px;color:var(--faint)}
+.pend-main b{display:block;font-weight:500}
+.pend-main small{display:block;color:var(--muted);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:62ch}
+.risk-dot{width:10px;height:10px;border-radius:50%}
+.risk-dot.alto,.risk-box.alto{background:var(--red)}
+.risk-dot.medio,.risk-box.medio{background:var(--warn)}
+.risk-dot.baixo,.risk-box.baixo{background:#b9b2b4}
+.risk-box{width:44px;height:44px;border-radius:12px;color:#fff;display:grid;place-items:center;font-size:22px;font-weight:700;flex:none}
+.risk-text.alto{color:var(--red)}.risk-text.medio{color:var(--warn)}.risk-text.baixo{color:var(--muted)}
+.kind-line{margin:0 0 2px;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.kind-chip{font-size:12px;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:20px;padding:2px 9px;white-space:nowrap}
+.dr-h p a{color:var(--bordo);text-decoration:none;font-weight:500}
+.divergence{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.divergence b{font-weight:600;font-size:13.5px}
+.divergence dl{margin:8px 0 0;display:grid;gap:6px}
+.divergence dl div{display:grid;grid-template-columns:150px 1fr;gap:10px;font-size:13.5px;padding:6px 10px;border-radius:8px;background:var(--bg)}
+.divergence dl div:nth-child(odd){background:var(--bordo-50)}
+.divergence dt{color:var(--muted)}
+.divergence dd{margin:0;font-weight:500}
+.actions-pick{display:grid;gap:8px;margin-bottom:14px}
+.pick{all:unset;box-sizing:border-box;cursor:pointer;border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;gap:2px}
+.pick:hover{border-color:var(--bordo-100)}
+.pick.on{border-color:var(--bordo);box-shadow:0 0 0 3px var(--bordo-50)}
+.pick.danger.on{border-color:var(--red);box-shadow:0 0 0 3px var(--red-50)}
+.pick b{font-weight:600;font-size:13.5px}
+.pick small{color:var(--muted);font-size:12.5px}
+.sugg-tag{margin-left:8px;font-size:10.5px;font-weight:600;color:var(--bordo);background:var(--bordo-50);border-radius:20px;padding:1px 7px}
+.action-form .help{color:var(--muted);text-align:left}
+.prev.warn-prev{background:var(--warn-50)}
+.btn.danger-btn{background:var(--red);border-color:var(--red)}
+@media (max-width:760px){.pend-row{grid-template-columns:auto 1fr auto}.kind-chip{display:none}.divergence dl div{grid-template-columns:1fr}}

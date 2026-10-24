@@ -155,18 +155,31 @@ export function createMockBackend(): Backend {
     },
   ];
   let step = 0;
-  let pendencies = stats.pendencies as Pendency[];
+  let pendencies = stats.pendencies as unknown as Pendency[];
   const equity = { cities: stats.cities, byDistance: stats.byDistance, byAge: stats.byAge, bySex: stats.bySex } as EquityReport;
   const summary = () => ({ ...(stats.summary as QueueSummary), total });
 
-  const PENDENCY_LOG: Record<string, string> = {
-    fix_cadastro: "Cadastro corrigido para bater com o CID.",
-    update_cid: "CID atualizado após conferir a biópsia.",
-    keep: "Conferido e mantido como está.",
-    merge: "Solicitações duplicadas mescladas; mantida a entrada mais antiga.",
-    keep_both: "Conferido: são solicitações distintas.",
-    remove: "Saída da fila confirmada com o paciente.",
-    archive: "Evento arquivado: solicitação não está na fila.",
+  // O mock registra a decisão, mas não recalcula a fila: a correção de verdade é do backend.
+  const PENDENCY_LOG: Record<string, (v: Record<string, string>) => string> = {
+    fix_cadastro: () => "Cadastro corrigido para bater com o CID.",
+    update_cid: (v) => `CID corrigido para ${(v.cid ?? "").toUpperCase()}.`,
+    keep: () => "Conferido e mantido como está.",
+    unrelated: () => "Biópsia desconsiderada para esta solicitação.",
+    merge: (v) => `Solicitações duplicadas mescladas; mantida a ${v.keep}.`,
+    keep_both: () => "Conferido: são solicitações distintas.",
+    remove: (v) => `Saída da fila confirmada (${v.confirmacao}).`,
+    link: (v) => `Evento vinculado à solicitação ${v.target}.`,
+    archive: () => "Evento arquivado: solicitação não está na fila.",
+  };
+  const fieldValues = (p: Pendency, actionId: string, values: Record<string, string> = {}) => {
+    const action = p.actions.find((a) => a.id === actionId);
+    if (!action) throw new Error(`A ação '${actionId}' não se aplica a esta pendência.`);
+    const out: Record<string, string> = {};
+    for (const f of action.fields) {
+      out[f.name] = (values[f.name] || f.suggested || "").trim();
+      if (f.required && !out[f.name]) throw new Error(`Preencha o campo '${f.label}'.`);
+    }
+    return { action, values: out };
   };
 
   const api: Backend = {
@@ -175,15 +188,51 @@ export function createMockBackend(): Backend {
     getPendencies: async () => [...pendencies],
     getEquity: async () => equity,
     getSummary: async () => summary(),
+    // O mock não tem modelo: responde "regras" com uma pequena espera, como faria o servidor.
+    // Texto vazio = o front usa a explicação local.
+    getExplanation: async () => {
+      await new Promise((r) => setTimeout(r, 600));
+      return { text: "", points: [], source: "regras" as const, verified: true };
+    },
+    getEquityInsight: async () => {
+      await new Promise((r) => setTimeout(r, 900));
+      const [near, , far] = equity.byDistance;
+      return {
+        text: `Quem mora a mais de 200 km espera em média ${far.avgWait - near.avgWait} dias a mais (${far.avgWait} contra ${near.avgWait}), e ${far.overduePct}% já passaram do prazo. A prioridade clínica não usa a distância, então essa diferença vem do acesso e merece atenção da gestão.`,
+        source: "regras" as const, verified: true,
+      };
+    },
+    getImpactInsight: async () => {
+      await new Promise((r) => setTimeout(r, 900));
+      const { headline: h, verifier: v } = impact as ImpactReport;
+      return {
+        text: `Dos ${h.a1Total} casos mais graves (câncer com piora recente), a regulação tinha marcado ${h.a1Low} como prioridade baixa ou vazia. Ao mesmo tempo, ${h.dHigh} casos sem urgência ocupavam prioridade alta. Na fila de hoje, ${v.manual.violacoes} pacientes com câncer ficam atrás de quem não tem urgência; na do Neco, ${v.neco.violacoes}.`,
+        source: "regras" as const, verified: true,
+      };
+    },
     getImpact: async () => impact as ImpactReport,
     // Carregado só quando pedido: o CSV oficial tem as 941 justificativas.
     exportQueueCsv: async () => (await import("./fila_priorizada.csv?raw")).default,
+    async simulatePendency(id, req) {
+      const p = pendencies.find((x) => x.id === id);
+      if (!p) throw new Error("Pendência não encontrada");
+      const { action } = fieldValues(p, req.action, req.values);
+      await new Promise((r) => setTimeout(r, 400));
+      return {
+        action: action.id, changes: [],
+        summary: action.changesQueue
+          ? "No modo de demonstração a fila não é recalculada; com o backend real esta prévia mostra a nova posição."
+          : "Nenhuma mudança na fila: só o registro é corrigido.",
+      };
+    },
     async resolvePendency(id, req) {
       const p = pendencies.find((x) => x.id === id);
       if (!p) throw new Error("Pendência não encontrada");
+      const { values } = fieldValues(p, req.action, req.values);
       pendencies = pendencies.filter((x) => x.id !== id);
+      const outcome = PENDENCY_LOG[req.action]?.(values) ?? req.action;
       const rec = appendAudit({ kind: "data", author: ADMIN, entry: { id: p.entryIds[0] ?? p.id, name: p.name }, from: null, to: 0,
-        justification: `${p.title}. ${PENDENCY_LOG[req.action] ?? req.action}${req.note ? " " + req.note : ""}` });
+        justification: `${p.title}. ${outcome}${req.note ? " " + req.note : ""}` });
       emit({ type: "pendency.resolved", id });
       emit({ type: "audit.appended", entry: rec });
       return rec;

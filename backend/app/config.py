@@ -36,6 +36,11 @@ class Config:
     CORS_ORIGINS = os.environ.get("CORS_ORIGINS", "*")
     WS_PATH = os.environ.get("WS_PATH", "/ws")
     HOSPITAL_ID = os.environ.get("HOSPITAL_ID", "hsl")
+    # Textos do Neco escritos pelo Gemini (plano gratuito). Sem chave, tudo cai no texto por regras.
+    GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+    GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.1-flash-lite")
+    NECO_IA_ENABLED = _bool(os.environ.get("NECO_IA_ENABLED"), True)
+    NECO_IA_RPM = int(os.environ.get("NECO_IA_RPM", "10"))
     TESTING = False
     DEBUG = _bool(os.environ.get("FLASK_DEBUG"))
 
@@ -44,6 +49,8 @@ class TestConfig(Config):
     TESTING = True
     SECRET_KEY = "teste"
     DPSS_REACTIVE_ENABLED = False
+    # A suíte nunca chama o modelo de verdade, mesmo com a chave no ambiente.
+    GEMINI_API_KEY = ""
 
 
 ENVIRONMENTS = {"desenvolvimento": Config, "teste": TestConfig, "producao": Config}

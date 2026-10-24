@@ -1,71 +1,66 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import type { Pendency, PendencyKind } from "../api/types";
+import { useMemo, useState } from "react";
+import type { Pendency } from "../api/types";
+import { ChevronRight } from "../components/icons";
 import { Neco } from "../components/Neco";
-import { useToast } from "../components/Toast";
+import { PendencyPanel, RISK_LABEL } from "../components/PendencyPanel";
 import { useQueue } from "../state/QueueContext";
 
-const KINDS: { kind: PendencyKind; label: string; hint: string; actions: [string, string][] }[] = [
-  { kind: "cid_flag", label: "Câncer divergente", hint: "A marcação de câncer do cadastro não bate com o CID.", actions: [["fix_cadastro", "Corrigir cadastro"]] },
-  { kind: "biopsy", label: "Biópsia × CID", hint: "Biópsia positiva em paciente com CID que não é de câncer.", actions: [["update_cid", "Atualizar CID"], ["keep", "Manter"]] },
-  { kind: "duplicate", label: "Duplicatas", hint: "Mesmo paciente com mais de uma solicitação para o mesmo procedimento.", actions: [["merge", "Mesclar"], ["keep_both", "São distintas"]] },
-  { kind: "left_queue", label: "Saída da fila", hint: "O call center registrou cirurgia em outro serviço ou desistência.", actions: [["remove", "Confirmar saída"], ["keep", "Manter na fila"]] },
-  { kind: "orphan_event", label: "Eventos órfãos", hint: "Eventos que apontam para solicitações fora da fila.", actions: [["archive", "Arquivar"]] },
-];
+const RISK_ORDER = { alto: 0, medio: 1, baixo: 2 };
 
 export function Pendencies() {
-  const { pendencies, backend, entry } = useQueue();
-  const toast = useToast();
-  const [kind, setKind] = useState<PendencyKind>("cid_flag");
-  const [busy, setBusy] = useState<string | null>(null);
-  const current = KINDS.find((k) => k.kind === kind)!;
-  const list = pendencies.filter((p) => p.kind === kind);
+  const { pendencies } = useQueue();
+  const [filter, setFilter] = useState("todas");
+  const [openId, setOpenId] = useState<string | null>(null);
 
-  async function resolve(p: Pendency, action: string, label: string) {
-    setBusy(p.id);
-    try {
-      await backend.resolvePendency(p.id, { action });
-      toast(`${label}: registrado na auditoria.`);
-    } finally {
-      setBusy(null);
+  // Os tipos vêm dos dados: um tipo novo de pendência aparece aqui sem mudar a tela.
+  const kinds = useMemo(() => {
+    const seen = new Map<string, { label: string; n: number }>();
+    for (const p of pendencies) {
+      const k = seen.get(p.kind) ?? { label: p.kindLabel, n: 0 };
+      k.n++;
+      seen.set(p.kind, k);
     }
-  }
+    return [...seen.entries()];
+  }, [pendencies]);
+  const high = pendencies.filter((p) => p.risk === "alto").length;
+
+  const list = useMemo(() => [...pendencies]
+    .filter((p) => filter === "todas" || (filter === "alto" ? p.risk === "alto" : p.kind === filter))
+    .sort((a, b) => RISK_ORDER[a.risk] - RISK_ORDER[b.risk] || a.id.localeCompare(b.id)), [pendencies, filter]);
+  const open: Pendency | null = pendencies.find((p) => p.id === openId) ?? null;
 
   return (
     <section className="page">
       <div className="head">
-        <div><h1>Pendências de dados</h1><p className="sub">Inconsistências que o Neco encontrou. Ele já contorna cada uma no cálculo, mas a correção é humana.</p></div>
-      </div>
-      <div className="bar">
-        <div className="seg seg-scroll">
-          {KINDS.map((k) => {
-            const n = pendencies.filter((p) => p.kind === k.kind).length;
-            return <button key={k.kind} className={kind === k.kind ? "on" : ""} onClick={() => setKind(k.kind)}>{k.label} <span className="cnt">{n}</span></button>;
-          })}
+        <div>
+          <h1>Pendências de dados</h1>
+          <p className="sub">Inconsistências que o Neco encontrou. Ele já contorna cada uma no cálculo, mas a correção é humana.</p>
         </div>
       </div>
-      <p className="hint"><Neco size={20} />{current.hint}</p>
+      <p className="hint"><Neco size={20} />Ordenei por risco: primeiro as que podem estar escondendo um paciente grave.</p>
+      <div className="bar">
+        <div className="seg seg-scroll">
+          <button className={filter === "todas" ? "on" : ""} onClick={() => setFilter("todas")}>Todas <span className="cnt">{pendencies.length}</span></button>
+          <button className={filter === "alto" ? "on" : ""} onClick={() => setFilter("alto")}>Risco alto <span className="cnt">{high}</span></button>
+          {kinds.map(([kind, k]) => (
+            <button key={kind} className={filter === kind ? "on" : ""} onClick={() => setFilter(kind)}>{k.label} <span className="cnt">{k.n}</span></button>
+          ))}
+        </div>
+      </div>
       <div className="card">
         {list.length ? list.map((p) => (
-          <div className="pend" key={p.id}>
-            <div>
+          <button className="pend-row" key={p.id} onClick={() => setOpenId(p.id)}>
+            <span className={`risk-dot ${p.risk}`} title={RISK_LABEL[p.risk]} />
+            <span className="pend-main">
               <b>{p.title}</b>
-              <p>
-                {p.entryIds.filter((id) => entry(id)).length
-                  ? p.entryIds.map((id, i) => entry(id) ? <Link key={id} to={`/fila/${id}`}>{i ? ", " : ""}{p.name}</Link> : null)
-                  : <span>{p.name}</span>}
-                {" · "}<span className="mono">{p.entryIds.join(" · ") || p.id}</span>
-              </p>
-              <small>{p.detail}</small>
-            </div>
-            <div className="pend-act">
-              {current.actions.map(([action, label], i) => (
-                <button key={action} className={`btn ${i === 0 ? "primary" : ""}`} disabled={busy === p.id} onClick={() => resolve(p, action, label)}>{label}</button>
-              ))}
-            </div>
-          </div>
+              <small>{p.name} · {p.divergences[0]?.values.map((v) => `${v.source}: ${v.value}`).join("  ≠  ")}</small>
+            </span>
+            <span className="kind-chip">{p.kindLabel}</span>
+            <ChevronRight />
+          </button>
         )) : <p className="empty">Nada pendente aqui.</p>}
       </div>
+      <PendencyPanel pendency={open} onClose={() => setOpenId(null)} />
     </section>
   );
 }

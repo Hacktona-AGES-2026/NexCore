@@ -7,6 +7,8 @@ import { Neco } from "../components/Neco";
 import { useToast } from "../components/Toast";
 import { officialCsv } from "../domain/officialCsv";
 import { downloadText } from "../lib/download";
+import { NecoComment } from "../components/NecoComment";
+import { ThinkingDots } from "../components/Typing";
 import { CLASS_LABEL } from "../domain/queue";
 import { useQueue } from "../state/QueueContext";
 
@@ -82,7 +84,7 @@ export function Impact() {
   if (!data) {
     return (
       <section className="page">
-        <div className="insight"><Neco size={44} busy /><p>Rodando o verificador oficial na fila do Neco e na fila de hoje…</p></div>
+        <div className="insight"><Neco size={44} thinking /><p className="thinking-row"><ThinkingDots />Rodando o verificador oficial na fila do Neco e na fila de hoje…</p></div>
       </section>
     );
   }
@@ -98,14 +100,15 @@ export function Impact() {
         <button className="btn primary" onClick={download} disabled={exporting}><DownloadIcon />{exporting ? "Gerando…" : "Baixar fila_priorizada.csv"}</button>
       </div>
 
-      <div className="insight">
-        <Neco size={44} cheer={neco.ok ? 1 : 0} />
-        <p>
-          Dos <b>{h.a1Total} casos mais graves</b> (câncer com piora recente), a regulação tinha marcado <b>{h.a1Low} como prioridade baixa ou vazia</b>.
-          Ao mesmo tempo, <b>{h.dHigh} casos sem urgência</b> ocupavam prioridade alta. Na fila de hoje, {manual.violacoes} pacientes com câncer ficam
-          atrás de quem não tem urgência; na do Neco, {neco.violacoes}.
-        </p>
-      </div>
+      <NecoComment
+        className="insight" reloadKey="impact" load={backend.getImpactInsight}
+        fallback={() => ({
+          text: `Dos ${h.a1Total} casos mais graves (câncer com piora recente), a regulação tinha marcado ${h.a1Low} como prioridade baixa ou vazia. `
+            + `Ao mesmo tempo, ${h.dHigh} casos sem urgência ocupavam prioridade alta. Na fila de hoje, ${manual.violacoes} pacientes com câncer ficam `
+            + `atrás de quem não tem urgência; na do Neco, ${neco.violacoes}.`,
+          source: "regras", verified: true,
+        })}
+      />
 
       <div className="verdicts">
         <VerifierCard title="Fila do Neco" run={neco} />

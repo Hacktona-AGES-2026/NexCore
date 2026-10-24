@@ -66,6 +66,8 @@ export interface QueueEntry {
   warnings: Warning[];
   /** Posição travada manualmente pela regulação. */
   locked: boolean;
+  /** Onde o Neco colocaria sem as intervenções manuais. */
+  suggestedPosition?: number;
   pendingConfirmation: boolean;
   events: ClinicalEvent[];
   highlights: Highlight[];
@@ -100,21 +102,77 @@ export interface ReorderRequest {
 }
 
 // ---------- pendências de dados ----------
-export type PendencyKind = "cid_flag" | "duplicate" | "biopsy" | "left_queue" | "orphan_event";
+// Formato único para qualquer tipo de pendência, inclusive tipos futuros: o painel de
+// correção só lê divergências, evidências e ações.
+
+/** Tipos conhecidos hoje; o backend pode mandar outros. */
+export type PendencyKind = "cid_flag" | "duplicate" | "biopsy" | "left_queue" | "orphan_event" | (string & {});
+export type PendencyRisk = "alto" | "medio" | "baixo";
+
+/** Um dado que discorda: o que cada fonte diz. */
+export interface PendencyDivergence {
+  field: string;
+  label: string;
+  values: { source: string; value: string }[];
+}
+
+export interface PendencyEvidence {
+  label: string;
+  text: string;
+  date?: string;
+}
+
+export interface PendencyField {
+  name: string;
+  label: string;
+  type: "text" | "select";
+  required: boolean;
+  options?: { value: string; label: string }[];
+  /** Valor sugerido pelo Neco; usado se o campo ficar vazio. */
+  suggested?: string;
+  pattern?: string;
+  help?: string;
+}
+
+export interface PendencyAction {
+  id: string;
+  label: string;
+  description: string;
+  fields: PendencyField[];
+  requiresJustification: boolean;
+  danger: boolean;
+  /** A ação muda dados que mexem na fila (recalcula ou retira alguém). */
+  changesQueue: boolean;
+}
 
 export interface Pendency {
   id: string;
   kind: PendencyKind;
+  kindLabel: string;
   title: string;
   detail: string;
   /** Nome do paciente (ou id, quando a solicitação não está na fila). */
   name: string;
   entryIds: string[];
+  risk: PendencyRisk;
+  riskReason: string;
+  divergences: PendencyDivergence[];
+  evidence: PendencyEvidence[];
+  actions: PendencyAction[];
+  suggestion: { actionId: string | null; reason: string };
 }
 
 export interface ResolveRequest {
   action: string;
+  values?: Record<string, string>;
   note?: string;
+}
+
+/** O que a correção faria na fila, antes de confirmar. */
+export interface PendencyPreview {
+  action: string;
+  summary: string;
+  changes: { entryId: string; name: string; from: number; to: number | null; classFrom: UrgencyClass; classTo: UrgencyClass }[];
 }
 
 // ---------- equidade ----------
@@ -134,6 +192,14 @@ export interface GroupStat {
   total: number;
   avgWait: number;
   overduePct: number;
+}
+
+/** Texto do Neco: "ia" quando escrito pelo modelo e conferido contra os dados, "regras" na reserva. */
+export interface NecoText {
+  text: string;
+  points?: string[];
+  source: "ia" | "regras";
+  verified: boolean;
 }
 
 export interface EquityReport {
@@ -186,6 +252,8 @@ export interface ImpactReport {
 // ---------- Pergunte ao Neco ----------
 export interface AskRequest {
   question: string;
+  /** Últimas trocas da conversa, para o Neco entender continuações. */
+  history?: { from: "me" | "neco"; text: string }[];
 }
 
 export interface NecoAnswer {

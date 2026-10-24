@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { EquityReport, GroupStat } from "../api/types";
-import { Neco } from "../components/Neco";
 import { MapLegend, RSMap } from "../components/RSMap";
+import { NecoComment } from "../components/NecoComment";
 import { useQueue } from "../state/QueueContext";
 
 function GroupCard({ title, groups }: { title: string; groups: GroupStat[] }) {
@@ -39,14 +39,15 @@ export function Equity() {
         <div><h1>Equidade</h1><p className="sub">Onde estão os pacientes e se alguém espera mais por morar longe, pela idade ou pelo sexo.</p></div>
       </div>
 
-      <div className="insight">
-        <Neco size={44} />
-        <p>
-          {gap > 30
-            ? <>Quem mora a <b>mais de 200 km</b> espera em média <b>{gap} dias a mais</b> ({far.avgWait} contra {near.avgWait}), e {far.overduePct}% já passaram do prazo. A prioridade clínica não usa a distância, então essa diferença vem do acesso e merece atenção da gestão.</>
-            : <>Não encontrei diferença relevante de espera por distância.</>}
-        </p>
-      </div>
+      <NecoComment
+        className="insight" reloadKey="equity" load={backend.getEquityInsight}
+        fallback={() => ({
+          text: gap > 30
+            ? `Quem mora a mais de 200 km espera em média ${gap} dias a mais (${far.avgWait} contra ${near.avgWait}), e ${far.overduePct}% já passaram do prazo. A prioridade clínica não usa a distância, então essa diferença vem do acesso e merece atenção da gestão.`
+            : "Não encontrei diferença relevante de espera por distância.",
+          source: "regras", verified: true,
+        })}
+      />
 
       <div className="eq-grid">
         <div className="card map-card">

@@ -78,14 +78,18 @@ export function QueueProvider({ children }: { children: ReactNode }) {
   const backend = useMemo(() => (config.useMock ? createMockBackend() : httpBackend), []);
   const [state, dispatch] = useReducer(reducer, initial);
 
+  useEffect(() => backend.subscribe(
+    (message) => dispatch({ type: "message", message }),
+    (status) => dispatch({ type: "status", status }),
+  ), [backend]);
+
+  // Auditoria e pendências não vêm no snapshot do WebSocket: busca de novo a cada
+  // (re)conexão, para o front se recuperar se o backend subiu depois dele.
   useEffect(() => {
+    if (state.status !== "open") return;
     backend.getAudit().then((audit) => dispatch({ type: "audit.loaded", audit })).catch(console.error);
     backend.getPendencies().then((pendencies) => dispatch({ type: "pendencies.loaded", pendencies })).catch(console.error);
-    return backend.subscribe(
-      (message) => dispatch({ type: "message", message }),
-      (status) => dispatch({ type: "status", status }),
-    );
-  }, [backend]);
+  }, [backend, state.status]);
 
   const value = useMemo<Ctx>(
     () => ({ ...state, backend, entry: (id) => state.entries.find((e) => e.id === id) }),

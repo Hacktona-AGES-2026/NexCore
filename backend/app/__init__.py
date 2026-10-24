@@ -3,7 +3,7 @@ import logging
 
 from flask import Flask, jsonify
 
-from . import data, errors, realtime, regulation
+from . import data, errors, neco_ia, realtime, regulation
 from .config import get_config
 
 
@@ -27,6 +27,7 @@ def create_app(environment=None, **overrides):
     app.register_blueprint(api)
     realtime.init_app(app)
     regulation.init_app(app)
+    neco_ia.init_app(app)
     _configure_cors(app)
 
     @app.get("/")

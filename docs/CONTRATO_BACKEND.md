@@ -256,23 +256,26 @@ O front reconecta sozinho com espera crescente e se ressincroniza pelo `queue.sn
 
 ---
 
-## 7. Pendências de dados
+## 7. Pendências de dados — implementado
+
+Toda pendência tem **o mesmo formato**, qualquer que seja o tipo, e um único painel de correção no front desenha todas, inclusive tipos novos. Um detector novo só precisa produzir este formato (`backend/app/regulation/pendencies.py`):
 
 ```json
-{ "id": "PEN-0045", "kind": "duplicate", "title": "2 solicitações para o mesmo procedimento",
-  "detail": "Safenectomia... Entradas em 14/01/2024 e 07/05/2024.", "name": "Jurema Quadros Weber",
-  "entryIds": ["SOL-2024-00003", "SOL-2024-00044"] }
+{ "id": "PEN-0067", "kind": "biopsy", "kindLabel": "Biópsia × CID", "title": "...", "detail": "...", "name": "...",
+  "entryIds": ["SOL-..."], "risk": "alto", "riskReason": "...",
+  "divergences": [{ "field": "cid", "label": "Diagnóstico",
+                    "values": [{ "source": "CID principal", "value": "D44.0 · ..." }, { "source": "Biópsia de 19/09/2026", "value": "positiva · ..." }] }],
+  "evidence": [{ "label": "Biópsia positiva", "date": "2026-09-19", "text": "..." }],
+  "actions": [{ "id": "update_cid", "label": "Corrigir o CID", "description": "...", "requiresJustification": true,
+                "danger": false, "changesQueue": true,
+                "fields": [{ "name": "cid", "label": "CID correto", "type": "text", "required": true, "suggested": "C73", "pattern": "..." }] }],
+  "suggestion": { "actionId": "update_cid", "reason": "..." } }
 ```
 
-| `kind` | Como detectar | Ações aceitas em `/resolver` |
-|---|---|---|
-| `cid_flag` | `flag_oncologico` ≠ oncologia pelo CID (44 casos) | `fix_cadastro` |
-| `biopsy` | biópsia positiva e CID não `C*` (23) | `update_cid`, `keep` |
-| `duplicate` | mesmo `paciente_id` + `procedimento_id` | `merge`, `keep_both` |
-| `left_queue` | contato telefônico `informou_cirurgia_outro_servico` ou `desistiu` (18) | `remove`, `keep` |
-| `orphan_event` | evento cuja solicitação não está na fila (9) | `archive` |
-
-`POST /pendencias/{id}/resolver` com `{ "action": "merge", "note": "opcional" }`: remove a pendência, grava auditoria `kind: "data"` e envia `pendency.resolved` + `audit.appended`. Se `remove` ou `merge` tirarem alguém da fila, mandar `queue.patch` com `removed`. Os textos de `title`/`detail` e as contagens de referência estão em `stats.json`.
+- `POST /pendencias/{id}/resolver` com `{ action, values, note }`: valida os campos da ação, **muda o dado de verdade** numa cópia da fila (nunca no dataset), recalcula, confere a regra de ouro, audita o antes e o depois e envia `pendency.resolved` + `queue.patch`. Pendências que ficam sem solicitação ativa são encerradas junto.
+- `POST /pendencias/{id}/simular` com `{ action, values }`: roda o mesmo código num rascunho e devolve `{ summary, changes: [{entryId, name, from, to, classFrom, classTo}] }` sem mudar nada.
+- Risco: `alto` quando a pendência pode esconder um paciente grave (CID benigno com marcação de câncer, biópsia positiva, evento órfão importante com outra solicitação ativa); `medio` para duplicatas e saída da fila; `baixo` para o resto.
+- Ações de hoje: `fix_cadastro`, `update_cid`, `keep`, `unrelated` (biópsia não é deste pedido), `merge` (com `keep`, padrão a entrada mais antiga), `keep_both`, `remove` (com `confirmacao`), `link` (com `target`), `archive`.
 
 ---
 
@@ -312,6 +315,28 @@ Já existe uma implementação de referência em Python: [`entrega/gerar_entrega
 - Ferramentas sugeridas para o modelo: buscar paciente por nome/ID, obter `QueueEntry`, listar fila com filtros (classe, especialidade, prazo vencido), `QueueSummary`, `EquityReport`, `Pendency[]`.
 - Regras no prompt de sistema: responder em português, curto; **só usar dados das ferramentas, nunca inventar**; **não alterar posições** (ele explica, quem decide é o humano); devolver em `entryIds` os pacientes citados.
 - Perguntas que o front sugere e devem funcionar: explicar posição de um paciente, comparar dois pacientes, contar casos por classe, listar quem passou do prazo por especialidade, falar de equidade e de pendências. O mock (`neco.ts`) responde essas mesmas perguntas por palavra-chave: serve de gabarito.
+
+---
+
+## 9.1 Textos do Neco por IA (Gemini) — implementado em `backend/app/neco_ia/`
+
+Todo texto em que o Neco "fala" pode ser escrito pelo modelo, sempre com a mesma regra: **a posição, a classe e o índice vêm do cálculo; a IA só escreve sobre eles**.
+
+| Onde | Rota | Formato |
+|---|---|---|
+| Por que o paciente está ali | `GET /fila/{id}/explicacao` | `NecoText` = `{text, points, source, verified}` |
+| Comentário da equidade | `GET /painel/equidade/comentario` | `NecoText` |
+| Comentário do impacto | `GET /painel/impacto/comentario` | `NecoText` |
+| Pergunte ao Neco | `POST /neco/perguntar` | aceita `history: [{from: "me" \| "neco", text}]` |
+
+- Os comentários dos painéis ficam em rotas próprias para o painel abrir na hora; o front mostra o Neco "pensando" até o comentário chegar e depois o escreve letra a letra. Se a rota falhar, o front escreve o texto por regras do mesmo jeito.
+- **Entrada da IA**: só dados estruturados — fatores, eventos recentes, trechos destacados do texto, avisos, vizinhos, a auditoria do paciente (movimentações manuais com justificativa, validações) e `suggestedPosition` (onde o Neco colocaria sem travas; campo novo em `QueueEntry`).
+- **Verificação**: todo número do texto precisa existir nos dados enviados; senão o texto é descartado. `source: "ia"` só quando o modelo respondeu e passou na verificação.
+- **Reserva**: sem chave, cota estourada, timeout ou resposta fora do formato → texto por regras (`source: "regras"`), sem erro para o usuário. No chat, cai nas respostas por palavra-chave (`regulation/ask.py`).
+- **Cache** por paciente + versão dos dados: um paciente custa uma chamada até mudar (evento, reordenação, validação). Equidade e impacto custam uma chamada por mudança nos números.
+- **Chat com ferramentas só de leitura** (`neco_ia/chat.py`): buscar pacientes, detalhar solicitação, listar fila com filtros, resumo, equidade, pendências, histórico de auditoria e regras do Neco. Nenhuma ferramenta altera a fila.
+- **Plano gratuito**: `NECO_IA_RPM` espaça as chamadas; se a espera passar de 3 s, usa a reserva em vez de travar a tela.
+- **Configuração** (`backend/.env`): `GEMINI_API_KEY`, `GEMINI_MODEL` (padrão `gemini-3.1-flash-lite`; confiram no Google AI Studio o modelo e os limites atuais), `NECO_IA_ENABLED`, `NECO_IA_RPM`. A chave nunca vai para o front nem para o Git.
 
 ---
 

@@ -49,7 +49,9 @@ def test_rotas_registradas_sao_as_do_canal_e_as_da_regulacao(cliente):
         f"{base}/fila/<request_id>/validar", f"{base}/auditoria", f"{base}/pendencias",
         f"{base}/pendencias/<pendency_id>/resolver", f"{base}/painel/resumo",
         f"{base}/painel/equidade", f"{base}/painel/impacto", f"{base}/fila/exportar",
-        f"{base}/neco/perguntar",
+        f"{base}/neco/perguntar", f"{base}/fila/<request_id>/explicacao",
+        f"{base}/painel/equidade/comentario", f"{base}/painel/impacto/comentario",
+        f"{base}/pendencias/<pendency_id>/simular",
     }
 
 

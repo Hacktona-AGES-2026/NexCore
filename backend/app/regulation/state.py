@@ -15,7 +15,7 @@ import threading
 
 from ..data.reader import strip_accents
 from ..prioritization import CLASS_LABEL, assess, golden_rule_violation, rank, relocate
-from . import ask, impact, panels, pendencies, serializers
+from . import ask, corrections, impact, panels, pendencies, serializers
 from .audit import AuditLog, utc_now
 from .errors import ContractError
 from .hub import Hub
@@ -47,21 +47,27 @@ class QueueState:
 
         places = load_municipalities() if municipalities is None else municipalities
         self.coordinates = {p["name"]: p for p in places.values()}
+        self.repository = repository
         self.records = {}
+        self.events = {}
+        self.cities = {}
         self.assessments = {}
         self._entries = {}
+        self.confirmed = set()  # left-queue alerts a human dismissed ("the patient wants to stay")
         for record in repository.queue:
             rid = record["solicitacao_id"]
             events = repository.events_for_request(rid)
-            assessment = assess(record, events, repository.reference_date)
             place = places.get(strip_accents(record.get("municipio_norm")))
-            self.records[rid] = record
-            self.assessments[rid] = assessment
-            self._entries[rid] = serializers.queue_entry(
-                record, assessment, events, city=place["name"] if place else None,
-            )
+            # Own copies: corrections change these, never the repository's rows.
+            self.records[rid] = dict(record)
+            self.events[rid] = events
+            self.cities[rid] = place["name"] if place else None
+            self.assessments[rid] = assess(record, events, repository.reference_date)
+            self._rebuild_entry(rid)
 
         self.order = rank(self.assessments)
+        self.suggested = {}
+        self._refresh_suggested()
         self.locked = set()
         self.previous = {}
         self.pendencies = {p["id"]: p for p in pendencies.detect(repository, self.assessments)}
@@ -76,6 +82,7 @@ class QueueState:
         if rid in self.previous:
             entry["previousPosition"] = self.previous[rid]
         entry["locked"] = rid in self.locked
+        entry["suggestedPosition"] = self.suggested.get(rid, position)
         return entry
 
     def entries(self):
@@ -126,6 +133,33 @@ class QueueState:
         with self._lock:
             self._impact = (order, report)
         return report
+
+    def explanation_context(self, rid):
+        """What the Neco needs to explain one position (neco_ia.texts.patient_facts)."""
+        with self._lock:
+            self._require(rid)
+            index = self.order.index(rid)
+            entries = self.entries()
+            return {
+                "entry": entries[index],
+                "above": entries[index - 1] if index > 0 else None,
+                "below": entries[index + 1] if index + 1 < len(entries) else None,
+                "audit_records": [r for r in reversed(self.audit.newest_first()) if r["entryId"] == rid],
+                "suggested_position": self.suggested.get(rid, index + 1),
+                "total": len(entries),
+            }
+
+    def chat_snapshot(self):
+        """A consistent read of everything the chat's tools may look at."""
+        with self._lock:
+            entries = self.entries()
+            return {
+                "entries": entries,
+                "summary": panels.summary(entries),
+                "equity": panels.equity(entries, self.records, self.coordinates),
+                "pendencies": self.pendency_list(),
+                "audit": self.audit.newest_first(),
+            }
 
     def ask(self, question):
         with self._lock:
@@ -201,43 +235,103 @@ class QueueState:
             self._publish_audit(record)
             return record
 
-    def resolve(self, pendency_id, action, note=None):
+    def _plan(self, pendency_id, action, values, note):
+        """Validates and applies a resolution on a draft. Raises ContractError."""
+        pendency = self.pendencies.get(pendency_id)
+        if pendency is None:
+            raise ContractError(f"Pendência {pendency_id} não encontrada.", 404)
+        try:
+            action_def, values = pendencies.validate(pendency, action, values or {}, note)
+        except ValueError as exc:
+            raise ContractError(str(exc)) from exc
+        draft = corrections.Draft(
+            self.records, self.events, self.assessments, self.order, self.locked, self.confirmed, self.reference_date,
+        )
+        facts = corrections.apply(draft, pendency, action, values, self.repository.events_for_request)
+        order = draft.reranked()
+        violation = golden_rule_violation(order, draft.assessments)
+        if violation:
+            raise ContractError(self._violation_detail(order, *violation), 422)
+        return pendency, action_def, values, draft, order, facts
+
+    def simulate(self, pendency_id, action, values=None):
+        """What resolving would change, without changing anything (PendencyPreview).
+
+        The justification is not checked here: the preview comes before writing it.
+        """
         with self._lock:
             pendency = self.pendencies.get(pendency_id)
-            if pendency is None:
-                raise ContractError(f"Pendência {pendency_id} não encontrada.", 404)
-            allowed = pendencies.ACTIONS[pendency["kind"]]
-            if action not in allowed:
-                raise ContractError(
-                    f"A ação '{action}' não se aplica a esta pendência. Use: {', '.join(allowed)}."
-                )
+            placeholder = "(prévia)" * 2 if pendency else ""
+            pendency, action_def, _, draft, order, _ = self._plan(pendency_id, action, values, placeholder)
+            before = {rid: i for i, rid in enumerate(self.order, start=1)}
+            after = {rid: i for i, rid in enumerate(order, start=1)}
+            ids = list(dict.fromkeys([*pendency["entryIds"], *draft.touched, *draft.removed]))
+            changes = []
+            for rid in ids:
+                if rid not in before:
+                    continue
+                changes.append({
+                    "entryId": rid, "name": self._entries[rid]["name"],
+                    "from": before[rid], "to": after.get(rid),
+                    "classFrom": self.assessments[rid]["urgency_class"],
+                    "classTo": draft.assessments[rid]["urgency_class"],
+                })
+            return {"action": action, "changes": changes, "summary": self._preview_summary(action_def, changes)}
+
+    @staticmethod
+    def _preview_summary(action_def, changes):
+        if not changes or not action_def["changesQueue"]:
+            return "Nenhuma mudança na fila: só o registro é corrigido."
+        parts = []
+        for c in changes:
+            name = first_name(c["name"])
+            if c["to"] is None:
+                parts.append(f"{name} sai da fila (estava na {c['from']}ª).")
+            elif c["to"] == c["from"] and c["classFrom"] == c["classTo"]:
+                parts.append(f"{name} continua na {c['from']}ª.")
+            else:
+                cls = "" if c["classFrom"] == c["classTo"] else f" e passa de {c['classFrom']} para {c['classTo']}"
+                parts.append(f"{name} vai da {c['from']}ª para a {c['to']}ª{cls}.")
+        return " ".join(parts)
+
+    def resolve(self, pendency_id, action, note=None, values=None):
+        with self._lock:
             note = note.strip() if isinstance(note, str) else ""
+            pendency, _, values, draft, order, facts = self._plan(pendency_id, action, values, note)
 
-            removed = []
-            touched = set()
-            ids = [rid for rid in pendency["entryIds"] if rid in self.order]
-            if action == "remove":
-                removed = ids
-            elif action == "merge":
-                removed = ids[1:]  # entryIds come oldest first: keep the first
-            elif pendency["kind"] == "left_queue" and action == "keep":
-                touched = self._clear_confirmation(ids)
+            self.records, self.events, self.assessments = draft.records, draft.events, draft.assessments
+            self.locked, self.confirmed = draft.locked, draft.confirmed
+            for rid in draft.touched:
+                self._rebuild_entry(rid)
+            changed = self._commit(order, extra=draft.touched - set(draft.removed))
+            if draft.removed or draft.touched:
+                self._refresh_suggested()
 
-            del self.pendencies[pendency_id]
-            changed = self._commit([rid for rid in self.order if rid not in removed], extra=touched)
-            justification = f"{pendency['title']}. {pendencies.OUTCOME[action]}"
+            # The pendency, and any other one left with no active request, are settled.
+            settled = [pendency_id] + [
+                pid for pid, p in self.pendencies.items()
+                if pid != pendency_id and p["entryIds"] and not any(rid in self.order for rid in p["entryIds"])
+            ]
+            for pid in settled:
+                del self.pendencies[pid]
+
+            outcome = pendencies.OUTCOME[action].format(**{**values, **facts})
+            justification = f"{pendency['title']}. {outcome}"
             if note:
                 justification += f" {note}"
             record = self.audit.append(
                 "data", self.author, (pendency["entryIds"] or [pendency_id])[0],
                 pendency["name"], None, 0, justification,
             )
-            self.hub.publish({"type": "pendency.resolved", "id": pendency_id})
+            for pid in settled:
+                self.hub.publish({"type": "pendency.resolved", "id": pid})
             self._publish_audit(record)
-            if changed or removed:
-                self._publish_patch(changed, removed)
-            if removed:
-                self._activity(f"{first_name(pendency['name'])} saiu da fila: {pendencies.OUTCOME[action]}", record["at"])
+            if changed or draft.removed:
+                self._publish_patch(changed, draft.removed)
+            if draft.removed:
+                self._activity(f"{first_name(pendency['name'])} saiu da fila: {outcome}", record["at"])
+            elif changed:
+                self._activity(f"Correção de dados recalculou a fila ({first_name(pendency['name'])})", record["at"])
             return record
 
     # --- internals -----------------------------------------------------
@@ -254,12 +348,17 @@ class QueueState:
         self.order = list(new_order)
         return changed
 
-    def _clear_confirmation(self, ids):
-        for rid in ids:
-            entry = self._entries[rid]
+    def _refresh_suggested(self):
+        """Where the Neco alone would put each active request, ignoring manual moves."""
+        active = {rid: self.assessments[rid] for rid in self.order}
+        self.suggested = {rid: i for i, rid in enumerate(rank(active), start=1)}
+
+    def _rebuild_entry(self, rid):
+        entry = serializers.queue_entry(self.records[rid], self.assessments[rid], self.events[rid], city=self.cities[rid])
+        if rid in self.confirmed:
             entry["pendingConfirmation"] = False
             entry["warnings"] = [w for w in entry["warnings"] if w["level"] != "critical"]
-        return set(ids)
+        self._entries[rid] = entry
 
     def _violation_detail(self, order, oncological, calm):
         onco_entry = self._entries[oncological]

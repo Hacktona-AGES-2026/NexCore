@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import type { QueueEntry } from "../api/types";
+import type { NecoText, QueueEntry } from "../api/types";
 import { CLASS_LABEL, CLASS_RANK, DEADLINE_DAYS, FACTOR_LABEL, byPosition, firstName } from "../domain/queue";
 import { useQueue } from "../state/QueueContext";
 import { HighlightLegend, HighlightedText } from "./HighlightedText";
 import { InfoIcon } from "./icons";
-import { Neco } from "./Neco";
+import { NecoComment } from "./NecoComment";
 import { ReorderModal } from "./ReorderModal";
 import { useToast } from "./Toast";
 
@@ -23,26 +23,27 @@ const isHot = (r: string, t: string) => ["positivo", "progressao", "piora", "rel
 const fmtDate = (d?: string) => (d ? d.split("-").reverse().join("/") : "—");
 const fmtNum = (n: number) => String(n).replace(".", ",");
 
-function Explanation({ entry, above }: { entry: QueueEntry; above?: QueueEntry }) {
+/** A explicação por regras, montada no front: é o que o Neco fala se a API falhar. */
+function localExplanation(entry: QueueEntry, above?: QueueEntry): NecoText {
   const deadline = DEADLINE_DAYS[entry.urgencyClass];
   const late = entry.daysWaiting - deadline;
-  return (
-    <div>
-      <div className="lbl">Por que está aqui</div>
-      <p><b>{CLASS_LABEL[entry.urgencyClass]} ({entry.urgencyClass})</b>: {entry.classReason}.</p>
-      <p>
-        {late > 0
-          ? <>Espera há {entry.daysWaiting} dias, <b>{late} dias além</b> do prazo de {deadline} dias.</>
-          : <>Espera há {entry.daysWaiting} dias, dentro do prazo de {deadline} dias.</>}
-      </p>
-      {above && (
-        <p className="muted">
-          Abaixo de #{above.position} {firstName(above.name)},{" "}
-          {CLASS_RANK[above.urgencyClass] > CLASS_RANK[entry.urgencyClass] ? "que é mais urgente" : above.locked ? "posicionado manualmente" : "que tem índice maior"}.
-        </p>
-      )}
-    </div>
-  );
+  const points = [
+    late > 0
+      ? `Espera há ${entry.daysWaiting} dias, ${late} além do prazo de ${deadline} dias.`
+      : `Espera há ${entry.daysWaiting} dias, dentro do prazo de ${deadline} dias.`,
+  ];
+  if (entry.locked && entry.suggestedPosition && entry.suggestedPosition !== entry.position) {
+    points.push(`Posição definida manualmente pela regulação; pelos dados, o Neco a colocaria na ${entry.suggestedPosition}ª.`);
+  }
+  if (above) {
+    const why = CLASS_RANK[above.urgencyClass] > CLASS_RANK[entry.urgencyClass] ? "que é mais urgente"
+      : above.locked ? "posicionado manualmente" : "que tem índice maior";
+    points.push(`Abaixo de #${above.position} ${firstName(above.name)}, ${why}.`);
+  }
+  return {
+    text: `${CLASS_LABEL[entry.urgencyClass]} (${entry.urgencyClass}): ${entry.classReason}.`,
+    points: points.slice(0, 3), source: "regras", verified: true,
+  };
 }
 
 export function PatientDrawer({ entryId, onClose }: { entryId: string | null; onClose: () => void }) {
@@ -60,6 +61,8 @@ export function PatientDrawer({ entryId, onClose }: { entryId: string | null; on
   const sorted = [...entries].sort(byPosition);
   const above = e ? sorted[sorted.indexOf(e) - 1] : undefined;
   const validation = e && audit.find((a) => a.entryId === e.id && a.kind === "validation");
+  // O Neco pensa de novo quando algo do paciente muda: posição, trava ou auditoria.
+  const explanationKey = e ? `${e.id}:${e.position}:${e.locked}:${audit.filter((a) => a.entryId === e.id).length}` : "";
 
   async function validate() {
     if (!e) return;
@@ -79,7 +82,10 @@ export function PatientDrawer({ entryId, onClose }: { entryId: string | null; on
               <button className="x" onClick={onClose} aria-label="Fechar">✕</button>
             </div>
             <div className="dr-b">
-              <div className="why"><Neco size={44} cheer={validation ? 1 : 0} /><Explanation entry={e} above={above} /></div>
+              <NecoComment
+                className="why" label="Por que está aqui" boldFirst reloadKey={explanationKey} cheer={validation ? 1 : 0}
+                load={() => backend.getExplanation(e.id)} fallback={() => localExplanation(e, above)}
+              />
               {e.warnings.map((w) => (
                 <div key={w.text} className={`warn ${w.level === "critical" ? "red" : ""}`}><InfoIcon />{w.text}</div>
               ))}

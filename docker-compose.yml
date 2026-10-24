@@ -18,6 +18,10 @@ services:
       HOSPITAL_ID: ${HOSPITAL_ID:-hsl}
       # O handshake do WebSocket não passa por CORS: o backend confere o Origin.
       CORS_ORIGINS: ${CORS_ORIGINS:-*}
+      # Textos do Neco por IA (Gemini). Sem chave, o Neco usa os textos por regras.
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.1-flash-lite}
+      NECO_IA_RPM: ${NECO_IA_RPM:-10}
     ports:
       - "${BACKEND_PORT:-5000}:5000"
     restart: unless-stopped

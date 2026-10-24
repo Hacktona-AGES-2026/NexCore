@@ -23,10 +23,18 @@ interface Props {
   analyze?: number;
   /** Cada incremento faz o Neco assobiar. */
   cheer?: number;
+  /** Esperando uma resposta: balança e inclina a cabeça, como quem pensa. */
+  thinking?: boolean;
+  /** Enquanto true, assobia sem parar (as notinhas saem do bico): usado enquanto o texto é escrito. */
+  singing?: boolean;
 }
 
+const SING_EVERY_MS = 1700;
+
 /** Neco, o sabiá do NexCore. */
-export function Neco({ size = 32, mood = "ok", invert = false, idle = true, busy = false, analyze = 0, cheer = 0 }: Props) {
+export function Neco({
+  size = 32, mood = "ok", invert = false, idle = true, busy = false, analyze = 0, cheer = 0, thinking = false, singing = false,
+}: Props) {
   const ref = useRef<SabiaSelo>(null);
   const wasBusy = useRef(busy);
   const first = useRef({ analyze, cheer });
@@ -58,22 +66,33 @@ export function Neco({ size = 32, mood = "ok", invert = false, idle = true, busy
     if (mood === "alert") ref.current?.chacoalhar();
   }, [mood]);
 
+  useEffect(() => {
+    const el = ref.current;
+    if (!singing || !el) return;
+    const sing = () => { el.assobiar(); };
+    if (el.postura === "agachado") el.levantar().then(sing); else sing();
+    const timer = setInterval(sing, SING_EVERY_MS);
+    return () => clearInterval(timer);
+  }, [singing]);
+
   const color = invert ? "#fff" : "var(--bordo)";
   const bg = invert ? "var(--bordo)" : "var(--sabia-claro)";
 
+  const wrap = (node: JSX.Element) => <span className={`neco-wrap ${thinking ? "thinking" : ""}`}>{node}</span>;
+
   if (size < MIN_ANIMATED) {
-    return (
+    return wrap(
       <svg className="neco" viewBox="0 0 200 200" width={size} height={size} role="img" aria-label="Neco">
         <circle cx="100" cy="100" r="96" fill={color} />
         <g transform="translate(100 102) scale(0.8) translate(-96 -104)">
           <path d={SILHUETA} fill={bg} />
           <circle cx="143" cy="69" r="4.5" fill={color} />
         </g>
-      </svg>
+      </svg>,
     );
   }
 
-  return (
+  return wrap(
     <sabia-selo
       ref={ref}
       class="neco"
@@ -81,6 +100,6 @@ export function Neco({ size = 32, mood = "ok", invert = false, idle = true, busy
       ocioso={idle ? "" : undefined}
       rotulo="Neco, assistente de priorização"
       style={{ ["--sabia-cor" as string]: color, ["--sabia-fundo" as string]: bg }}
-    />
+    />,
   );
 }
