@@ -1,0 +1,109 @@
+# Testes do simulador (Go) e do backend (Python) em todo push e PR; com os dois
+# verdes num push na main, deploy na VPS da Hostinger (docs/DEPLOY.md explica os secrets).
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  # um PR novo cancela a rodada anterior dele; pushes na main não se atropelam
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  go:
+    name: Testes Go (simulador)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: simulador
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: simulador/go.mod
+          cache: false # só biblioteca padrão: não há go.sum nem módulos para guardar
+
+      - name: gofmt
+        run: |
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then
+            echo "Arquivos sem gofmt:"; echo "$unformatted"; exit 1
+          fi
+
+      - name: go vet
+        run: go vet ./...
+
+      - name: go test
+        run: go test -race -cover ./...
+
+  python:
+    name: Testes Python (backend + dataset)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12" # a mesma da imagem do backend
+          cache: pip
+          cache-dependency-path: |
+            backend/requirements.txt
+            backend/requirements-dev.txt
+            backend/dataset/requirements.txt
+
+      # o teste de contrato com o simulador roda `go run . -dump` (sem Go ele é pulado)
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: simulador/go.mod
+          cache: false
+
+      - name: Dependências
+        run: pip install -r backend/requirements-dev.txt
+
+      # da raiz, onde está o pytest.ini; inclui os testes `lento` (verificador oficial)
+      # e os do compose (o runner tem Docker)
+      - name: pytest
+        run: python -m pytest
+
+  # Deploy pela API da Hostinger (docs/DEPLOY.md): a VPS baixa o repositório e sobe o
+  # docker-compose.yml da raiz como o projeto "nexcore", substituindo o anterior.
+  deploy:
+    name: Deploy na Hostinger
+    needs: [go, python]
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false # um deploy pela metade é pior que um atrasado
+    steps:
+      - uses: actions/checkout@v4
+
+      # O Flask só guarda a chave na config (não há sessão nem cookie assinado), e o
+      # estado vive em memória: uma chave nova a cada deploy não quebra nada.
+      - name: SECRET_KEY do deploy
+        id: flask
+        run: |
+          key="$(openssl rand -hex 32)"
+          echo "::add-mask::$key"
+          echo "secret_key=$key" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy na VPS
+        uses: hostinger/deploy-action@v1
+        with:
+          api-key: ${{ secrets.HOSTINGER_API_KEY }}
+          virtual-machine: ${{ secrets.HOSTINGER_VM_ID }}
+          project-name: nexcore
+          docker-compose-path: docker-compose.yml
+          # repositório privado: a VPS baixa o código com o token do próprio job
+          personal-token: ${{ secrets.GITHUB_TOKEN }}
+          environment-variables: |
+            SECRET_KEY=${{ steps.flask.outputs.secret_key }}
+            GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}

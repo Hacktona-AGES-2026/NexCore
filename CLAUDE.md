@@ -61,15 +61,22 @@ backend/.venv/bin/python backend/wsgi.py                # http://127.0.0.1:5000 
 # em produção o worker PRECISA ser de thread (o socket fica aberto):
 #   gunicorn -k gthread -w 1 --threads 50 -b 0.0.0.0:5000 wsgi:app   # 1 processo: estado em memória
 
-# tudo em Docker (da raiz): front em :8080 (nginx faz proxy de /v1 e /api), backend em :5000
+# tudo em Docker (da raiz): front em :8080 (nginx faz proxy de /v1 e /api), backend em :5000,
+# e o simulador (imagem própria) só depois do healthcheck do backend
 docker compose up --build -d
 docker compose logs -f backend
+docker compose logs -f simulador
+docker compose stop simulador                           # congela a fila
 docker compose down
 
 # falar com o canal à mão (não precisa de front nem de dependência nova)
 cd backend && .venv/bin/python tools/ws_client.py                  # interativo
 cd backend && .venv/bin/python tools/ws_client.py queue.list size=3 oncological=true
 cd backend && .venv/bin/python tools/ws_client.py stats.summary --raw | jq .payload
+
+# simulador avulso, só com o backend FORA do Docker (senão seriam dois simuladores)
+cd simulador && docker compose up --build -d && docker compose logs -f simulador
+cd simulador && go test ./...
 
 # regenerar backend/dataset/normalizado/ a partir dos CSVs de origem
 backend/.venv/bin/python backend/dataset/normalizar_dataset.py
@@ -127,7 +134,26 @@ memória sob um lock — por isso **um processo só**. A regra fica em `app/prio
 (pura); a regra de ouro usa o "sem urgência clínica" do verificador, não "classe D".
 `/painel/impacto` roda o verificador oficial por subprocess (`regulation/verifier.py`) na fila
 do Neco e na fila manual, com cache por ordem; `/fila/exportar` é o `fila_priorizada.csv` da fila
-atual. Ingestão (`/fila/entradas`, `/fila/eventos`) ainda não existe.
+atual. Ingestão: `/fila/entradas` e `/fila/eventos` recebem linhas dos CSVs de origem
+(objeto ou lote), `regulation/intake.py` valida e normaliza como o normalizador, e o
+`QueueState` encaixa (`prioritization.place`, menos inversões + regra de ouro) e empurra os
+frames; quem a regulação travou não é movido. As linhas ingeridas vão ao verificador como
+`extra` (cópia dos CSVs de origem com as linhas no fim), senão ele acusaria id inexistente.
+O que entra pela ingestão vive só em memória, como o resto do estado: reiniciar o backend
+volta ao dataset.
+
+**Simulador (`simulador/`, Go, imagem própria)** sobe no compose da raiz depois do
+healthcheck do backend (`test_docker_compose.py` trava isso; `simulador/docker-compose.yml` é
+o avulso, para backend fora do Docker) e alimenta a ingestão na demonstração como um timer:
+uma entrada nova a cada 10 s (`ENTRY_INTERVAL`) e, desde a primeira, um evento a cada 5 s
+(`EVENT_INTERVAL`) na **última** entrada (`SOL-2026-9NNNN`). Quando os dois coincidem o evento
+sai antes, então cada entrada recebe 2 eventos e os 2 primeiros passos de cada história
+carregam o pulo na fila. `go test ./...` lá dentro; o contrato com o backend é
+`test_ingestao.py::test_dados_do_simulador_passam_na_ingestao_e_pulam_na_fila`.
+
+**CI/CD** (`.github/workflows/ci-cd.yml`, guia em `docs/DEPLOY.md`): testes Go e Python em
+todo push/PR; push na `main` com os dois verdes faz deploy na VPS da Hostinger pela
+`hostinger/deploy-action` (secrets `HOSTINGER_API_KEY`, `HOSTINGER_VM_ID`, `GEMINI_API_KEY`).
 
 **Além disso, HTTP tem `/api/health`** (mais `GET /`, que anuncia o canal, o protocolo e as
 ações). O blueprint `api` continua existindo para ele: um healthcheck de deploy não deve

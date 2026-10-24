@@ -14,11 +14,7 @@ Para o front usar o servidor real: `frontend/.env` com `VITE_USE_MOCK=false`, `V
 
 O front roda contra o backend real com `npm run dev:backend`. Testado ponta a ponta: fila completa (941), reordenação com regra de ouro (422), validação, auditoria encadeada, pendências, resumo, equidade, impacto (verificador oficial no servidor, ~3 s), exportação do CSV oficial, Pergunte ao Neco e WebSocket (`queue.snapshot`, `queue.patch`, `audit.appended`, `pendency.resolved`, `activity`). Todos os formatos batem com `types.ts`.
 
-Ainda faltam no backend:
-
-| Rota | Hoje o front faz |
-|---|---|
-| `POST /fila/entradas`, `POST /fila/eventos` | nada: sem ingestão, a fila só muda por ação humana. É o que faz a demonstração "ao vivo" funcionar |
+A ingestão (`POST /fila/entradas`, `POST /fila/eventos`) também já existe no backend: o corpo é uma linha dos CSVs de origem (ou uma lista delas, um lote atômico), validada contra `backend/dataset/dicionario_dados.md`. A entrada devolve `201` com a `QueueEntry` criada; o evento, `202` com a `QueueEntry` atualizada. Erros: `400` (fora do domínio, com todos os problemas da linha), `404` (evento para solicitação fora da fila), `409` (id repetido). O efeito chega ao front pelo WebSocket, sem mudança no front. Como o resto do estado, o que entra vive só em memória: reiniciar o backend volta ao dataset. O simulador em `simulador/` alimenta a ingestão na demonstração.
 
 ---
 
