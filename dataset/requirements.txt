@@ -1,0 +1,2 @@
+# Dependências dos scripts de dataset (normalizar_dataset.py, verificar_fila_priorizada.py).
+pandas>=2.0
