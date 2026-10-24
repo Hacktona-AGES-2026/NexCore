@@ -9,12 +9,17 @@ export const CLASS_LABEL: Record<UrgencyClass, string> = {
   C: "Moderado",
   D: "Eletivo",
 };
-export const FACTOR_LABEL = {
-  urgency: "Urgência clínica",
+export const FACTOR_LABEL: Record<string, string> = {
   wait: "Tempo de espera",
+  clinical: "Gravidade clínica",
+  social: "Vulnerabilidade social",
+  urgency: "Urgência clínica",
   events: "Eventos recentes",
   symptoms: "Dor e limitação",
-} as const;
+};
+
+/** O backend ordena pelo DPSS: índice = espera × (1 + clínico + social). */
+export const isDpss = (e: QueueEntry) => e.priority?.model === "dpss";
 
 export const byPosition = (a: QueueEntry, b: QueueEntry) => a.position - b.position;
 export const daysOverdue = (e: QueueEntry) => e.daysWaiting - DEADLINE_DAYS[e.urgencyClass];

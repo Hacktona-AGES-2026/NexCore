@@ -75,13 +75,13 @@ export function Screen() {
                 <span className="l"><b>{c.cls}</b> {CLASS_LABEL[c.cls]}</span>
                 <div className="tv-track">
                   <i className="late" style={{ width: `${(c.overdue / maxClass) * 100}%` }} />
-                  <i className="ok" style={{ width: `${((c.total - c.overdue) / maxClass) * 100}%` }} />
+                  <i className="intime" style={{ width: `${((c.total - c.overdue) / maxClass) * 100}%` }} />
                 </div>
                 <span className="v">{c.total}</span>
               </div>
             ))}
           </div>
-          <div className="tv-key"><span><i className="late" />Passou do prazo</span><span><i className="ok" />No prazo</span></div>
+          <div className="tv-key"><span><i className="late" />Passou do prazo</span><span><i className="intime" />No prazo</span></div>
 
           <h2 style={{ marginTop: "2.2vh" }}>Tempo de espera</h2>
           <div className="tv-hist">

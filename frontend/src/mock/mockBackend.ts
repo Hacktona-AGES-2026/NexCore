@@ -101,7 +101,7 @@ export function createMockBackend(): Backend {
   // Move pela regra do Neco: atrás do último com classe mais urgente ou índice maior.
   function necoPlace(target: QueueEntry) {
     let prev: QueueEntry | undefined;
-    for (const o of sorted()) if (o.id !== target.id && (CLASS_RANK[o.urgencyClass] > CLASS_RANK[target.urgencyClass] || (CLASS_RANK[o.urgencyClass] === CLASS_RANK[target.urgencyClass] && o.score >= target.score))) prev = o;
+    for (const o of sorted()) if (o.id !== target.id && (CLASS_RANK[o.urgencyClass] > CLASS_RANK[target.urgencyClass] || (CLASS_RANK[o.urgencyClass] === CLASS_RANK[target.urgencyClass] && (o.score ?? -Infinity) >= (target.score ?? -Infinity)))) prev = o;
     let to = prev ? prev.position + 1 : 1;
     if (to > target.position) to--;
     return to;

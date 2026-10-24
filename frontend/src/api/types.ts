@@ -13,8 +13,13 @@ export interface ClinicalEvent {
   origin: string;
 }
 
+/**
+ * Um fator do índice. No DPSS: `wait` (espera/prazo, passa de 1 quando venceu),
+ * `clinical` (0 a 1) e `social` (peso × vulnerabilidade). O mock ainda usa as
+ * chaves antigas do Neco (urgency, wait, events, symptoms).
+ */
 export interface ScoreFactor {
-  key: "urgency" | "wait" | "events" | "symptoms";
+  key: "wait" | "clinical" | "social" | "urgency" | "events" | "symptoms" | (string & {});
   value: number;
   max: number;
 }
@@ -22,6 +27,18 @@ export interface ScoreFactor {
 export interface Warning {
   level: "info" | "critical";
   text: string;
+}
+
+export interface PriorityInfo {
+  model: "dpss" | (string & {});
+  version: string;
+  basis: string;
+  /** Na faixa protegida (A1/A2 ou câncer): fica acima de quem não tem urgência. */
+  protected: boolean;
+  dps: number | null;
+  socioeconomicVulnerability: number | null;
+  socialSource: string | null;
+  socioeconomicWeight: number;
 }
 
 export type HighlightKind = "urgency" | "events" | "symptoms" | "red_flag";
@@ -59,8 +76,11 @@ export interface QueueEntry {
   position: number;
   previousPosition?: number;
   urgencyClass: UrgencyClass;
-  score: number;
+  /** Índice que ordena a faixa; null quando o DPS não inferiu a classe. */
+  score: number | null;
   factors: ScoreFactor[];
+  /** Modelo de prioridade (DPSS) e seus dados; ausente no mock. */
+  priority?: PriorityInfo;
   /** Frase do Neco explicando a classe, ex.: "dor moderada (6/10)". */
   classReason: string;
   warnings: Warning[];

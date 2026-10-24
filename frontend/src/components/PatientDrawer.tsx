@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { NecoText, QueueEntry } from "../api/types";
-import { CLASS_LABEL, CLASS_RANK, DEADLINE_DAYS, FACTOR_LABEL, byPosition, firstName } from "../domain/queue";
+import { CLASS_LABEL, CLASS_RANK, DEADLINE_DAYS, byPosition, firstName } from "../domain/queue";
+import { PriorityBreakdown } from "./PriorityBreakdown";
 import { useQueue } from "../state/QueueContext";
 import { HighlightLegend, HighlightedText } from "./HighlightedText";
 import { InfoIcon } from "./icons";
@@ -21,7 +22,6 @@ const RESULT_LABEL: Record<string, string> = {
 };
 const isHot = (r: string, t: string) => ["positivo", "progressao", "piora", "relata_piora", "observacao"].includes(r) || t === "internacao";
 const fmtDate = (d?: string) => (d ? d.split("-").reverse().join("/") : "—");
-const fmtNum = (n: number) => String(n).replace(".", ",");
 
 /** A explicação por regras, montada no front: é o que o Neco fala se a API falhar. */
 function localExplanation(entry: QueueEntry, above?: QueueEntry): NecoText {
@@ -104,13 +104,7 @@ export function PatientDrawer({ entryId, onClose }: { entryId: string | null; on
                 </div>
               )}
 
-              <div className="sect">Como o índice foi composto</div>
-              {e.factors.map((f) => (
-                <div className="factor" key={f.key}>
-                  <b>{FACTOR_LABEL[f.key]}</b><span>{fmtNum(f.value)} de {f.max}</span>
-                  <div className="track"><i style={{ width: `${(f.value / f.max) * 100}%` }} /></div>
-                </div>
-              ))}
+              <PriorityBreakdown entry={e} />
 
               <details>
                 <summary>Dados clínicos</summary>
