@@ -9,11 +9,11 @@ preview (`/simular`) builds a draft, applies the action and diffs positions;
 the resolution does the same and then adopts the draft. Either way the same
 code runs, so the preview cannot lie.
 """
-from ..prioritization import assess, rank
+from ..prioritization import rank
 
 
 class Draft:
-    def __init__(self, records, events, assessments, order, locked, confirmed, reference_date):
+    def __init__(self, records, events, assessments, order, locked, confirmed, reference_date, evaluate):
         self.records = dict(records)
         self.events = dict(events)
         self.assessments = dict(assessments)
@@ -21,6 +21,7 @@ class Draft:
         self.locked = set(locked)
         self.confirmed = set(confirmed)
         self.reference_date = reference_date
+        self.evaluate = evaluate  # (record, events) -> assessment, the state's own
         self.touched = set()
         self.removed = []
 
@@ -46,7 +47,7 @@ class Draft:
 
     def reassess(self):
         for rid in self.touched:
-            self.assessments[rid] = assess(self.records[rid], self.events[rid], self.reference_date)
+            self.assessments[rid] = self.evaluate(self.records[rid], self.events[rid])
 
     def reranked(self):
         """The order after the edits: manual positions stay, everyone else follows the Neco."""

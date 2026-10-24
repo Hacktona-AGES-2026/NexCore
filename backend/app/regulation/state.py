@@ -2,7 +2,8 @@
 
 Built once from the read-only repository when the app starts, then changed by
 the admin's actions and by ingestion (new requests and clinical events, which
-the Neco places and recalculates on its own). State lives in memory (a
+the Neco places and recalculates on its own). The order is the DPSS's: the
+A1/A2 safety band first, then the DPSS score (`prioritization.scoring`). State lives in memory (a
 decision for the hackathon): restarting the server goes back to the dataset,
 the Neco's initial ranking and an empty audit log, ingested rows included. That also means ONE process — two gunicorn workers would hold two
 different queues.
@@ -15,7 +16,7 @@ from pathlib import Path
 import threading
 
 from ..data.reader import strip_accents
-from ..prioritization import CLASS_LABEL, assess, golden_rule_violation, place, rank, relocate
+from ..prioritization import CLASS_LABEL, References, evaluate, golden_rule_violation, place, rank, relocate
 from . import ask, corrections, impact, intake, panels, pendencies, serializers
 from .audit import AuditLog, utc_now
 from .errors import ContractError
@@ -45,6 +46,11 @@ def load_municipalities(path=MUNICIPALITIES):
     return {strip_accents(r["name"]): r for r in rows}
 
 
+def _score(assessment):
+    score = assessment["score"]
+    return "sem índice" if score is None else f"{score:.3f}".replace(".", ",")
+
+
 def first_name(name):
     return (name or "").split(" ")[0]
 
@@ -59,6 +65,7 @@ class QueueState:
         self._clock = clock
 
         self.repository = repository
+        self.references = References.from_repository(repository)
         self.places = load_municipalities() if municipalities is None else municipalities
         self.coordinates = {p["name"]: p for p in self.places.values()}
         self.procedures = repository.procedures_by_id
@@ -262,6 +269,7 @@ class QueueState:
             raise ContractError(str(exc)) from exc
         draft = corrections.Draft(
             self.records, self.events, self.assessments, self.order, self.locked, self.confirmed, self.reference_date,
+            self._assess,
         )
         facts = corrections.apply(draft, pendency, action, values, self.repository.events_for_request)
         order = draft.reranked()
@@ -497,9 +505,9 @@ class QueueState:
                 f"para {CLASS_LABEL[after['urgency_class']]} ({after['urgency_class']}): {after['class_reason']}."
             )
         elif before["score"] != after["score"]:
-            sentence += f" Índice de {before['score']:.1f} para {after['score']:.1f}, classe mantida."
+            sentence += f" DPSS de {_score(before)} para {_score(after)}, classe mantida."
         else:
-            sentence += " Não muda classe nem índice."
+            sentence += " Não muda classe nem DPSS."
         if after["pending_confirmation"] and not before["pending_confirmation"]:
             sentence += " Posição mantida até confirmação humana: o Neco não retira pacientes da fila."
         elif event["solicitacao_id"] in self.locked and (
@@ -534,8 +542,11 @@ class QueueState:
         """(Re)assesses one request from its record and events and rebuilds its entry."""
         place_ = self.places.get(strip_accents(self.records[rid].get("municipio_norm")))
         self.cities[rid] = place_["name"] if place_ else None
-        self.assessments[rid] = assess(self.records[rid], self.events[rid], self.reference_date)
+        self.assessments[rid] = self._assess(self.records[rid], self.events[rid])
         self._rebuild_entry(rid)
+
+    def _assess(self, record, events):
+        return evaluate(record, events, self.reference_date, self.references)
 
     def _commit(self, new_order, extra=()):
         """Adopts `new_order`; returns the ids whose entry must be re-sent."""

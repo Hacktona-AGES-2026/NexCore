@@ -118,12 +118,16 @@ def mentioned_ids(text, entries):
 
 RULES_SUMMARY = {
     "classes": {cls: {"rotulo": CLASS_LABEL[cls], "prazo_dias": DEADLINE_DAYS[cls]} for cls in CLASS_LABEL},
-    "ordem": "Primeiro a classe (A1 é a mais urgente), depois o índice de 0 a 97, maior primeiro.",
+    "ordem": (
+        "Primeiro a faixa protegida (classes A1 e A2 e todo câncer pelo CID), depois o resto; "
+        "dentro de cada uma, o índice DPSS, maior primeiro. B, C e D não são separados: "
+        "quem passou mais do prazo da sua classe sobe."
+    ),
     "indice": {
-        "urgency": "urgência clínica da classe, até 40",
-        "wait": "espera em relação ao prazo da classe, até 25",
-        "events": "PS, internação, piora e progressão nos últimos 180 dias, até 20",
-        "symptoms": "dor e limitação funcional, até 12",
+        "formula": "DPSS = (T/M) × (1 + c + w·S)",
+        "wait": "T/M: dias em fila dividido pelo prazo SWALIS da classe (1 = no limite do prazo)",
+        "clinical": "c: fator clínico de 0 a 1 (gravidade, dor, vulnerabilidade metabólica)",
+        "social": "w·S: vulnerabilidade social e barreira de acesso (S de 0 a 1) vezes o peso w",
     },
     "regra_de_ouro": "Nenhum paciente com câncer (CID iniciado por C) fica abaixo de alguém sem urgência clínica.",
     "manual": "A regulação pode mover um paciente com justificativa; a posição fica travada e vai para a auditoria.",

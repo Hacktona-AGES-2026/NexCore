@@ -88,6 +88,49 @@ def _evfam_values(record):
     return values, columns
 
 
+def _row_code(row):
+    return str(row.get("id_municipio") or row.get("codigo_ibge") or "").strip()
+
+
+def _row_state(row):
+    return str(row.get("uf") or "").strip().upper()
+
+
+class MunicipalIndex:
+    """Municipal rows indexed by IBGE code and by accent-free city name.
+
+    Built once per table: matching a request then costs a dict lookup instead of
+    a pass over every municipality of Brazil. The matching rule is unchanged.
+    """
+
+    def __init__(self, rows):
+        self.rows = tuple(rows)
+        self.by_code = {}
+        self.by_city = {}
+        for row in self.rows:
+            code = _row_code(row)
+            if code:
+                self.by_code.setdefault(code, []).append(row)
+            city = _city(row.get("municipio_norm") or row.get("municipio"))
+            if city:
+                self.by_city.setdefault(city, []).append(row)
+
+    def __len__(self):
+        return len(self.rows)
+
+    def __iter__(self):
+        return iter(self.rows)
+
+    def candidates(self, code, city):
+        if code:
+            return self.by_code.get(code, [])
+        return self.by_city.get(city, []) if city else []
+
+
+def municipal_index(rows):
+    return rows if isinstance(rows, MunicipalIndex) else MunicipalIndex(rows)
+
+
 def _municipal_reference(record, rows):
     """Return one unambiguous municipal INSE reference for the request."""
     code = str(
@@ -95,21 +138,10 @@ def _municipal_reference(record, rows):
     ).strip()
     city = _city(record.get("municipio_norm") or record.get("municipio"))
     state = str(record.get("uf") or "").strip().upper()
-    matches = []
-    for row in rows:
-        row_code = str(
-            row.get("id_municipio") or row.get("codigo_ibge") or ""
-        ).strip()
-        row_city = _city(row.get("municipio_norm") or row.get("municipio"))
-        row_state = str(row.get("uf") or "").strip().upper()
-        city_and_state = (
-            not code
-            and city
-            and row_city == city
-            and (not state or not row_state or row_state == state)
-        )
-        if (code and row_code == code) or city_and_state:
-            matches.append(row)
+    matches = [
+        row for row in municipal_index(rows).candidates(code, city)
+        if code or not state or not _row_state(row) or _row_state(row) == state
+    ]
     if len(matches) > 1:
         return None, "ambiguous"
     if not matches:
@@ -411,6 +443,7 @@ def prioritize(
 ):
     """Extend and rank DPS records, retaining the existing A1/A2 safety band."""
     queue_by_id = {row.get("solicitacao_id"): row for row in queue}
+    socioeconomic_rows = municipal_index(socioeconomic_rows)
     results = [
         extend_priority(
             item,
