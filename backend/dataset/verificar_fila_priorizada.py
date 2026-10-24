@@ -39,6 +39,10 @@ def main():
     out = pd.read_csv(a.arquivo)
     erros, avisos = [], []
 
+    # Aceita o contrato original do desafio e o contrato de API em inglês.
+    aliases = {'position': 'posicao', 'justification': 'justificativa'}
+    out = out.rename(columns={k: v for k, v in aliases.items() if v not in out.columns})
+
     # 1. formato
     for c in ('solicitacao_id', 'posicao', 'justificativa'):
         if c not in out.columns: erros.append(f'coluna obrigatória ausente: {c}')
@@ -68,7 +72,12 @@ def main():
     f['sem_urgencia'] = ((~f.onco) & (f.intensidade_dor_eva.fillna(0) <= 3) & f.limitacao_funcional.fillna('nenhuma').isin(['nenhuma', 'leve'])
                          & ~f.cid.isin(CID_URGENTE) & ~f.index.isin(piora_ids) & ~txt)
     o = out.sort_values('posicao').set_index('solicitacao_id')
-    o = o.join(f[['onco', 'sem_urgencia', 'cid_principal']], how='left')
+    # A fila priorizada pode preservar todas as colunas originais. Nesse caso,
+    # cid_principal já existe na saída e não deve ser adicionada uma segunda vez.
+    colunas_a_adicionar = ['onco', 'sem_urgencia']
+    if 'cid_principal' not in o.columns:
+        colunas_a_adicionar.append('cid_principal')
+    o = o.join(f[colunas_a_adicionar], how='left')
     if o.sem_urgencia.fillna(False).any():
         primeiro_calmo = o[o.sem_urgencia.fillna(False)].posicao.min()
         viol = o[o.onco.fillna(False) & (o.posicao > primeiro_calmo)]

@@ -111,7 +111,7 @@ andamento nela. O `status` segue a convenção HTTP: 400 parâmetro inválido, 4
 | `queue.request` | `request_id` | `{request, procedure, events, total_events}` |
 | `queue.events` | `request_id`, `page`, `size` | `{data, pagination}` |
 | `patient.events` | `patient_id`, `page`, `size` | `{data, pagination}` |
-| `queue.prioritize` | os filtros de `queue.list` | `{strategy, provisional, total, data}` — emite `progress` |
+| `queue.prioritize` | `as_of`, `include_inactive` e filtros de `queue.list` | executa DPS e retorna `{strategy, model, pipeline, total, data}` — emite `progress` |
 | `catalog.procedures` | — | `{data, total}` |
 | `catalog.swalis` | — | `{data, total}` |
 | `catalog.filters` | — | `{specialties, priorities, sort_fields}` |
@@ -123,6 +123,22 @@ Filtros de `queue.list`: `specialty`, `priority` (`alta`/`media`/`baixa`), `city
 `procedure_id`, `oncological` (booleano, derivado do CID), `min_days`, `max_days`,
 `min_age`, `search` (id, nome, procedimento, CID, justificativa e observações — ignora
 acento e caixa). Ordenação: `sort_by` (padrão `dias_em_fila`), `order` (`desc`/`asc`).
+
+Para calcular a fila priorizada em tempo real, envie:
+
+```json
+{
+  "id": "priority-1",
+  "action": "queue.prioritize",
+  "params": {"as_of": "2026-10-23", "include_inactive": false}
+}
+```
+
+A ação relê os CSVs quando eles mudam, calcula `P = (t / M) * (1 + c)` e devolve os
+campos derivados de ordenação primeiro, seguidos de **todos os campos originais** da fila
+e das evidências estruturadas do DPS. `provisional: true` indica que os pesos clínicos
+ainda não foram validados por uma elicitação PAPRIKA local; não significa que o retorno
+usa o antigo placeholder por tempo de espera.
 
 Os **nomes** dos parâmetros são em inglês; os **valores** são os termos do dataset, porque é
 o que está nos dados: `priority: "alta"`, `sort_by: "dias_em_fila"`. Como o comando é JSON,
@@ -323,17 +339,13 @@ curl localhost:5000/api/health
   a checagem de `Origin` é nossa: com `CORS_ORIGINS=*` (padrão de desenvolvimento) tudo
   entra; com uma lista, só ela. Restrinja antes de qualquer exposição pública.
 
-## Ainda não implementado
+## Estado clínico do módulo
 
-O **algoritmo de priorização** e o `fila_priorizada.csv` não estão aqui.
+O DPS está implementado em `app/prioritization/` como cálculo independente do transporte;
+`app/realtime/prioritization.py` apenas valida o comando e apresenta o resultado no canal.
+O CSV continua disponível como ferramenta local de exportação, mas não existe endpoint
+HTTP para priorização.
 
-A ação `queue.prioritize` já existe, mas é o **encaixe do transporte, não a regra**: ela
-ordena por tempo de espera e nada mais, declara isso em `strategy` e `provisional: true`,
-ignora a regra de ouro e não passaria pelo
-`backend/dataset/verificar_fila_priorizada.py`. Ela serve para o front integrar contra um
-contrato estável desde já.
-
-Quando a regra real entrar, o lugar é `app/prioritization/` em função pura (recebe fila +
-eventos, devolve posição + justificativa) chamada de dentro de `handlers.prioritize`. O
-contrato do cliente não muda: mesma ação, mesmos frames, mesmas chaves
-`solicitacao_id`/`posicao`/`justificativa` que o entregável pede.
+Os pesos iguais usados no fator clínico são configuração de protótipo e estão marcados no
+payload como não validados por PAPRIKA. Portanto, o módulo é auditável e executável, mas
+ainda não está autorizado para decisão clínica real sem elicitação e validação local.

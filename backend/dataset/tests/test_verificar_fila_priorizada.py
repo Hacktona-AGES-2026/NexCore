@@ -192,6 +192,33 @@ def test_id_inexistente_na_fila(onco_e_calmo):
     assert "não existem na fila" in r.stdout
 
 
+def test_aceita_saida_com_campos_originais_da_fila(onco_e_calmo):
+    linhas = posicoes("SOL-ONCO", "SOL-CALMO")
+    linhas[0].update({"cid_principal": "C50.4", "idade": 70, "asa": 3})
+    linhas[1].update({"cid_principal": "K40.9", "idade": 40, "asa": 1})
+    r = verificar(onco_e_calmo, linhas)
+    assert r.returncode == 0, r.stdout + r.stderr
+    assert "OK" in r.stdout
+
+
+def test_aceita_position_e_justification_em_ingles(onco_e_calmo):
+    linhas = [
+        {
+            "solicitacao_id": "SOL-ONCO",
+            "position": 1,
+            "justification": "oncological safety band",
+        },
+        {
+            "solicitacao_id": "SOL-CALMO",
+            "position": 2,
+            "justification": "general band",
+        },
+    ]
+    r = verificar(onco_e_calmo, linhas)
+    assert r.returncode == 0, r.stdout + r.stderr
+    assert "OK" in r.stdout
+
+
 # --- avisos (não bloqueiam) ----------------------------------------------
 
 def test_justificativa_vazia_e_apenas_aviso(onco_e_calmo):

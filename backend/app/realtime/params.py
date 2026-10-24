@@ -8,6 +8,8 @@ function of the dict, so it tests without a socket.
 Parameter names are English; their accepted values are the dataset's own terms
 (priority=alta|media|baixa, sort_by=dias_em_fila), since those are the data.
 """
+from datetime import datetime
+
 from ..data.reader import strip_accents
 from ..errors import RequestError
 
@@ -75,6 +77,19 @@ def required_identifier(params, name):
     if value is None:
         raise RequestError(f"parameter '{name}' is required")
     return value
+
+
+def iso_date(params, name, default=None):
+    """Read an ISO calendar date and return its normalized string value."""
+    raw = params.get(name)
+    if _missing(raw):
+        return default
+    if not isinstance(raw, str):
+        raise RequestError(f"parameter '{name}' must use YYYY-MM-DD")
+    try:
+        return datetime.strptime(raw.strip(), "%Y-%m-%d").date().isoformat()
+    except ValueError:
+        raise RequestError(f"parameter '{name}' must use YYYY-MM-DD")
 
 
 def pagination(params, limits):

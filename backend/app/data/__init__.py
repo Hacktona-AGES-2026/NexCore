@@ -15,4 +15,7 @@ def init_app(app):
 
 
 def current_repository():
-    return current_app.extensions[KEY]
+    repository = current_app.extensions[KEY]
+    if current_app.config.get("AUTO_REFRESH_DATASET", True):
+        repository.refresh_if_changed()
+    return repository

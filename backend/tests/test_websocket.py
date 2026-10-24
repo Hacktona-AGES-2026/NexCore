@@ -130,10 +130,10 @@ def test_progresso_cresce_e_termina_em_cem_por_cento(conversa):
 
     completados = [f["completed"] for f in progressos]
     assert completados == sorted(completados)
-    assert all(f["total"] == 941 for f in progressos)
-    assert progressos[-1]["completed"] == 941
+    assert all(f["total"] == 924 for f in progressos)
+    assert progressos[-1]["completed"] == 924
     assert progressos[-1]["percent"] == 100.0
-    assert progressos[0]["label"] == "ranqueando a fila"
+    assert progressos[0]["label"] == "prioritizing queue with DPS"
 
 
 def test_todo_frame_do_comando_carrega_o_id_para_correlacionar(conversa):
@@ -144,31 +144,52 @@ def test_todo_frame_do_comando_carrega_o_id_para_correlacionar(conversa):
 
 def test_prioritizacao_cobre_a_fila_com_posicoes_sequenciais(pedir):
     payload = pedir("queue.prioritize")
-    assert payload["total"] == 941
-    assert [r["posicao"] for r in payload["data"]] == list(range(1, 942))
-    assert len({r["solicitacao_id"] for r in payload["data"]}) == 941
+    assert payload["total"] == 924
+    assert [r["position"] for r in payload["data"]] == list(range(1, 925))
+    assert len({r["solicitacao_id"] for r in payload["data"]}) == 924
 
 
 def test_prioritizacao_se_declara_provisoria(pedir):
-    """Enquanto o algoritmo real não entrar, o payload precisa dizer que não é ele."""
+    """DPS roda de verdade, mas pesos ainda não têm validação PAPRIKA."""
     payload = pedir("queue.prioritize")
     assert payload["provisional"] is True
-    assert payload["strategy"] == "placeholder:dias_em_fila"
-    assert all(r["justificativa"].startswith("provisório:") for r in payload["data"])
+    assert payload["strategy"] == "dps"
+    assert payload["model"]["formula"] == "P = (t / M) * (1 + c)"
+    assert payload["model"]["weights_validated_with_paprika"] is False
+    assert all(r["justification"].strip() for r in payload["data"])
 
 
 def test_prioritizacao_aceita_os_mesmos_filtros_da_fila(pedir):
     payload = pedir("queue.prioritize", specialty="oftalmologia")
     assert 0 < payload["total"] < 941
-    assert [r["posicao"] for r in payload["data"]] == list(
+    assert [r["position"] for r in payload["data"]] == list(
         range(1, payload["total"] + 1)
     )
 
 
-def test_entregavel_tem_as_colunas_do_verificador(pedir):
-    """fila_priorizada.csv pede solicitacao_id, posicao e justificativa."""
-    primeira = pedir("queue.prioritize", size=1)["data"][0]
-    assert {"solicitacao_id", "posicao", "justificativa"} <= set(primeira)
+def test_entregavel_tem_as_colunas_do_verificador(pedir, repo):
+    """O contrato inglês é aceito pelo verificador e mantém a linha completa."""
+    primeira = pedir("queue.prioritize", specialty="oftalmologia")["data"][0]
+    assert {"solicitacao_id", "position", "justification", "nome_paciente"} <= set(
+        primeira
+    )
+    assert set(repo.queue[0]) <= set(primeira)
+
+
+def test_priorizacao_pode_incluir_inativos(pedir):
+    payload = pedir("queue.prioritize", include_inactive=True)
+    assert payload["total"] == 941
+    assert any(record["active"] is False for record in payload["data"])
+
+
+def test_priorizacao_rejeita_data_de_corte_invalida(conversa):
+    frame = conversa({
+        "id": "bad-date",
+        "action": "queue.prioritize",
+        "params": {"as_of": "24-10-2026"},
+    }).primeiro("error")
+    assert frame["error"]["status"] == 400
+    assert "as_of" in frame["error"]["message"]
 
 
 # --- várias ações na mesma conexão ----------------------------------------

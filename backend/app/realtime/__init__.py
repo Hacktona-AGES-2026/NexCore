@@ -10,6 +10,7 @@ from flask_sock import Sock
 from ..data import current_repository
 from . import actions, protocol  # noqa: F401  (re-exported for create_app)
 from . import handlers  # noqa: F401  (importing registers the actions)
+from . import prioritization  # noqa: F401  (registers DPS action)
 from .channel import serve
 
 sock = Sock()
@@ -33,10 +34,11 @@ def init_app(app):
 
 
 def limits(config):
-    """The paging bounds the actions validate against."""
+    """Runtime limits and safe feature switches exposed to socket actions."""
     return {
         "default_size": config["DEFAULT_PAGE_SIZE"],
         "max_size": config["MAX_PAGE_SIZE"],
+        "auto_refresh_dataset": config.get("AUTO_REFRESH_DATASET", True),
     }
 
 
