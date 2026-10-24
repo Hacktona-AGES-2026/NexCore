@@ -1,0 +1,2232 @@
+{
+ "total": 941,
+ "rows": [
+  {
+   "id": "SOL-2026-00098",
+   "pac": "PAC-00761",
+   "nome": "Eliane Lima Peixoto",
+   "sexo": "F",
+   "idade": 42,
+   "mun": "Porto Alegre",
+   "km": "14",
+   "proc": "Histerectomia",
+   "esp": "Ginecologia",
+   "cid": "C54.1",
+   "cidd": "Neoplasia maligna do endometrio",
+   "asa": "1",
+   "com": "nenhuma",
+   "dor": "9",
+   "lim": "nenhuma",
+   "just": "Carcinoma de endometrio, AP confirmado por histeroscopia. Estadiamento clinico I.",
+   "obs": "ENFERMAGEM: PCT COM EMAGRECIMENTO VISIVEL NA CONSULTA.",
+   "entrada": "2026-02-01",
+   "dias": 264,
+   "prio": "media",
+   "onco": true,
+   "classe": "A1",
+   "score": 92.2,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 40,
+     "d": "Classe A1: prazo máximo de 15 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 25,
+     "d": "264 dias em fila = 17.6× o prazo da classe A1."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 20,
+     "d": "3 ida(s) ao PS/internação nos últimos 180 dias; exame de imagem com progressão"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 7.2,
+     "d": "Dor EVA 9; limitação nenhuma."
+    }
+   ],
+   "alerts": [],
+   "eventos": [
+    {
+     "d": "2025-12-12",
+     "t": "biopsia",
+     "r": "positivo",
+     "v": "",
+     "desc": "AP: adenocarcinoma moderadamente diferenciado.",
+     "o": "laboratorio de patologia"
+    },
+    {
+     "d": "2026-08-06",
+     "t": "internacao",
+     "r": "alta",
+     "v": "4",
+     "desc": "Internacao por 4 dias (sangramento uterino intenso).",
+     "o": "Hospital Sao Lucas"
+    },
+    {
+     "d": "2026-09-11",
+     "t": "exame_imagem",
+     "r": "progressao",
+     "v": "",
+     "desc": "TC: surgimento de linfonodomegalias regionais.",
+     "o": "radiologia"
+    },
+    {
+     "d": "2026-09-19",
+     "t": "exame_imagem",
+     "r": "estavel",
+     "v": "",
+     "desc": "TC de controle: lesao estavel.",
+     "o": "radiologia"
+    },
+    {
+     "d": "2026-10-09",
+     "t": "pronto_socorro",
+     "r": "observacao",
+     "v": "",
+     "desc": "Atendimento em PS por sangramento uterino intenso.",
+     "o": "PS municipal"
+    },
+    {
+     "d": "2026-10-16",
+     "t": "pronto_socorro",
+     "r": "observacao",
+     "v": "",
+     "desc": "Atendimento em PS por sangramento uterino intenso.",
+     "o": "PS municipal"
+    }
+   ],
+   "pos": 1
+  },
+  {
+   "id": "SOL-2026-00229",
+   "pac": "PAC-00917",
+   "nome": "Iara Schmidt Mendes",
+   "sexo": "F",
+   "idade": 51,
+   "mun": "Passo Fundo",
+   "km": "",
+   "proc": "Gastrectomia",
+   "esp": "Cirurgia Oncologica",
+   "cid": "C16.2",
+   "cidd": "Neoplasia maligna do corpo do estomago",
+   "asa": "2",
+   "com": "HAS",
+   "dor": "5",
+   "lim": "moderada",
+   "just": "Adenocarcinoma gastrico, EDA + AP confirmados. Disfagia e perda ponderal de 5 kg. Melena recorrente, Hb 9,1, ja transfundida 2 CH.",
+   "obs": "",
+   "entrada": "2026-03-20",
+   "dias": 217,
+   "prio": "baixa",
+   "onco": true,
+   "classe": "A1",
+   "score": 91.5,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 40,
+     "d": "Classe A1: prazo máximo de 15 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 25,
+     "d": "217 dias em fila = 14.5× o prazo da classe A1."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 20,
+     "d": "2 ida(s) ao PS/internação nos últimos 180 dias; 1 relato(s) de piora; exame de imagem com progressão"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 6.5,
+     "d": "Dor EVA 5; limitação moderada."
+    }
+   ],
+   "alerts": [],
+   "eventos": [
+    {
+     "d": "2026-05-28",
+     "t": "falta",
+     "r": "exame",
+     "v": "",
+     "desc": "Paciente nao compareceu.",
+     "o": "ambulatorio"
+    },
+    {
+     "d": "2026-06-30",
+     "t": "pronto_socorro",
+     "r": "atendido_liberado",
+     "v": "",
+     "desc": "Atendimento em PS por hematemese / vomitos.",
+     "o": "PS Hospital Sao Lucas"
+    },
+    {
+     "d": "2026-07-04",
+     "t": "exame_imagem",
+     "r": "estavel",
+     "v": "",
+     "desc": "TC de controle sem sinais de progressao.",
+     "o": "radiologia"
+    },
+    {
+     "d": "2026-07-05",
+     "t": "pronto_socorro",
+     "r": "observacao",
+     "v": "",
+     "desc": "Atendimento em PS por hematemese / vomitos.",
+     "o": "Emergencia HPS"
+    },
+    {
+     "d": "2026-08-30",
+     "t": "exame_imagem",
+     "r": "progressao",
+     "v": "",
+     "desc": "RNM: crescimento da lesao e invasao de estruturas adjacentes.",
+     "o": "radiologia"
+    },
+    {
+     "d": "2026-09-11",
+     "t": "consulta_reavaliacao",
+     "r": "piora",
+     "v": "",
+     "desc": "Reavaliacao ambulatorial: perda ponderal, dor em piora, ECOG 2. Solicito antecipacao.",
+     "o": "ambulatorio oncologia"
+    }
+   ],
+   "pos": 2
+  },
+  {
+   "id": "SOL-2026-00781",
+   "pac": "PAC-00284",
+   "nome": "Nair Fagundes Moraes",
+   "sexo": "F",
+   "idade": 59,
+   "mun": "Porto Alegre",
+   "km": "10",
+   "proc": "Lobectomia pulmonar",
+   "esp": "Cirurgia Toracica",
+   "cid": "C34.1",
+   "cidd": "Neoplasia maligna do lobo superior, bronquio ou pulmao",
+   "asa": "2",
+   "com": "obesidade",
+   "dor": "6",
+   "lim": "leve",
+   "just": "Nodulo pulmonar direito de 2,0 cm, PET-CT com captacao, biopsia transtoracica: adenocarcinoma. IMC elevado.",
+   "obs": "",
+   "entrada": "2026-08-17",
+   "dias": 67,
+   "prio": "alta",
+   "onco": true,
+   "classe": "A1",
+   "score": 90.8,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 40,
+     "d": "Classe A1: prazo máximo de 15 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 25,
+     "d": "67 dias em fila = 4.5× o prazo da classe A1."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 20,
+     "d": "2 ida(s) ao PS/internação nos últimos 180 dias; exame de imagem com progressão"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 5.8,
+     "d": "Dor EVA 6; limitação leve."
+    }
+   ],
+   "alerts": [],
+   "eventos": [
+    {
+     "d": "2026-07-11",
+     "t": "biopsia",
+     "r": "positivo",
+     "v": "",
+     "desc": "AP: melanoma, Breslow 1,2 mm.",
+     "o": "laboratorio de patologia"
+    },
+    {
+     "d": "2026-08-27",
+     "t": "pronto_socorro",
+     "r": "atendido_liberado",
+     "v": "",
+     "desc": "Atendimento em PS por dispneia / hemoptise.",
+     "o": "UPA Moacyr Scliar"
+    },
+    {
+     "d": "2026-09-12",
+     "t": "exame_imagem",
+     "r": "progressao",
+     "v": "",
+     "desc": "TC: surgimento de linfonodomegalias regionais.",
+     "o": "radiologia"
+    },
+    {
+     "d": "2026-09-28",
+     "t": "pronto_socorro",
+     "r": "observacao",
+     "v": "",
+     "desc": "Atendimento em PS por dispneia / hemoptise.",
+     "o": "UPA Lomba do Pinheiro"
+    }
+   ],
+   "pos": 3
+  },
+  {
+   "id": "SOL-2026-00340",
+   "pac": "PAC-00531",
+   "nome": "Cleusa Machado Vargas",
+   "sexo": "F",
+   "idade": 54,
+   "mun": "Viamao",
+   "km": "22",
+   "proc": "Colectomia",
+   "esp": "Cirurgia Oncologica",
+   "cid": "C19",
+   "cidd": "Neoplasia maligna da juncao retossigmoide",
+   "asa": "2",
+   "com": "tabagismo",
+   "dor": "6",
+   "lim": "leve",
+   "just": "Adenocarcinoma de juncao retossigmoide, colonoscopia + AP confirmados. TC sem metastases a distancia.",
+   "obs": "",
+   "entrada": "2026-04-22",
+   "dias": 184,
+   "prio": "alta",
+   "onco": true,
+   "classe": "A1",
+   "score": 90.8,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 40,
+     "d": "Classe A1: prazo máximo de 15 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 25,
+     "d": "184 dias em fila = 12.3× o prazo da classe A1."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 20,
+     "d": "2 ida(s) ao PS/internação nos últimos 180 dias; 1 relato(s) de piora; exame de imagem com progressão"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 5.8,
+     "d": "Dor EVA 6; limitação leve."
+    }
+   ],
+   "alerts": [],
+   "eventos": [
+    {
+     "d": "2026-03-26",
+     "t": "biopsia",
+     "r": "positivo",
+     "v": "",
+     "desc": "Anatomopatologico POSITIVO para malignidade.",
+     "o": "laboratorio de patologia"
+    },
+    {
+     "d": "2026-07-22",
+     "t": "exame_imagem",
+     "r": "estavel",
+     "v": "",
+     "desc": "TC de estadiamento sem metastases.",
+     "o": "radiologia"
+    },
+    {
+     "d": "2026-09-16",
+     "t": "pronto_socorro",
+     "r": "observacao",
+     "v": "",
+     "desc": "Atendimento em PS por dor abdominal / suboclusao.",
+     "o": "PS municipal"
+    },
+    {
+     "d": "2026-09-26",
+     "t": "exame_imagem",
+     "r": "progressao",
+     "v": "",
+     "desc": "TC: surgimento de linfonodomegalias regionais.",
+     "o": "radiologia"
+    },
+    {
+     "d": "2026-10-06",
+     "t": "consulta_reavaliacao",
+     "r": "piora",
+     "v": "",
+     "desc": "Reavaliacao ambulatorial: perda ponderal, dor em piora, ECOG 2. Solicito antecipacao.",
+     "o": "ambulatorio oncologia"
+    },
+    {
+     "d": "2026-10-13",
+     "t": "internacao",
+     "r": "alta",
+     "v": "3",
+     "desc": "Internacao por 3 dias (dor abdominal / suboclusao).",
+     "o": "Hospital Sao Lucas"
+    }
+   ],
+   "pos": 4
+  },
+  {
+   "id": "SOL-2026-00563",
+   "pac": "PAC-00396",
+   "nome": "Claudia Bortolini Cardoso",
+   "sexo": "F",
+   "idade": 55,
+   "mun": "Taquara",
+   "km": "",
+   "proc": "Colectomia",
+   "esp": "Cirurgia Oncologica",
+   "cid": "C18.7",
+   "cidd": "Neoplasia maligna do colon sigmoide",
+   "asa": "2",
+   "com": "HAS",
+   "dor": "6",
+   "lim": "nenhuma",
+   "just": "Tumor de sigmoide, AP adenocarcinoma moderadamente diferenciado, CEA 7,8. Enterorragia recorrente com queda de Hb para 8,9. Suboclusao intestinal no ultimo mes. Hipertensa em uso de losartana.",
+   "obs": "Familiar liga informando internacao recente.",
+   "entrada": "2026-06-27",
+   "dias": 118,
+   "prio": "baixa",
+   "onco": true,
+   "classe": "A1",
+   "score": 89.8,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 40,
+     "d": "Classe A1: prazo máximo de 15 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 25,
+     "d": "118 dias em fila = 7.9× o prazo da classe A1."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 20,
+     "d": "2 ida(s) ao PS/internação nos últimos 180 dias; 1 relato(s) de piora; exame de imagem com progressão"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 4.8,
+     "d": "Dor EVA 6; limitação nenhuma."
+    }
+   ],
+   "alerts": [],
+   "eventos": [
+    {
+     "d": "2026-05-25",
+     "t": "biopsia",
+     "r": "positivo",
+     "v": "",
+     "desc": "Anatomopatologico POSITIVO para malignidade.",
+     "o": "laboratorio de patologia"
+    },
+    {
+     "d": "2026-08-21",
+     "t": "internacao",
+     "r": "alta",
+     "v": "5",
+     "desc": "Internacao por 5 dias (dor abdominal / suboclusao).",
+     "o": "Hospital Sao Lucas"
+    },
+    {
+     "d": "2026-09-02",
+     "t": "exame_imagem",
+     "r": "progressao",
+     "v": "",
+     "desc": "TC: progressao da lesao primaria, aumento de 40%.",
+     "o": "radiologia"
+    },
+    {
+     "d": "2026-09-20",
+     "t": "pronto_socorro",
+     "r": "observacao",
+     "v": "",
+     "desc": "Atendimento em PS por dor abdominal / suboclusao.",
+     "o": "UPA Zona Norte"
+    },
+    {
+     "d": "2026-09-28",
+     "t": "consulta_reavaliacao",
+     "r": "piora",
+     "v": "",
+     "desc": "Reavaliacao ambulatorial: perda ponderal, dor em piora, ECOG 2. Solicito antecipacao.",
+     "o": "ambulatorio oncologia"
+    }
+   ],
+   "pos": 5
+  },
+  {
+   "id": "SOL-2025-00011",
+   "pac": "PAC-00090",
+   "nome": "Vera Pereira Carvalho",
+   "sexo": "F",
+   "idade": 42,
+   "mun": "Porto Alegre",
+   "km": "19",
+   "proc": "Mastectomia / setorectomia de mama",
+   "esp": "Mastologia",
+   "cid": "C50.9",
+   "cidd": "Neoplasia maligna da mama, nao especificada",
+   "asa": "2",
+   "com": "HAS; anticoagulacao oral",
+   "dor": "6",
+   "lim": "nenhuma",
+   "just": "Carcinoma ductal invasivo de mama esquerda, 4,1 cm, AP confirmado. Estadiamento IIA. Lesao ulcerada de mama com secrecao, crescimento rapido, linfonodo axilar fixo. HAS controlada.",
+   "obs": "",
+   "entrada": "2025-01-13",
+   "dias": 648,
+   "prio": "alta",
+   "onco": true,
+   "classe": "A1",
+   "score": 89.8,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 40,
+     "d": "Classe A1: prazo máximo de 15 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 25,
+     "d": "648 dias em fila = 43.2× o prazo da classe A1."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 20,
+     "d": "2 ida(s) ao PS/internação nos últimos 180 dias; exame de imagem com progressão"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 4.8,
+     "d": "Dor EVA 6; limitação nenhuma."
+    }
+   ],
+   "alerts": [],
+   "eventos": [
+    {
+     "d": "2024-11-28",
+     "t": "biopsia",
+     "r": "positivo",
+     "v": "",
+     "desc": "AP: carcinoma ductal invasivo, grau 2.",
+     "o": "laboratorio de patologia"
+    },
+    {
+     "d": "2025-12-10",
+     "t": "contato_telefonico",
+     "r": "atendeu",
+     "v": "",
+     "desc": "Contato de confirmacao de interesse. Pct mantem desejo de operar.",
+     "o": "call center"
+    },
+    {
+     "d": "2026-04-13",
+     "t": "exame_imagem",
+     "r": "estavel",
+     "v": "",
+     "desc": "TC de controle: lesao estavel.",
+     "o": "radiologia"
+    },
+    {
+     "d": "2026-07-02",
+     "t": "pronto_socorro",
+     "r": "observacao",
+     "v": "",
+     "desc": "Atendimento em PS por dor e secrecao em mama.",
+     "o": "PS municipal"
+    },
+    {
+     "d": "2026-08-10",
+     "t": "internacao",
+     "r": "alta",
+     "v": "4",
+     "desc": "Internacao por 4 dias (dor e secrecao em mama).",
+     "o": "Hospital Sao Lucas"
+    },
+    {
+     "d": "2026-09-24",
+     "t": "exame_imagem",
+     "r": "progressao",
+     "v": "",
+     "desc": "TC: surgimento de linfonodomegalias regionais.",
+     "o": "radiologia"
+    }
+   ],
+   "pos": 6
+  },
+  {
+   "id": "SOL-2026-00129",
+   "pac": "PAC-00070",
+   "nome": "Iara Peixoto Kunz",
+   "sexo": "F",
+   "idade": 55,
+   "mun": "Alvorada",
+   "km": "16",
+   "proc": "Histerectomia",
+   "esp": "Ginecologia",
+   "cid": "C53.9",
+   "cidd": "Neoplasia maligna do colo do utero, nao especificado",
+   "asa": "2",
+   "com": "asma",
+   "dor": "6",
+   "lim": "nenhuma",
+   "just": "Neoplasia de colo uterino IIA, AP carcinoma epidermoide. Encaminhada para histerectomia. Risco cirurgico em anexo.",
+   "obs": "Medico assistente pede urgencia.",
+   "entrada": "2026-02-13",
+   "dias": 252,
+   "prio": "baixa",
+   "onco": true,
+   "classe": "A1",
+   "score": 89.8,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 40,
+     "d": "Classe A1: prazo máximo de 15 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 25,
+     "d": "252 dias em fila = 16.8× o prazo da classe A1."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 20,
+     "d": "2 ida(s) ao PS/internação nos últimos 180 dias; exame de imagem com progressão"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 4.8,
+     "d": "Dor EVA 6; limitação nenhuma."
+    }
+   ],
+   "alerts": [],
+   "eventos": [
+    {
+     "d": "2026-08-02",
+     "t": "internacao",
+     "r": "alta",
+     "v": "5",
+     "desc": "Internacao por 5 dias (sangramento uterino intenso).",
+     "o": "Hospital Sao Lucas"
+    },
+    {
+     "d": "2026-09-14",
+     "t": "pronto_socorro",
+     "r": "atendido_liberado",
+     "v": "",
+     "desc": "Atendimento em PS por sangramento uterino intenso.",
+     "o": "UPA Moacyr Scliar"
+    },
+    {
+     "d": "2026-10-14",
+     "t": "exame_imagem",
+     "r": "progressao",
+     "v": "",
+     "desc": "TC: surgimento de linfonodomegalias regionais.",
+     "o": "radiologia"
+    }
+   ],
+   "pos": 7
+  },
+  {
+   "id": "SOL-2026-00879",
+   "pac": "PAC-00246",
+   "nome": "Gilberto Pires Borges",
+   "sexo": "M",
+   "idade": 59,
+   "mun": "Charqueadas",
+   "km": "66",
+   "proc": "Gastrectomia",
+   "esp": "Cirurgia Oncologica",
+   "cid": "D37.1",
+   "cidd": "Neoplasia de comportamento incerto do estomago",
+   "asa": "2",
+   "com": "HAS",
+   "dor": "4",
+   "lim": "grave",
+   "just": "Conforme laudo anexo.",
+   "obs": "",
+   "entrada": "2026-09-02",
+   "dias": 51,
+   "prio": "alta",
+   "onco": false,
+   "classe": "A2",
+   "score": 76.2,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 34,
+     "d": "Classe A2: prazo máximo de 21 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 25,
+     "d": "51 dias em fila = 2.4× o prazo da classe A2."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 10,
+     "d": "1 relato(s) de piora; biópsia positiva com CID ainda benigno"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 7.2,
+     "d": "Dor EVA 4; limitação grave."
+    }
+   ],
+   "alerts": [],
+   "eventos": [
+    {
+     "d": "2026-09-02",
+     "t": "biopsia",
+     "r": "inconclusivo",
+     "v": "",
+     "desc": "AP inconclusivo, material insuficiente. Repetir biopsia.",
+     "o": "laboratorio de patologia"
+    },
+    {
+     "d": "2026-09-27",
+     "t": "biopsia",
+     "r": "positivo",
+     "v": "",
+     "desc": "AP: carcinoma ductal invasivo, grau 2.",
+     "o": "laboratorio de patologia"
+    },
+    {
+     "d": "2026-10-20",
+     "t": "consulta_reavaliacao",
+     "r": "piora",
+     "v": "",
+     "desc": "AP positivo para malignidade. Necessario atualizar CID e prioridade.",
+     "o": "ambulatorio"
+    }
+   ],
+   "pos": 30
+  },
+  {
+   "id": "SOL-2026-00610",
+   "pac": "PAC-00679",
+   "nome": "Carla Rocha Flores",
+   "sexo": "F",
+   "idade": 61,
+   "mun": "Porto Alegre",
+   "km": "21",
+   "proc": "Histerectomia",
+   "esp": "Ginecologia",
+   "cid": "D25.9",
+   "cidd": "Leiomioma do utero, nao especificado",
+   "asa": "4",
+   "com": "HAS; DRC; asma",
+   "dor": "6",
+   "lim": "leve",
+   "just": "LEIOMIOMATOSE UTERINA VOLUMOSA. DOR PELVICA E SINTOMAS COMPRESSIVOS (POLACIURIA). PROLE CONSTITUIDA. Biopsia realizada, resultado pendente.",
+   "obs": "",
+   "entrada": "2026-07-07",
+   "dias": 108,
+   "prio": "media",
+   "onco": false,
+   "classe": "A2",
+   "score": 74.8,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 34,
+     "d": "Classe A2: prazo máximo de 21 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 25,
+     "d": "108 dias em fila = 5.1× o prazo da classe A2."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 10,
+     "d": "1 relato(s) de piora; biópsia positiva com CID ainda benigno"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 5.8,
+     "d": "Dor EVA 6; limitação leve."
+    }
+   ],
+   "alerts": [],
+   "eventos": [
+    {
+     "d": "2026-09-20",
+     "t": "biopsia",
+     "r": "positivo",
+     "v": "",
+     "desc": "Biopsia: carcinoma epidermoide invasor.",
+     "o": "laboratorio de patologia"
+    },
+    {
+     "d": "2026-10-09",
+     "t": "consulta_reavaliacao",
+     "r": "piora",
+     "v": "",
+     "desc": "AP positivo para malignidade. Necessario atualizar CID e prioridade.",
+     "o": "ambulatorio"
+    }
+   ],
+   "pos": 31
+  },
+  {
+   "id": "SOL-2026-00037",
+   "pac": "PAC-00108",
+   "nome": "Vera Zanella Pacheco",
+   "sexo": "F",
+   "idade": 54,
+   "mun": "Ijui",
+   "km": "391",
+   "proc": "Colectomia",
+   "esp": "Cirurgia Oncologica",
+   "cid": "C18.7",
+   "cidd": "Neoplasia maligna do colon sigmoide",
+   "asa": "2",
+   "com": "HAS; fibrilacao atrial",
+   "dor": "5",
+   "lim": "leve",
+   "just": "NEOPLASIA DE SIGMOIDE. LESAO SUBESTENOSANTE. PERDA PONDERAL. ENCAMINHADA PARA COLECTOMIA. Encaminho para avaliacao anestesica.",
+   "obs": "Medico assistente solicitou reavaliacao da prioridade em 01/06/2026.",
+   "entrada": "2026-01-13",
+   "dias": 283,
+   "prio": "media",
+   "onco": true,
+   "classe": "A2",
+   "score": 72.0,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 34,
+     "d": "Classe A2: prazo máximo de 21 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 25,
+     "d": "283 dias em fila = 13.5× o prazo da classe A2."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 8,
+     "d": "2 relato(s) de piora"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 5.0,
+     "d": "Dor EVA 5; limitação leve."
+    }
+   ],
+   "alerts": [],
+   "eventos": [
+    {
+     "d": "2026-03-18",
+     "t": "exame_imagem",
+     "r": "estavel",
+     "v": "",
+     "desc": "US/RNM: sem novas lesoes.",
+     "o": "radiologia"
+    },
+    {
+     "d": "2026-08-05",
+     "t": "contato_telefonico",
+     "r": "relata_piora",
+     "v": "",
+     "desc": "Pct refere piora dos sintomas e pergunta sobre data da cirurgia.",
+     "o": "call center"
+    },
+    {
+     "d": "2026-09-23",
+     "t": "consulta_reavaliacao",
+     "r": "piora",
+     "v": "",
+     "desc": "Oncologia: solicita reavaliacao da prioridade. Doenca em evolucao.",
+     "o": "ambulatorio oncologia"
+    }
+   ],
+   "pos": 32
+  },
+  {
+   "id": "SOL-2025-00478",
+   "pac": "PAC-00199",
+   "nome": "Ari Moraes Rodrigues",
+   "sexo": "M",
+   "idade": 77,
+   "mun": "Eldorado Do Sul",
+   "km": "",
+   "proc": "Colectomia",
+   "esp": "Cirurgia Oncologica",
+   "cid": "D12.6",
+   "cidd": "Neoplasia benigna do colon, nao especificado",
+   "asa": "2",
+   "com": "DM2; obesidade",
+   "dor": "2",
+   "lim": "leve",
+   "just": "Polipo de colon colon ascendente nao ressecavel por colonoscopia, AP: adenoma tubuloviloso com displasia de alto grau. IMC elevado.",
+   "obs": "",
+   "entrada": "2025-12-17",
+   "dias": 310,
+   "prio": "baixa",
+   "onco": false,
+   "classe": "A2",
+   "score": 71.6,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 34,
+     "d": "Classe A2: prazo máximo de 21 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 25,
+     "d": "310 dias em fila = 14.8× o prazo da classe A2."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 10,
+     "d": "1 relato(s) de piora; biópsia positiva com CID ainda benigno"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 2.6,
+     "d": "Dor EVA 2; limitação leve."
+    }
+   ],
+   "alerts": [],
+   "eventos": [
+    {
+     "d": "2025-10-29",
+     "t": "biopsia",
+     "r": "negativo",
+     "v": "",
+     "desc": "LAUDO AP: PROCESSO INFLAMATORIO CRONICO. SEM ATIPIAS.",
+     "o": "laboratorio de patologia"
+    },
+    {
+     "d": "2026-03-18",
+     "t": "biopsia",
+     "r": "inconclusivo",
+     "v": "",
+     "desc": "Biopsia com atipias indeterminadas. Revisao de laminas solicitada.",
+     "o": "laboratorio de patologia"
+    },
+    {
+     "d": "2026-05-10",
+     "t": "hba1c",
+     "r": "resultado",
+     "v": "7.3",
+     "desc": "HbA1c 7,3%.",
+     "o": "laboratorio"
+    },
+    {
+     "d": "2026-08-17",
+     "t": "biopsia",
+     "r": "positivo",
+     "v": "",
+     "desc": "AP: melanoma, Breslow 1,2 mm.",
+     "o": "laboratorio de patologia"
+    },
+    {
+     "d": "2026-10-01",
+     "t": "consulta_reavaliacao",
+     "r": "piora",
+     "v": "",
+     "desc": "AP positivo para malignidade. Necessario atualizar CID e prioridade.",
+     "o": "ambulatorio"
+    }
+   ],
+   "pos": 33
+  },
+  {
+   "id": "SOL-2026-00380",
+   "pac": "PAC-00386",
+   "nome": "Andre Oliveira Severo",
+   "sexo": "M",
+   "idade": 62,
+   "mun": "Viamao",
+   "km": "28",
+   "proc": "Colectomia",
+   "esp": "Cirurgia Oncologica",
+   "cid": "K57.3",
+   "cidd": "Doenca diverticular do colon sem perfuracao ou abscesso",
+   "asa": "2",
+   "com": "obesidade",
+   "dor": "3",
+   "lim": "nenhuma",
+   "just": "Doenca diverticular com episodios de diverticulite de repeticao (4 episodios). Indicada sigmoidectomia eletiva. Obeso.",
+   "obs": "Paciente pede cirurgia no periodo de ferias.",
+   "entrada": "2026-05-11",
+   "dias": 165,
+   "prio": "baixa",
+   "onco": false,
+   "classe": "A2",
+   "score": 71.4,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 34,
+     "d": "Classe A2: prazo máximo de 21 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 25,
+     "d": "165 dias em fila = 7.9× o prazo da classe A2."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 10,
+     "d": "1 relato(s) de piora; biópsia positiva com CID ainda benigno"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 2.4,
+     "d": "Dor EVA 3; limitação nenhuma."
+    }
+   ],
+   "alerts": [],
+   "eventos": [
+    {
+     "d": "2026-06-08",
+     "t": "biopsia",
+     "r": "inconclusivo",
+     "v": "",
+     "desc": "AP inconclusivo, material insuficiente. Repetir biopsia.",
+     "o": "laboratorio de patologia"
+    },
+    {
+     "d": "2026-10-02",
+     "t": "biopsia",
+     "r": "positivo",
+     "v": "",
+     "desc": "AP: adenocarcinoma moderadamente diferenciado.",
+     "o": "laboratorio de patologia"
+    },
+    {
+     "d": "2026-10-14",
+     "t": "consulta_reavaliacao",
+     "r": "piora",
+     "v": "",
+     "desc": "AP positivo para malignidade. Necessario atualizar CID e prioridade.",
+     "o": "ambulatorio"
+    }
+   ],
+   "pos": 34
+  },
+  {
+   "id": "SOL-2026-00232",
+   "pac": "PAC-00472",
+   "nome": "Leticia Freitas Vieira",
+   "sexo": "F",
+   "idade": 50,
+   "mun": "Alegrete",
+   "km": "505",
+   "proc": "Exerese de tumor de pele com reconstrucao",
+   "esp": "Cirurgia Oncologica",
+   "cid": "D22.9",
+   "cidd": "Nevo melanocitico, nao especificado",
+   "asa": "",
+   "com": "nenhuma",
+   "dor": "2",
+   "lim": "nenhuma",
+   "just": "Paciente com indicacao de exerese de tumor de pele com reconstrucao.",
+   "obs": "Necessita TFD (tratamento fora de domicilio) para deslocamento.",
+   "entrada": "2026-03-20",
+   "dias": 217,
+   "prio": "baixa",
+   "onco": false,
+   "classe": "A2",
+   "score": 70.6,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 34,
+     "d": "Classe A2: prazo máximo de 21 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 25,
+     "d": "217 dias em fila = 10.3× o prazo da classe A2."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 10,
+     "d": "1 relato(s) de piora; biópsia positiva com CID ainda benigno"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 1.6,
+     "d": "Dor EVA 2; limitação nenhuma."
+    }
+   ],
+   "alerts": [
+    "ASA não informado."
+   ],
+   "eventos": [
+    {
+     "d": "2026-01-31",
+     "t": "biopsia",
+     "r": "negativo",
+     "v": "",
+     "desc": "Biopsia negativa para neoplasia. Fibroadenoma.",
+     "o": "laboratorio de patologia"
+    },
+    {
+     "d": "2026-04-13",
+     "t": "biopsia",
+     "r": "inconclusivo",
+     "v": "",
+     "desc": "AP inconclusivo, material insuficiente. Repetir biopsia.",
+     "o": "laboratorio de patologia"
+    },
+    {
+     "d": "2026-10-08",
+     "t": "consulta_reavaliacao",
+     "r": "piora",
+     "v": "",
+     "desc": "AP positivo para malignidade. Necessario atualizar CID e prioridade.",
+     "o": "ambulatorio"
+    },
+    {
+     "d": "2026-10-10",
+     "t": "biopsia",
+     "r": "positivo",
+     "v": "",
+     "desc": "AP: carcinoma ductal invasivo, grau 2.",
+     "o": "laboratorio de patologia"
+    }
+   ],
+   "pos": 35
+  },
+  {
+   "id": "SOL-2025-00280",
+   "pac": "PAC-00260",
+   "nome": "Antonio Severo Schmidt",
+   "sexo": "M",
+   "idade": 70,
+   "mun": "Porto Alegre",
+   "km": "8",
+   "proc": "Artroplastia total de quadril",
+   "esp": "Ortopedia",
+   "cid": "M16.0",
+   "cidd": "Coxartrose primaria bilateral",
+   "asa": "",
+   "com": "tabagismo",
+   "dor": "8",
+   "lim": "moderada",
+   "just": "Coxartrose direita avancada, dor em repouso, uso de muletas. Rx: perda total do espaco articular. Tabagista 37 macos/ano.",
+   "obs": "Familiar informa internacao recente na UPA.",
+   "entrada": "2025-09-16",
+   "dias": 402,
+   "prio": "alta",
+   "onco": false,
+   "classe": "B",
+   "score": 75.9,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 22,
+     "d": "Classe B: prazo máximo de 60 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 25,
+     "d": "402 dias em fila = 6.7× o prazo da classe B."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 20,
+     "d": "4 ida(s) ao PS/internação nos últimos 180 dias"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 8.9,
+     "d": "Dor EVA 8; limitação moderada."
+    }
+   ],
+   "alerts": [
+    "Flag oncológica do cadastro ('sim') diverge do CID M16.0. NeCo usou o CID.",
+    "ASA não informado."
+   ],
+   "eventos": [
+    {
+     "d": "2026-06-15",
+     "t": "pronto_socorro",
+     "r": "atendido_liberado",
+     "v": "",
+     "desc": "Atendimento em PS por dor incapacitante em quadril.",
+     "o": "Emergencia HPS"
+    },
+    {
+     "d": "2026-06-26",
+     "t": "pronto_socorro",
+     "r": "observacao",
+     "v": "",
+     "desc": "Atendimento em PS por dor incapacitante em quadril.",
+     "o": "PS municipal"
+    },
+    {
+     "d": "2026-10-01",
+     "t": "internacao",
+     "r": "alta",
+     "v": "4",
+     "desc": "Internacao por 4 dias (dor incapacitante em quadril).",
+     "o": "Hospital Sao Lucas"
+    },
+    {
+     "d": "2026-10-04",
+     "t": "pronto_socorro",
+     "r": "observacao",
+     "v": "",
+     "desc": "Atendimento em PS por dor incapacitante em quadril.",
+     "o": "UPA Lomba do Pinheiro"
+    }
+   ],
+   "pos": 201
+  },
+  {
+   "id": "SOL-2025-00504",
+   "pac": "PAC-00211",
+   "nome": "Camila Bitencourt Prestes",
+   "sexo": "F",
+   "idade": 52,
+   "mun": "Porto Alegre",
+   "km": "23",
+   "proc": "Safenectomia / tratamento cirurgico de varizes",
+   "esp": "Cirurgia Vascular",
+   "cid": "I83.1",
+   "cidd": "Varizes dos membros inferiores com inflamacao",
+   "asa": "2",
+   "com": "obesidade",
+   "dor": "6",
+   "lim": "grave",
+   "just": "Varizes bilaterais, episodios de tromboflebite superficial recorrente. Obesa.",
+   "obs": "Familiar informa internacao recente na UPA.",
+   "entrada": "2025-12-26",
+   "dias": 301,
+   "prio": "alta",
+   "onco": false,
+   "classe": "B",
+   "score": 75.8,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 22,
+     "d": "Classe B: prazo máximo de 60 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 25,
+     "d": "301 dias em fila = 5.0× o prazo da classe B."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 20,
+     "d": "4 ida(s) ao PS/internação nos últimos 180 dias"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 8.8,
+     "d": "Dor EVA 6; limitação grave."
+    }
+   ],
+   "alerts": [],
+   "eventos": [
+    {
+     "d": "2026-01-08",
+     "t": "contato_telefonico",
+     "r": "atendeu",
+     "v": "",
+     "desc": "Contato de confirmacao de interesse. Pct mantem desejo de operar.",
+     "o": "call center"
+    },
+    {
+     "d": "2026-08-04",
+     "t": "internacao",
+     "r": "alta",
+     "v": "5",
+     "desc": "Internacao por 5 dias (celulite em ulcera venosa).",
+     "o": "Hospital Sao Lucas"
+    },
+    {
+     "d": "2026-09-02",
+     "t": "pronto_socorro",
+     "r": "observacao",
+     "v": "",
+     "desc": "Atendimento em PS por celulite em ulcera venosa.",
+     "o": "Emergencia HPS"
+    },
+    {
+     "d": "2026-09-06",
+     "t": "pronto_socorro",
+     "r": "atendido_liberado",
+     "v": "",
+     "desc": "Atendimento em PS por celulite em ulcera venosa.",
+     "o": "Emergencia HPS"
+    },
+    {
+     "d": "2026-10-12",
+     "t": "pronto_socorro",
+     "r": "atendido_liberado",
+     "v": "",
+     "desc": "Atendimento em PS por celulite em ulcera venosa.",
+     "o": "UPA Zona Norte"
+    }
+   ],
+   "pos": 202
+  },
+  {
+   "id": "SOL-2026-00127",
+   "pac": "PAC-00663",
+   "nome": "Osmar Weber Kunz",
+   "sexo": "M",
+   "idade": 64,
+   "mun": "Porto Alegre",
+   "km": "15",
+   "proc": "Artroplastia total de joelho",
+   "esp": "Ortopedia",
+   "cid": "M17.0",
+   "cidd": "Gonartrose primaria bilateral",
+   "asa": "2",
+   "com": "HAS; DM2",
+   "dor": "9",
+   "lim": "moderada",
+   "just": "Gonartrose direita tricompartimental, deformidade em varo, dor incapacitante, nao sobe escadas. Candidato a ATJ. HAS controlada.",
+   "obs": "",
+   "entrada": "2026-02-13",
+   "dias": 252,
+   "prio": "alta",
+   "onco": false,
+   "classe": "B",
+   "score": 74.7,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 22,
+     "d": "Classe B: prazo máximo de 60 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 25,
+     "d": "252 dias em fila = 4.2× o prazo da classe B."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 18,
+     "d": "3 ida(s) ao PS/internação nos últimos 180 dias"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 9.7,
+     "d": "Dor EVA 9; limitação moderada."
+    }
+   ],
+   "alerts": [],
+   "eventos": [
+    {
+     "d": "2026-07-13",
+     "t": "pronto_socorro",
+     "r": "observacao",
+     "v": "",
+     "desc": "Atendimento em PS por queda / dor em joelho.",
+     "o": "Emergencia HPS"
+    },
+    {
+     "d": "2026-09-16",
+     "t": "pronto_socorro",
+     "r": "observacao",
+     "v": "",
+     "desc": "Atendimento em PS por queda / dor em joelho.",
+     "o": "UPA Lomba do Pinheiro"
+    },
+    {
+     "d": "2026-10-02",
+     "t": "hba1c",
+     "r": "resultado",
+     "v": "8.3",
+     "desc": "HbA1c 8,3%.",
+     "o": "laboratorio"
+    },
+    {
+     "d": "2026-10-06",
+     "t": "pronto_socorro",
+     "r": "atendido_liberado",
+     "v": "",
+     "desc": "Atendimento em PS por queda / dor em joelho.",
+     "o": "UPA Zona Norte"
+    },
+    {
+     "d": "2026-10-07",
+     "t": "contato_telefonico",
+     "r": "atendeu",
+     "v": "",
+     "desc": "Contato de confirmacao de interesse. Pct mantem desejo de operar.",
+     "o": "call center"
+    }
+   ],
+   "pos": 203
+  },
+  {
+   "id": "SOL-2026-00128",
+   "pac": "PAC-00459",
+   "nome": "Dirce Bitencourt Lenz",
+   "sexo": "F",
+   "idade": 55,
+   "mun": "Porto Alegre",
+   "km": "5",
+   "proc": "Artroplastia total de quadril",
+   "esp": "Ortopedia",
+   "cid": "M16.9",
+   "cidd": "Coxartrose nao especificada",
+   "asa": "2",
+   "com": "tabagismo",
+   "dor": "8",
+   "lim": "moderada",
+   "just": "Necrose asseptica de cabeca femoral direita, dor intensa, deambula com dificuldade. Paciente acamada ha 3 meses pela dor, ja apresenta ulcera de pressao sacral inicial. Tabagista 10 macos/ano.",
+   "obs": "Enfermagem: paciente com dor importante na consulta de hoje.",
+   "entrada": "2026-02-13",
+   "dias": 252,
+   "prio": "baixa",
+   "onco": false,
+   "classe": "B",
+   "score": 73.9,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 22,
+     "d": "Classe B: prazo máximo de 60 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 25,
+     "d": "252 dias em fila = 4.2× o prazo da classe B."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 18,
+     "d": "3 ida(s) ao PS/internação nos últimos 180 dias"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 8.9,
+     "d": "Dor EVA 8; limitação moderada."
+    }
+   ],
+   "alerts": [],
+   "eventos": [
+    {
+     "d": "2026-06-23",
+     "t": "pronto_socorro",
+     "r": "atendido_liberado",
+     "v": "",
+     "desc": "Atendimento em PS por dor incapacitante em quadril.",
+     "o": "PS Hospital Sao Lucas"
+    },
+    {
+     "d": "2026-07-24",
+     "t": "pronto_socorro",
+     "r": "observacao",
+     "v": "",
+     "desc": "Atendimento em PS por dor incapacitante em quadril.",
+     "o": "PS municipal"
+    },
+    {
+     "d": "2026-08-21",
+     "t": "internacao",
+     "r": "alta",
+     "v": "1",
+     "desc": "Internacao por 1 dias (dor incapacitante em quadril).",
+     "o": "Hospital Sao Lucas"
+    }
+   ],
+   "pos": 204
+  },
+  {
+   "id": "SOL-2026-00274",
+   "pac": "PAC-00916",
+   "nome": "Rosane Lopes Schneider",
+   "sexo": "F",
+   "idade": 33,
+   "mun": "Porto Alegre",
+   "km": "20",
+   "proc": "Liberacao do tunel do carpo",
+   "esp": "Ortopedia",
+   "cid": "G56.0",
+   "cidd": "Sindrome do tunel do carpo",
+   "asa": "",
+   "com": "nenhuma",
+   "dor": "5",
+   "lim": "moderada",
+   "just": "STC direita confirmada por ENMG (grau moderado). Parestesias noturnas.",
+   "obs": "",
+   "entrada": "2026-04-05",
+   "dias": 201,
+   "prio": "alta",
+   "onco": false,
+   "classe": "B",
+   "score": 73.5,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 22,
+     "d": "Classe B: prazo máximo de 60 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 25,
+     "d": "201 dias em fila = 3.4× o prazo da classe B."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 20,
+     "d": "3 ida(s) ao PS/internação nos últimos 180 dias; 1 relato(s) de piora"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 6.5,
+     "d": "Dor EVA 5; limitação moderada."
+    }
+   ],
+   "alerts": [
+    "ASA não informado."
+   ],
+   "eventos": [
+    {
+     "d": "2026-06-21",
+     "t": "pronto_socorro",
+     "r": "atendido_liberado",
+     "v": "",
+     "desc": "Atendimento em PS por dor intensa em mao.",
+     "o": "PS municipal"
+    },
+    {
+     "d": "2026-06-28",
+     "t": "pronto_socorro",
+     "r": "observacao",
+     "v": "",
+     "desc": "Atendimento em PS por dor intensa em mao.",
+     "o": "Emergencia HPS"
+    },
+    {
+     "d": "2026-10-12",
+     "t": "consulta_reavaliacao",
+     "r": "piora",
+     "v": "",
+     "desc": "Reavaliacao: quadro em piora, solicito reclassificacao de prioridade.",
+     "o": "ambulatorio"
+    },
+    {
+     "d": "2026-10-21",
+     "t": "pronto_socorro",
+     "r": "atendido_liberado",
+     "v": "",
+     "desc": "Atendimento em PS por dor intensa em mao.",
+     "o": "UPA Lomba do Pinheiro"
+    }
+   ],
+   "pos": 205
+  },
+  {
+   "id": "SOL-2026-00597",
+   "pac": "PAC-00292",
+   "nome": "Carlos Pereira Quadros",
+   "sexo": "M",
+   "idade": 70,
+   "mun": "Novo Hamburgo",
+   "km": "50",
+   "proc": "Revascularizacao do miocardio",
+   "esp": "Cirurgia Cardiaca",
+   "cid": "I20.8",
+   "cidd": "Outras formas de angina pectoris",
+   "asa": "3",
+   "com": "HAS; cardiopatia isquemica",
+   "dor": "5",
+   "lim": "moderada",
+   "just": "DAC triarterial, angina CCS II, FE 47%. Cateterismo: lesoes >70% em DA, CX e CD. Sincope ao esforco. Lesao de tronco 80%. Hipertenso em uso de losartana.",
+   "obs": "PCT REFERE PIORA. SOLICITA AGILIZAR.",
+   "entrada": "2026-07-05",
+   "dias": 110,
+   "prio": "alta",
+   "onco": false,
+   "classe": "B",
+   "score": 69.4,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 22,
+     "d": "Classe B: prazo máximo de 60 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 22.9,
+     "d": "110 dias em fila = 1.8× o prazo da classe B."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 18,
+     "d": "3 ida(s) ao PS/internação nos últimos 180 dias"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 6.5,
+     "d": "Dor EVA 5; limitação moderada."
+    }
+   ],
+   "alerts": [],
+   "eventos": [
+    {
+     "d": "2026-07-15",
+     "t": "pronto_socorro",
+     "r": "observacao",
+     "v": "",
+     "desc": "Atendimento em PS por dor toracica / angina.",
+     "o": "Emergencia HPS"
+    },
+    {
+     "d": "2026-08-24",
+     "t": "pronto_socorro",
+     "r": "atendido_liberado",
+     "v": "",
+     "desc": "Atendimento em PS por dor toracica / angina.",
+     "o": "UPA Moacyr Scliar"
+    },
+    {
+     "d": "2026-10-12",
+     "t": "pronto_socorro",
+     "r": "observacao",
+     "v": "",
+     "desc": "Atendimento em PS por dor toracica / angina.",
+     "o": "UPA Lomba do Pinheiro"
+    }
+   ],
+   "pos": 220
+  },
+  {
+   "id": "SOL-2025-00292",
+   "pac": "PAC-00291",
+   "nome": "Leticia Rodrigues Peixoto",
+   "sexo": "F",
+   "idade": 84,
+   "mun": "Porto Alegre",
+   "km": "22",
+   "proc": "Facectomia com implante de lente intraocular",
+   "esp": "Oftalmologia",
+   "cid": "H25.1",
+   "cidd": "Catarata senil nuclear",
+   "asa": "2",
+   "com": "HAS; tabagismo; fibrilacao atrial",
+   "dor": "3",
+   "lim": "nenhuma",
+   "just": "Pct com catarata direita, av CD 1m, mora sozinha, ja teve 1 queda em casa por baixa visao. Hipertensa em uso de losartana.",
+   "obs": "Familiar informa internacao recente na UPA.",
+   "entrada": "2025-09-19",
+   "dias": 399,
+   "prio": "baixa",
+   "onco": false,
+   "classe": "C",
+   "score": 49.4,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 12,
+     "d": "Classe C: prazo máximo de 180 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 25,
+     "d": "399 dias em fila = 2.2× o prazo da classe C."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 10,
+     "d": "1 ida(s) ao PS/internação nos últimos 180 dias; 1 relato(s) de piora"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 2.4,
+     "d": "Dor EVA 3; limitação nenhuma."
+    }
+   ],
+   "alerts": [],
+   "eventos": [
+    {
+     "d": "2026-08-09",
+     "t": "pronto_socorro",
+     "r": "atendido_liberado",
+     "v": "",
+     "desc": "Atendimento em PS por dor ocular / PIO elevada.",
+     "o": "UPA Zona Norte"
+    },
+    {
+     "d": "2026-09-18",
+     "t": "consulta_reavaliacao",
+     "r": "piora",
+     "v": "",
+     "desc": "Reavaliacao: quadro em piora, solicito reclassificacao de prioridade.",
+     "o": "ambulatorio"
+    }
+   ],
+   "pos": 403
+  },
+  {
+   "id": "SOL-2025-00274",
+   "pac": "PAC-00442",
+   "nome": "Gabriela Ramos Quadros",
+   "sexo": "F",
+   "idade": 67,
+   "mun": "Porto Alegre",
+   "km": "14",
+   "proc": "Revascularizacao do miocardio",
+   "esp": "Cirurgia Cardiaca",
+   "cid": "I20.0",
+   "cidd": "Angina instavel",
+   "asa": "3",
+   "com": "HAS; ICC; cardiopatia isquemica",
+   "dor": "6",
+   "lim": "leve",
+   "just": "Angina instavel, internacao recente, lesao de tronco de coronaria esquerda. Cirurgia com prioridade.",
+   "obs": "Pct relata que foi ao PS 2x no ultimo mes por dor.",
+   "entrada": "2025-09-09",
+   "dias": 409,
+   "prio": "alta",
+   "onco": false,
+   "classe": "C",
+   "score": 48.8,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 12,
+     "d": "Classe C: prazo máximo de 180 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 25,
+     "d": "409 dias em fila = 2.3× o prazo da classe C."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 6,
+     "d": "1 ida(s) ao PS/internação nos últimos 180 dias"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 5.8,
+     "d": "Dor EVA 6; limitação leve."
+    }
+   ],
+   "alerts": [],
+   "eventos": [
+    {
+     "d": "2025-05-29",
+     "t": "internacao",
+     "r": "alta",
+     "v": "7",
+     "desc": "Internacao por 7 dias (dor toracica / angina), anterior a inclusao na fila.",
+     "o": "Hospital Sao Lucas"
+    },
+    {
+     "d": "2026-10-02",
+     "t": "pronto_socorro",
+     "r": "atendido_liberado",
+     "v": "",
+     "desc": "Atendimento em PS por dor toracica / angina.",
+     "o": "UPA Lomba do Pinheiro"
+    }
+   ],
+   "pos": 404
+  },
+  {
+   "id": "SOL-2025-00272",
+   "pac": "PAC-00018",
+   "nome": "Claudio Bitencourt Lopes",
+   "sexo": "M",
+   "idade": 65,
+   "mun": "Santa Maria",
+   "km": "271",
+   "proc": "Herniorrafia umbilical / incisional",
+   "esp": "Cirurgia Geral",
+   "cid": "K43.9",
+   "cidd": "Hernia da parede abdominal anterior sem obstrucao ou gangrena",
+   "asa": "3",
+   "com": "HAS; DRC; anticoagulacao oral",
+   "dor": "2",
+   "lim": "nenhuma",
+   "just": "Hernia incisional em cicatriz de laparotomia previa, volumosa, com dor e desconforto.",
+   "obs": "",
+   "entrada": "2025-09-09",
+   "dias": 409,
+   "prio": "baixa",
+   "onco": false,
+   "classe": "C",
+   "score": 48.6,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 12,
+     "d": "Classe C: prazo máximo de 180 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 25,
+     "d": "409 dias em fila = 2.3× o prazo da classe C."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 10,
+     "d": "1 ida(s) ao PS/internação nos últimos 180 dias; 1 relato(s) de piora"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 1.6,
+     "d": "Dor EVA 2; limitação nenhuma."
+    }
+   ],
+   "alerts": [],
+   "eventos": [
+    {
+     "d": "2026-06-21",
+     "t": "pronto_socorro",
+     "r": "observacao",
+     "v": "",
+     "desc": "Atendimento em PS por hernia encarcerada, reducao manual.",
+     "o": "PS municipal"
+    },
+    {
+     "d": "2026-10-06",
+     "t": "consulta_reavaliacao",
+     "r": "piora",
+     "v": "",
+     "desc": "Reavaliacao: quadro em piora, solicito reclassificacao de prioridade.",
+     "o": "ambulatorio"
+    }
+   ],
+   "pos": 405
+  },
+  {
+   "id": "SOL-2025-00072",
+   "pac": "PAC-00601",
+   "nome": "Elza Machado Rocha",
+   "sexo": "F",
+   "idade": 64,
+   "mun": "Bage",
+   "km": "437",
+   "proc": "Artroplastia total de joelho",
+   "esp": "Ortopedia",
+   "cid": "M17.1",
+   "cidd": "Outras gonartroses primarias",
+   "asa": "3",
+   "com": "obesidade; asma",
+   "dor": "6",
+   "lim": "moderada",
+   "just": "Gonartrose esquerda, dor moderada, mantem atividades com limitacao. Rx grau III. IMC elevado.",
+   "obs": "",
+   "entrada": "2025-03-15",
+   "dias": 587,
+   "prio": "baixa",
+   "onco": false,
+   "classe": "C",
+   "score": 48.3,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 12,
+     "d": "Classe C: prazo máximo de 180 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 25,
+     "d": "587 dias em fila = 3.3× o prazo da classe C."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 4,
+     "d": "1 relato(s) de piora"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 7.3,
+     "d": "Dor EVA 6; limitação moderada."
+    }
+   ],
+   "alerts": [],
+   "eventos": [
+    {
+     "d": "2026-09-11",
+     "t": "contato_telefonico",
+     "r": "relata_piora",
+     "v": "",
+     "desc": "Familiar relata piora da limitacao, pct nao sai mais de casa.",
+     "o": "call center"
+    }
+   ],
+   "pos": 406
+  },
+  {
+   "id": "SOL-2024-00183",
+   "pac": "PAC-00093",
+   "nome": "Diego Goncalves Souza",
+   "sexo": "M",
+   "idade": 82,
+   "mun": "Sao Gabriel",
+   "km": "349",
+   "proc": "Colecistectomia videolaparoscopica",
+   "esp": "Cirurgia Geral",
+   "cid": "K80.2",
+   "cidd": "Calculose da vesicula biliar sem colecistite",
+   "asa": "3",
+   "com": "HAS; obesidade; DPOC",
+   "dor": "6",
+   "lim": "moderada",
+   "just": "Paciente com colelitiase e polipo vesicular de 1,5 cm em US. Indicada colecistectomia. DPOC em uso de broncodilatador.",
+   "obs": "",
+   "entrada": "2024-12-17",
+   "dias": 675,
+   "prio": "baixa",
+   "onco": false,
+   "classe": "C",
+   "score": 48.3,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 12,
+     "d": "Classe C: prazo máximo de 180 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 25,
+     "d": "675 dias em fila = 3.8× o prazo da classe C."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 4,
+     "d": "1 relato(s) de piora"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 7.3,
+     "d": "Dor EVA 6; limitação moderada."
+    }
+   ],
+   "alerts": [],
+   "eventos": [
+    {
+     "d": "2025-02-23",
+     "t": "falta",
+     "r": "consulta",
+     "v": "",
+     "desc": "Paciente nao compareceu - informou falta de transporte.",
+     "o": "ambulatorio"
+    },
+    {
+     "d": "2025-05-01",
+     "t": "contato_telefonico",
+     "r": "atendeu",
+     "v": "",
+     "desc": "Contato de confirmacao de interesse. Pct mantem desejo de operar.",
+     "o": "call center"
+    },
+    {
+     "d": "2026-10-20",
+     "t": "contato_telefonico",
+     "r": "relata_piora",
+     "v": "",
+     "desc": "Familiar relata piora da limitacao, pct nao sai mais de casa.",
+     "o": "call center"
+    }
+   ],
+   "pos": 407
+  },
+  {
+   "id": "SOL-2024-00063",
+   "pac": "PAC-00460",
+   "nome": "Carla Freitas Rodrigues",
+   "sexo": "F",
+   "idade": 42,
+   "mun": "Passo Fundo",
+   "km": "333",
+   "proc": "Septoplastia / turbinectomia",
+   "esp": "Otorrinolaringologia",
+   "cid": "J34.2",
+   "cidd": "Desvio do septo nasal",
+   "asa": "3",
+   "com": "HAS; DM2; tabagismo; anticoagulacao oral",
+   "dor": "2",
+   "lim": "leve",
+   "just": "DESVIO SEPTAL + HIPERTROFIA DE CORNETOS. OBSTRUCAO NASAL BILATERAL. RINITE ASSOCIADA. Apneia obstrutiva grave associada, dessaturacao noturna ate 78%.",
+   "obs": "Enfermagem: pct com aspecto debilitada na consulta.",
+   "entrada": "2024-06-04",
+   "dias": 871,
+   "prio": "baixa",
+   "onco": false,
+   "classe": "D",
+   "score": 35.6,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 4,
+     "d": "Classe D: prazo máximo de 360 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 25,
+     "d": "871 dias em fila = 2.4× o prazo da classe D."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 4,
+     "d": "1 relato(s) de piora"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 2.6,
+     "d": "Dor EVA 2; limitação leve."
+    }
+   ],
+   "alerts": [],
+   "eventos": [
+    {
+     "d": "2024-10-11",
+     "t": "contato_telefonico",
+     "r": "atendeu",
+     "v": "",
+     "desc": "Contato de confirmacao de interesse. Pct mantem desejo de operar.",
+     "o": "call center"
+    },
+    {
+     "d": "2026-10-14",
+     "t": "consulta_reavaliacao",
+     "r": "piora",
+     "v": "",
+     "desc": "Reavaliacao: quadro clinico preocupante, ver justificativa.",
+     "o": "ambulatorio"
+    }
+   ],
+   "pos": 650
+  },
+  {
+   "id": "SOL-2024-00014",
+   "pac": "PAC-00818",
+   "nome": "Sergio Muller Kerber",
+   "sexo": "M",
+   "idade": 53,
+   "mun": "Porto Alegre",
+   "km": "12",
+   "proc": "Herniorrafia inguinal",
+   "esp": "Cirurgia Geral",
+   "cid": "K40.9",
+   "cidd": "Hernia inguinal unilateral, sem obstrucao ou gangrena",
+   "asa": "2",
+   "com": "HAS; tabagismo",
+   "dor": "2",
+   "lim": "leve",
+   "just": "HERNIA INGUINAL BILATERAL VOLUMOSA, DOR AOS ESFORCOS. TRABALHADOR BRACAL, AFASTADO DO TRABALHO. Solicito agendamento.",
+   "obs": "Pct confirma que ainda deseja a cirurgia.",
+   "entrada": "2024-02-11",
+   "dias": 985,
+   "prio": "media",
+   "onco": false,
+   "classe": "D",
+   "score": 35.6,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 4,
+     "d": "Classe D: prazo máximo de 360 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 25,
+     "d": "985 dias em fila = 2.7× o prazo da classe D."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 4,
+     "d": "1 relato(s) de piora"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 2.6,
+     "d": "Dor EVA 2; limitação leve."
+    }
+   ],
+   "alerts": [],
+   "eventos": [
+    {
+     "d": "2026-04-25",
+     "t": "contato_telefonico",
+     "r": "relata_melhora",
+     "v": "",
+     "desc": "Pct refere melhora dos sintomas com tratamento clinico.",
+     "o": "call center"
+    },
+    {
+     "d": "2026-10-22",
+     "t": "consulta_reavaliacao",
+     "r": "piora",
+     "v": "",
+     "desc": "Reavaliacao anual.",
+     "o": "ambulatorio"
+    }
+   ],
+   "pos": 651
+  },
+  {
+   "id": "SOL-2024-00088",
+   "pac": "PAC-00072",
+   "nome": "Rafael Machado Weber",
+   "sexo": "M",
+   "idade": 77,
+   "mun": "Gravatai",
+   "km": "29",
+   "proc": "Exerese de tumor de pele com reconstrucao",
+   "esp": "Cirurgia Oncologica",
+   "cid": "L72.0",
+   "cidd": "Cisto epidermico",
+   "asa": "2",
+   "com": "DM2; obesidade",
+   "dor": "2",
+   "lim": "nenhuma",
+   "just": "Cisto epidermico dorso, 3,5 cm, episodios de infeccao.",
+   "obs": "Reconfirmado interesse em 12/08/2026.",
+   "entrada": "2024-07-21",
+   "dias": 824,
+   "prio": "media",
+   "onco": false,
+   "classe": "D",
+   "score": 34.6,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 4,
+     "d": "Classe D: prazo máximo de 360 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 25,
+     "d": "824 dias em fila = 2.3× o prazo da classe D."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 4,
+     "d": "1 relato(s) de piora"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 1.6,
+     "d": "Dor EVA 2; limitação nenhuma."
+    }
+   ],
+   "alerts": [],
+   "eventos": [
+    {
+     "d": "2026-02-17",
+     "t": "hba1c",
+     "r": "resultado",
+     "v": "7.3",
+     "desc": "HbA1c 7,3%.",
+     "o": "laboratorio"
+    },
+    {
+     "d": "2026-07-08",
+     "t": "contato_telefonico",
+     "r": "atendeu",
+     "v": "",
+     "desc": "Reconfirmacao anual de interesse. Pct mantem desejo de operar.",
+     "o": "call center"
+    },
+    {
+     "d": "2026-07-20",
+     "t": "consulta_reavaliacao",
+     "r": "piora",
+     "v": "",
+     "desc": "Reavaliacao anual.",
+     "o": "ambulatorio"
+    }
+   ],
+   "pos": 652
+  },
+  {
+   "id": "SOL-2024-00166",
+   "pac": "PAC-00816",
+   "nome": "Daniela Prestes Kunz",
+   "sexo": "F",
+   "idade": 77,
+   "mun": "Porto Alegre",
+   "km": "6",
+   "proc": "Facectomia com implante de lente intraocular",
+   "esp": "Oftalmologia",
+   "cid": "H25.8",
+   "cidd": "Outras cataratas senis",
+   "asa": "2",
+   "com": "cardiopatia isquemica; fibrilacao atrial",
+   "dor": "0",
+   "lim": "leve",
+   "just": "Catarata madura direita. Visao CD 1m. Nao consegue mais ler nem reconhecer rostos. Dependente de familiares. Catarata hipermadura com risco de glaucoma facomorfico, PIO 28 mmHg.",
+   "obs": "Enfermagem: pct com aspecto debilitada na consulta.",
+   "entrada": "2024-11-21",
+   "dias": 701,
+   "prio": "media",
+   "onco": false,
+   "classe": "D",
+   "score": 33.3,
+   "mods": [
+    {
+     "m": "Classe de urgência (SWALIS adaptado)",
+     "v": 4,
+     "d": "Classe D: prazo máximo de 360 dias."
+    },
+    {
+     "m": "Tempo de espera vs. prazo",
+     "v": 24.3,
+     "d": "701 dias em fila = 1.9× o prazo da classe D."
+    },
+    {
+     "m": "Eventos clínicos recentes",
+     "v": 4,
+     "d": "1 relato(s) de piora"
+    },
+    {
+     "m": "Sintomas e função",
+     "v": 1.0,
+     "d": "Dor EVA 0; limitação leve."
+    }
+   ],
+   "alerts": [],
+   "eventos": [
+    {
+     "d": "2025-01-05",
+     "t": "falta",
+     "r": "exame",
+     "v": "",
+     "desc": "Paciente nao compareceu.",
+     "o": "ambulatorio"
+    },
+    {
+     "d": "2026-09-05",
+     "t": "consulta_reavaliacao",
+     "r": "piora",
+     "v": "",
+     "desc": "Reavaliacao: quadro clinico preocupante, ver justificativa.",
+     "o": "ambulatorio"
+    }
+   ],
+   "pos": 653
+  }
+ ]
+}
