@@ -47,6 +47,226 @@ def test_clean_preserva_espacos_internos():
     assert nd.clean("  Cirurgia   Geral  ") == "Cirurgia   Geral"
 
 
+def test_inse_e_agregado_por_municipio_e_invertido_por_minmax():
+    import pandas as pd
+
+    reference = nd.build_socioeconomic_reference(pd.DataFrame([
+        {"ano": "2021", "id_municipio": "0000001", "inse": "2.0"},
+        {"ano": "2021", "id_municipio": "0000001", "inse": "4.0"},
+        {"ano": "2021", "id_municipio": "0000002", "inse": "5.0"},
+    ]))
+    first = reference.set_index("id_municipio").loc["0000001"]
+    second = reference.set_index("id_municipio").loc["0000002"]
+    assert first.inse_medio == 3.0
+    assert first.observacoes_inse == 2
+    assert first.s_vulnerabilidade == 1.0
+    assert second.s_vulnerabilidade == 0.0
+
+
+def test_indicador_substituto_usa_ibge_e_fallback_explicito():
+    import pandas as pd
+
+    patients = pd.DataFrame([
+        {"id_municipio": "0000001", "distancia_hospital_km": "75"},
+        {"id_municipio": "9999999", "distancia_hospital_km": "0"},
+    ])
+    ibge = pd.DataFrame([
+        {"id_municipio": "0000001", "inse": "2.0"},
+        {"id_municipio": "0000002", "inse": "4.0"},
+    ])
+    components = nd.calcular_componentes_s_substituto(patients, ibge)
+    assert list(components.s_social) == [1.0, 0.5]
+    assert list(components.s_geografico) == [0.5, 0.0]
+    assert list(components.s_vulnerabilidade) == [0.9, 0.4]
+    assert list(components.s_vulnerabilidade_imputada) == ["nao", "sim"]
+
+
+def test_evfam_prevalece_sobre_ibge_e_usa_media_dos_itens_presentes():
+    import pandas as pd
+
+    patients = pd.DataFrame([
+        {
+            "id_municipio": "0000001",
+            "distancia_hospital_km": "150",
+            "evfam_dificuldade_financeira": "1",
+            "evfam_ausencia_apoio_familiar": "0.5",
+        }
+    ])
+    ibge = pd.DataFrame([
+        {"id_municipio": "0000001", "inse": "2.0"},
+        {"id_municipio": "0000002", "inse": "4.0"},
+    ])
+    components = nd.calcular_componentes_s_substituto(patients, ibge)
+    assert components.iloc[0].s_evfam == 0.75
+    assert components.iloc[0].s_ibge == 1.0
+    assert components.iloc[0].s_social == 0.75
+    assert components.iloc[0].s_social_source == "evfam_br"
+    assert components.iloc[0].s_vulnerabilidade == pytest.approx(0.8)
+
+
+def test_distancia_e_limitada_e_ausencia_recebe_neutro():
+    import pandas as pd
+
+    patients = pd.DataFrame([
+        {"id_municipio": "0000001", "distancia_hospital_km": "300"},
+        {"id_municipio": "0000001", "distancia_hospital_km": ""},
+    ])
+    ibge = pd.DataFrame([
+        {"id_municipio": "0000001", "inse": "2.0"},
+        {"id_municipio": "0000002", "inse": "4.0"},
+    ])
+    components = nd.calcular_componentes_s_substituto(patients, ibge)
+    assert list(components.s_geografico) == [1.0, 0.5]
+    assert list(components.s_distancia_imputada) == ["nao", "sim"]
+
+
+def test_funcao_publica_retorna_s_entre_zero_e_um():
+    import pandas as pd
+
+    patients = pd.DataFrame([
+        {"id_municipio": "0000001", "distancia_hospital_km": "1000"},
+    ])
+    ibge = pd.DataFrame([
+        {"id_municipio": "0000001", "inse": "2.0"},
+        {"id_municipio": "0000002", "inse": "4.0"},
+    ])
+    result = nd.calcular_indicador_s_substituto(patients, ibge)
+    assert result.name == "s_vulnerabilidade"
+    assert result.between(0.0, 1.0).all()
+
+
+def test_populacao_evfam_sintetica_e_deterministica_e_binaria():
+    import pandas as pd
+
+    patients = pd.DataFrame([
+        {"solicitacao_id": "SOL-1", "id_municipio": "0000001", "idade": 30},
+        {"solicitacao_id": "SOL-2", "id_municipio": "0000002", "idade": 80},
+    ])
+    ibge = pd.DataFrame([
+        {"id_municipio": "0000001", "inse": "2.0"},
+        {"id_municipio": "0000002", "inse": "4.0"},
+    ])
+    first = nd.popular_evfam_sintetica(patients, ibge)
+    second = nd.popular_evfam_sintetica(patients, ibge)
+    columns = [
+        "evfam_dificuldade_financeira",
+        "evfam_uso_medicamentos_continuos",
+        "evfam_sem_apoio_familiar",
+        "evfam_vulnerabilidade_habitacional",
+    ]
+    assert first[columns].equals(second[columns])
+    assert set(first[columns].stack()) <= {0, 1}
+    assert set(first.evfam_dados_sinteticos) == {"sim"}
+
+
+def test_populacao_evfam_preserva_coluna_existente():
+    import pandas as pd
+
+    patients = pd.DataFrame([
+        {
+            "solicitacao_id": "SOL-1",
+            "id_municipio": "0000001",
+            "evfam_dificuldade_financeira": 0,
+        }
+    ])
+    ibge = pd.DataFrame([
+        {"id_municipio": "0000001", "inse": "2.0"},
+        {"id_municipio": "0000002", "inse": "4.0"},
+    ])
+    result = nd.popular_evfam_sintetica(patients, ibge)
+    assert result.iloc[0].evfam_dificuldade_financeira == 0
+
+
+def test_probabilidade_evfam_aumenta_com_vulnerabilidade_inse():
+    import pandas as pd
+
+    patients = pd.DataFrame([
+        {"solicitacao_id": f"V-{i}", "id_municipio": "0000001"}
+        for i in range(1000)
+    ] + [
+        {"solicitacao_id": f"R-{i}", "id_municipio": "0000002"}
+        for i in range(1000)
+    ])
+    ibge = pd.DataFrame([
+        {"id_municipio": "0000001", "inse": "2.0"},
+        {"id_municipio": "0000002", "inse": "8.0"},
+    ])
+    result = nd.popular_evfam_sintetica(patients, ibge)
+    vulnerable = result.iloc[:1000].evfam_dificuldade_financeira.mean()
+    affluent = result.iloc[1000:].evfam_dificuldade_financeira.mean()
+    assert vulnerable > affluent + 0.5
+
+
+def test_mudanca_na_origem_normaliza_recalcula_e_publica(
+    mini_dataset, fabrica_fila, fabrica_evento, tmp_path
+):
+    from app.data.repository import Repository
+    from app.data.ingestion import DatasetIngestion
+    from app.realtime.dpss_live import ReactiveDpss
+
+    swalis = [
+        {"classe": cls, "descricao": cls, "prazo_maximo_dias": days, "exemplos": ""}
+        for cls, days in (("A1", 15), ("A2", 21), ("B", 60), ("C", 180), ("D", 360))
+    ]
+    base = mini_dataset([fabrica_fila()], swalis=swalis)
+    output = tmp_path / "normalizado-live"
+    nd.main(base=base, output=output)
+    repository = Repository(output, "2026-10-23")
+    live = ReactiveDpss(
+        repository,
+        "hsl",
+        source_directory=base,
+        normalizer=nd.main,
+    )
+    subscription = live.subscribe()
+    before = subscription.get(0)
+    assert before["data"][0]["swalis_class"] == "D"
+
+    ingestion = DatasetIngestion(base, live)
+    accepted = ingestion.create_event(
+        fabrica_evento(
+            evento_id="EVT-LIVE",
+            tipo_evento="exame_imagem",
+            resultado="progressao",
+        )
+    )
+    assert accepted["accepted"] is True
+    assert accepted["recalculated"] is True
+    after = subscription.get(0)
+    assert after["reason"] == "source_normalized"
+    assert after["data"][0]["swalis_class"] == "A2"
+    assert len(repository.events) == 1
+
+    created = ingestion.create_request(
+        {
+            "solicitacao_id": "SOL-LIVE-2",
+            "paciente_id": "PAC-LIVE-2",
+            "nome_paciente": "Paciente nova",
+            "municipio": "Porto Alegre",
+            "uf": "RS",
+            "distancia_hospital_km": 30,
+            "procedimento_id": "PROC001",
+            "procedimento": "Procedimento Teste",
+            "especialidade": "Cirurgia Geral",
+            "cid_principal": "K40.9",
+            "data_entrada_fila": "2026-01-01",
+            "intensidade_dor_eva": 2,
+            "limitacao_funcional": "nenhuma",
+            "evfam_dificuldade_financeira": 1,
+            "evfam_uso_medicamentos_continuos": 0,
+            "evfam_sem_apoio_familiar": 1,
+            "evfam_vulnerabilidade_habitacional": 0,
+        }
+    )
+    assert created["queue_total"] == 2
+    new_record = repository.get_request("SOL-LIVE-2")
+    assert new_record["s_social_source"] == "evfam_br"
+    assert new_record["evfam_dados_sinteticos"] == "nao"
+    assert new_record["s_vulnerabilidade"] == pytest.approx(
+        0.8 * 0.5 + 0.2 * (30 / 150)
+    )
+
+
 # --- execução completa ----------------------------------------------------
 
 @pytest.fixture()
@@ -66,6 +286,7 @@ def executar(tmp_path, monkeypatch, mini_dataset):
             "dir": saida,
             "fila": ler("fila_cirurgica_normalizada.csv"),
             "eventos": ler("eventos_clinicos_normalizados.csv"),
+            "socioeconomic": ler("socioeconomic_normalized.csv"),
             "resumo": json.loads((saida / "analise_qualidade.json").read_text("utf-8")),
         }
 
@@ -109,6 +330,17 @@ def test_municipio_com_grafia_inconsistente_converge(executar, fabrica_fila):
         fabrica_fila(solicitacao_id="SOL-3", municipio=" Porto Alegre "),
     ])
     assert set(r["fila"].municipio_norm) == {"Porto Alegre"}
+    assert set(r["fila"].id_municipio) == {"4314902"}
+    assert set(r["fila"].s_vulnerabilidade_imputada) == {"nao"}
+
+
+def test_municipio_sem_codigo_ainda_recebe_evfam_sintetica(executar, fabrica_fila):
+    r = executar([fabrica_fila(municipio="Cidade Inexistente")])
+    row = r["fila"].iloc[0]
+    assert row.s_social_source == "evfam_br"
+    assert row.evfam_dados_sinteticos == "sim"
+    assert row.s_vulnerabilidade_imputada == "nao"
+    assert r["resumo"]["solicitacoes_socioeconomico_fallback_0_5"] == 0
 
 
 def test_datas_saem_em_iso_e_invalida_vira_vazio(executar, fabrica_fila):

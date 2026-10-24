@@ -11,6 +11,21 @@
   "ids_procedimento_sem_catalogo": 0,
   "oncologicos_por_cid": 177,
   "divergencia_flag_oncologica_vs_cid": 44,
+  "municipios_inse": 5570,
+  "inse_municipal_min": 2.2622222222222224,
+  "inse_municipal_max": 5.503335294117647,
+  "solicitacoes_socioeconomico_fallback_0_5": 0,
+  "solicitacoes_s_por_evfam": 941,
+  "solicitacoes_s_por_ibge": 0,
+  "solicitacoes_evfam_sintetica": 941,
+  "evfam_sintetica_versao": "correlated-inse-v1",
+  "prevalencia_evfam_sintetica": {
+    "evfam_dificuldade_financeira": 0.29436769394261425,
+    "evfam_uso_medicamentos_continuos": 0.29861849096705634,
+    "evfam_sem_apoio_familiar": 0.21785334750265675,
+    "evfam_vulnerabilidade_habitacional": 0.25398512221041447
+  },
+  "solicitacoes_distancia_fallback_0_5": 20,
   "valores_prioridade_manual_origem": {
     "baixa": 348,
     "alta": 296,
@@ -39,6 +54,12 @@
     "CID comparável sem ponto em cid_principal_norm/cid_secundario_norm.",
     "oncologico_cid é derivado do CID, não da flag manual.",
     "Eventos duplicados, órfãos e com paciente divergente são sinalizados e mantidos.",
-    "Campos ausentes permanecem vazios; não foram imputados."
+    "Campos clínicos ausentes permanecem vazios; apenas S possui fallback explícito 0.5.",
+    "Camada social usa média EVFAM-BR quando disponível, senão INSE municipal invertido.",
+    "Na base sintética de homologação, colunas EVFAM ausentes são geradas de forma determinística e correlacionada ao INSE.",
+    "Dados EVFAM existentes nunca são sobrescritos pela rotina sintética.",
+    "Camada social sem EVFAM-BR e sem INSE recebe fallback explícito 0.5.",
+    "S final combina 80% da camada social e 20% da distância normalizada por 150 km.",
+    "Distância ausente ou negativa recebe fator geográfico neutro 0.5 e flag explícita."
   ]
 }

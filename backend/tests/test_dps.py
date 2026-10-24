@@ -67,6 +67,63 @@ def test_formula_dps_usa_t_m_e_c():
     assert result["dps"]["score"] == pytest.approx(expected, abs=1e-6)
 
 
+@pytest.mark.parametrize(
+    ("cid", "description", "justification", "expected_class"),
+    [
+        (
+            "K80.2",
+            "Colelitíase",
+            "Colelitíase sintomática, com cólicas semanais",
+            "C",
+        ),
+        (
+            "K42.9",
+            "Hérnia umbilical sem obstrução ou gangrena",
+            "Solicitação cirúrgica eletiva",
+            "D",
+        ),
+        (
+            "I83.9",
+            "Varizes dos membros inferiores",
+            "Insuficiência venosa CEAP C3, edema e dermatite de estase",
+            "C",
+        ),
+        (
+            "N13.2",
+            "Hidronefrose com obstrução por cálculo",
+            "Cálculo ureteral de 18 mm e hidronefrose moderada",
+            "B",
+        ),
+        (
+            "E04.2",
+            "Bócio multinodular não tóxico",
+            "Bócio volumoso, desvio traqueal e dispneia aos esforços",
+            "B",
+        ),
+    ],
+)
+def test_inferencia_local_cobre_casos_sem_mapeamento_swalis(
+    cid, description, justification, expected_class
+):
+    patient = request(
+        cid_principal=cid,
+        cid_descricao=description,
+        justificativa_clinica=justification,
+        intensidade_dor_eva=None,
+        limitacao_funcional_norm="nenhuma",
+    )
+    result = calculate_priority(patient, [], SWALIS, "2026-04-11")
+    assert result["swalis"]["class"] == expected_class
+    assert result["swalis"]["source"] == (
+        "swalis_normalizado.csv + regras_clinicas_prototipo"
+    )
+    assert result["swalis"]["maximum_wait_days"] == {
+        "B": 60,
+        "C": 180,
+        "D": 360,
+    }[expected_class]
+
+
 def test_novo_evento_de_progressao_muda_swalis_e_score():
     before = calculate_priority(request(), [], SWALIS, "2026-04-11")
     after = calculate_priority(

@@ -27,6 +27,10 @@ class Config:
     )
     REFERENCE_DATE = os.environ.get("REFERENCE_DATE", DEFAULT_REFERENCE_DATE)
     AUTO_REFRESH_DATASET = _bool(os.environ.get("AUTO_REFRESH_DATASET"), True)
+    DPSS_REACTIVE_ENABLED = _bool(os.environ.get("DPSS_REACTIVE_ENABLED"), True)
+    DPSS_WATCH_INTERVAL_SECONDS = float(
+        os.environ.get("DPSS_WATCH_INTERVAL_SECONDS", "1.0")
+    )
     DEFAULT_PAGE_SIZE = int(os.environ.get("DEFAULT_PAGE_SIZE", "50"))
     MAX_PAGE_SIZE = int(os.environ.get("MAX_PAGE_SIZE", "500"))
     CORS_ORIGINS = os.environ.get("CORS_ORIGINS", "*")
@@ -39,6 +43,7 @@ class Config:
 class TestConfig(Config):
     TESTING = True
     SECRET_KEY = "teste"
+    DPSS_REACTIVE_ENABLED = False
 
 
 ENVIRONMENTS = {"desenvolvimento": Config, "teste": TestConfig, "producao": Config}

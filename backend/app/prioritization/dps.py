@@ -54,6 +54,15 @@ def _number(value, minimum=0.0, maximum=1.0):
     return max(minimum, min(maximum, parsed))
 
 
+def _normalized_cid(value):
+    """Return a punctuation-free CID code for deterministic prototype rules."""
+    return "".join(
+        character
+        for character in str(value or "").upper()
+        if character.isalnum()
+    )
+
+
 def _eligible_events(record, events: Iterable[Mapping], as_of: date):
     request_id = record.get("solicitacao_id")
     patient_id = record.get("paciente_id")
@@ -218,6 +227,7 @@ def infer_swalis(record, snapshot):
     latest_phone = snapshot["latest_phone"] or {}
     pain = record.get("intensidade_dor_eva")
     limitation = strip_accents(record.get("limitacao_funcional_norm") or "")
+    cid = _normalized_cid(record.get("cid_principal"))
 
     alarm = next((term for term in ALARM_TERMS if term in text), None)
     if alarm:
@@ -249,6 +259,21 @@ def infer_swalis(record, snapshot):
     if oncological or snapshot["positive_biopsy"] or reasons:
         return "A2", reasons
 
+    # Local inference rules for diagnoses that occur in the current queue but
+    # have no direct SWALIS mapping. They use the diagnosis together with the
+    # clinical description; the CID alone is not treated as sufficient evidence
+    # of urgency. These are transparent prototype rules, not PAPRIKA weights.
+    if cid == "N132" and "hidronefrose" in text and "obstr" in text:
+        return "B", [
+            "CID N13.2 com obstrução urinária e hidronefrose descritas no pedido"
+        ]
+    if cid == "E042" and (
+        "desvio traqueal" in text or "dispneia" in text or "compress" in text
+    ):
+        return "B", [
+            "bócio multinodular com sinal compressivo respiratório descrito no pedido"
+        ]
+
     if record.get("flag_piora_clinica_norm"):
         reasons.append("campo flag_piora_clinica_norm indica piora")
     if latest_review.get("resultado_norm") == "piora":
@@ -275,6 +300,19 @@ def infer_swalis(record, snapshot):
     if reasons:
         return "B", reasons
 
+    if cid == "K802" and (
+        "sintomat" in text or "colica" in text or "colecist" in text
+    ):
+        return "C", [
+            "colelitíase sintomática com cólicas recorrentes descritas no pedido"
+        ]
+    if cid == "I839" and (
+        "ceap c3" in text or "dermatite" in text or "edema" in text
+    ):
+        return "C", [
+            "doença venosa crônica com edema ou alteração cutânea descrita no pedido"
+        ]
+
     if pain is not None and pain >= 4:
         reasons.append(f"dor moderada (EVA {pain})")
     if limitation in {"moderada", "leve"}:
@@ -288,6 +326,11 @@ def infer_swalis(record, snapshot):
         )
     if reasons:
         return "C", reasons
+
+    if cid == "K429" and "sem obstrucao" in text and "gangrena" in text:
+        return "D", [
+            "hérnia umbilical sem obstrução ou gangrena e sem marcador atual de progressão"
+        ]
 
     if pain is not None and pain <= 3 and limitation in {"nenhuma", "leve", ""}:
         return "D", ["sem marcador atual de progressão e baixa carga sintomática"]

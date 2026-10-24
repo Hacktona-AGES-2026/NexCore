@@ -9,6 +9,7 @@ Parameter names are English; their accepted values are the dataset's own terms
 (priority=alta|media|baixa, sort_by=dias_em_fila), since those are the data.
 """
 from datetime import datetime
+import math
 
 from ..data.reader import strip_accents
 from ..errors import RequestError
@@ -31,6 +32,25 @@ def integer(params, name, default=None, minimum=None, maximum=None):
         value = int(raw)
     except (TypeError, ValueError):
         raise RequestError(f"parameter '{name}' must be an integer")
+    if minimum is not None and value < minimum:
+        raise RequestError(f"parameter '{name}' must be >= {minimum}")
+    if maximum is not None and value > maximum:
+        raise RequestError(f"parameter '{name}' must be <= {maximum}")
+    return value
+
+
+def number(params, name, default=None, minimum=None, maximum=None):
+    raw = params.get(name)
+    if _missing(raw):
+        return default
+    if isinstance(raw, bool):
+        raise RequestError(f"parameter '{name}' must be a number")
+    try:
+        value = float(raw)
+    except (TypeError, ValueError):
+        raise RequestError(f"parameter '{name}' must be a number")
+    if not math.isfinite(value):
+        raise RequestError(f"parameter '{name}' must be a finite number")
     if minimum is not None and value < minimum:
         raise RequestError(f"parameter '{name}' must be >= {minimum}")
     if maximum is not None and value > maximum:

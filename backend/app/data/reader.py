@@ -15,6 +15,14 @@ FILES = {
     "swalis": "swalis_normalizado.csv",
 }
 
+# DPSS reference tables are intentionally optional until their provenance and
+# mappings have been validated.  Their absence must not stop the existing DPS
+# service from starting.
+OPTIONAL_FILES = {
+    "socioeconomic": "socioeconomic_normalized.csv",
+    "disease_burden": "disease_burden_normalized.csv",
+}
+
 INTEGER_FIELDS = (
     "idade",
     "dias_em_fila",
@@ -25,7 +33,19 @@ INTEGER_FIELDS = (
     "duracao_media_min",
     "prazo_maximo_dias",
 )
-FLOAT_FIELDS = ("hba1c_ultima", "valor_numerico")
+FLOAT_FIELDS = (
+    "hba1c_ultima",
+    "valor_numerico",
+    "s_vulnerabilidade",
+    "inse_medio",
+    "s_evfam",
+    "s_ibge",
+    "s_social",
+    "s_geografico",
+    "s_distancia_teto_km",
+    "disability_weight_norm",
+    "daly_weight_norm",
+)
 DATE_FIELDS = (
     "data_entrada_fila",
     "data_ultima_revisao_prioridade",
@@ -42,6 +62,8 @@ BOOLEAN_FIELDS = (
     "duplicata_conteudo",
     "solicitacao_na_fila",
     "paciente_coincide_fila",
+    "s_vulnerabilidade_imputada",
+    "s_distancia_imputada",
 )
 
 
@@ -121,7 +143,11 @@ def load(directory):
             f"diretorio do dataset nao encontrado: {directory}. "
             "Rode `python backend/dataset/normalizar_dataset.py` ou ajuste DATASET_DIR."
         )
-    return {name: read_csv(directory / file) for name, file in FILES.items()}
+    tables = {name: read_csv(directory / file) for name, file in FILES.items()}
+    for name, filename in OPTIONAL_FILES.items():
+        path = directory / filename
+        tables[name] = read_csv(path) if path.exists() else []
+    return tables
 
 
 def today():

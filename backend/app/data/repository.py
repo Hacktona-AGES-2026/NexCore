@@ -10,7 +10,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from threading import RLock
 
-from .reader import FILES, load, strip_accents
+from .reader import FILES, OPTIONAL_FILES, load, strip_accents
 
 SORT_KEYS = {
     "dias_em_fila": lambda r: r.get("dias_em_fila") or 0,
@@ -46,6 +46,8 @@ class Repository:
         self.events = tables["eventos"]
         self.procedures = tables["procedimentos"]
         self.swalis = tables["swalis"]
+        self.socioeconomic = tables.get("socioeconomic", [])
+        self.disease_burden = tables.get("disease_burden", [])
 
         self._by_request = {r["solicitacao_id"]: r for r in self.queue}
         self._by_procedure = {r["procedimento_id"]: r for r in self.procedures}
@@ -71,7 +73,8 @@ class Repository:
                 (directory / filename).stat().st_mtime_ns,
                 (directory / filename).stat().st_size,
             )
-            for name, filename in sorted(FILES.items())
+            for name, filename in sorted({**FILES, **OPTIONAL_FILES}.items())
+            if (directory / filename).exists()
         )
 
     def refresh_if_changed(self):
@@ -149,6 +152,8 @@ class Repository:
             events_by_request=self._events_by_request,
             procedures_by_id=self._by_procedure,
             swalis=self.swalis,
+            socioeconomic=self.socioeconomic,
+            disease_burden=self.disease_burden,
         )
         return DEFAULT_PIPELINE.run(
             sources,

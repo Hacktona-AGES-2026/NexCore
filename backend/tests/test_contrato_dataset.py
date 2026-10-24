@@ -11,6 +11,12 @@ CAMPOS_USADOS_NA_FILA = {
     "municipio_norm", "prioridade_regulacao_norm", "oncologico_cid",
     "flag_oncologico_norm", "dias_em_fila", "idade", "intensidade_dor_eva",
     "data_entrada_fila",
+    "id_municipio", "inse_medio", "s_evfam", "s_ibge", "s_social",
+    "s_social_source", "s_geografico", "s_vulnerabilidade",
+    "s_vulnerabilidade_imputada", "s_distancia_imputada",
+    "evfam_dificuldade_financeira", "evfam_uso_medicamentos_continuos",
+    "evfam_sem_apoio_familiar", "evfam_vulnerabilidade_habitacional",
+    "evfam_dados_sinteticos", "evfam_sintese_versao",
 }
 CAMPOS_USADOS_NOS_EVENTOS = {
     "evento_id", "solicitacao_id", "paciente_id", "data_evento", "tipo_evento_norm",
@@ -68,6 +74,16 @@ def test_data_de_entrada_esta_em_iso(repo):
     for registro in repo.queue:
         data = registro["data_entrada_fila"]
         assert data is None or (len(data) == 10 and data[4] == data[7] == "-")
+
+
+def test_indicador_socioeconomico_cobre_toda_a_fila_sem_fallback(repo):
+    assert len(repo.socioeconomic) == 5570
+    assert all(len(r["id_municipio"]) == 7 for r in repo.queue)
+    assert all(0.0 <= r["s_vulnerabilidade"] <= 1.0 for r in repo.queue)
+    assert not any(r["s_vulnerabilidade_imputada"] for r in repo.queue)
+    assert all(r["s_social_source"] == "evfam_br" for r in repo.queue)
+    assert all(r["evfam_dados_sinteticos"] == "sim" for r in repo.queue)
+    assert sum(bool(r["s_distancia_imputada"]) for r in repo.queue) == 20
 
 
 def test_eventos_orfaos_continuam_no_dataset(repo):

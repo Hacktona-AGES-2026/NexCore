@@ -94,6 +94,26 @@ def mini_dataset(tmp_path):
             swalis or [{"classe": "A1", "descricao": "Risco de vida",
                         "prazo_maximo_dias": "15", "exemplos": "Neoplasia em progressao"}],
         )
+        escrever_csv(
+            tmp_path / "IBGE.csv",
+            ["ano", "sigla_uf", "id_municipio", "rede", "tipo_localizacao", "inse"],
+            [
+                {"ano": "2021", "sigla_uf": "RS", "id_municipio": "4314902",
+                 "rede": "0", "tipo_localizacao": "0", "inse": "5.0"},
+                {"ano": "2021", "sigla_uf": "RS", "id_municipio": "4314902",
+                 "rede": "2", "tipo_localizacao": "1", "inse": "3.0"},
+                {"ano": "2021", "sigla_uf": "RS", "id_municipio": "4300604",
+                 "rede": "0", "tipo_localizacao": "0", "inse": "2.0"},
+            ],
+        )
+        escrever_csv(
+            tmp_path / "referencias" / "municipios_ibge.csv",
+            ["municipio_norm", "uf", "id_municipio", "municipio_ibge"],
+            [
+                {"municipio_norm": "Porto Alegre", "uf": "RS",
+                 "id_municipio": "4314902", "municipio_ibge": "Porto Alegre"},
+            ],
+        )
         return tmp_path
 
     return montar

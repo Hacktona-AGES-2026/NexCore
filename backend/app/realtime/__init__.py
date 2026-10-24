@@ -11,6 +11,8 @@ from ..data import current_repository
 from . import actions, protocol  # noqa: F401  (re-exported for create_app)
 from . import handlers  # noqa: F401  (importing registers the actions)
 from . import prioritization  # noqa: F401  (registers DPS action)
+from . import dpss  # noqa: F401  (registers experimental DPSS action)
+from . import ingestion  # noqa: F401  (registers dataset write actions)
 from .channel import serve
 
 sock = Sock()

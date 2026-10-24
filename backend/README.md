@@ -135,12 +135,81 @@ andamento nela. O `status` segue a convenção HTTP: 400 parâmetro inválido, 4
 | `queue.events` | `request_id`, `page`, `size` | `{data, pagination}` |
 | `patient.events` | `patient_id`, `page`, `size` | `{data, pagination}` |
 | `queue.prioritize` | `as_of`, `include_inactive` e filtros de `queue.list` | executa DPS e retorna `{strategy, model, pipeline, total, data}` — emite `progress` |
+| `queue.prioritize.dpss` | os parâmetros do DPS e `socioeconomic_weight` | executa o DPSS experimental, informa cobertura e faz fallback auditável quando faltam referências |
+| `queue.request.create` | `{request: {...}}` | grava uma solicitação e dispara normalização, DPSS e publicação |
+| `clinical_event.create` | `{event: {...}}` | grava um evento validado e dispara o fluxo reativo |
+| `procedure.upsert` | `{procedure: {...}}` | cria ou atualiza um procedimento e dispara o fluxo reativo |
 | `catalog.procedures` | — | `{data, total}` |
 | `catalog.swalis` | — | `{data, total}` |
 | `catalog.filters` | — | `{specialties, priorities, sort_fields}` |
 | `stats.summary` | — | agregados da fila |
 
 O `welcome` lista as ações disponíveis, então não precisa duplicar esta tabela no front.
+
+### DPSS reativo
+
+O WebSocket push-only `GET /v1/dpss/ws?hospital=hsl` envia imediatamente um
+`queue.dpss.snapshot` completo e publica outro snapshot sempre que fila,
+eventos, procedimentos ou referências mudam. O observador executa o fluxo:
+
+```text
+mudança no CSV de origem
+→ normalização atômica
+→ recarga do repositório
+→ recálculo de toda a fila DPSS
+→ publicação de queue.dpss.snapshot
+```
+
+O intervalo padrão de observação é um segundo. Pode ser configurado por
+`DPSS_WATCH_INTERVAL_SECONDS`; `DPSS_REACTIVE_ENABLED=false` desativa o
+observador. O endpoint antigo `/ws` continua sendo request/response e a ação
+`queue.prioritize.dpss` continua disponível para execução explícita.
+
+Exemplo de entrada de evento pelo `/ws`:
+
+```json
+{
+  "id": "ingest-1",
+  "action": "clinical_event.create",
+  "params": {
+    "event": {
+      "evento_id": "EVT-NEW-001",
+      "solicitacao_id": "SOL-2026-00001",
+      "paciente_id": "PAC-00001",
+      "data_evento": "2026-10-24",
+      "tipo_evento": "internacao",
+      "resultado": "internado",
+      "descricao": "Internação durante a espera",
+      "origem": "prontuario"
+    }
+  }
+}
+```
+
+A resposta confirma `accepted`, `revision` e `queue_total`. A fila completa
+atualizada é publicada no `/v1/dpss/ws`. IDs duplicados, campos desconhecidos,
+datas inválidas, vínculos paciente/solicitação divergentes e procedimentos
+inexistentes são rejeitados.
+
+O DPSS permanece isolado do motor padrão até haver referências territoriais e de
+incapacidade validadas. Consulte [`docs/DPSS.md`](../docs/DPSS.md) para o contrato,
+as fórmulas, as travas e os critérios de ativação.
+
+O indicador híbrido `S` combina 80% de vulnerabilidade social e 20% de barreira
+geográfica. A camada social usa a média dos itens EVFAM-BR válidos e, quando o
+questionário não existe, usa a média municipal do INSE de `dataset/IBGE.csv`
+invertida por min-max; sem ambos, usa `0.5`. A distância é limitada por 150 km e
+também possui fallback neutro `0.5`. Todas as fontes e imputações ficam explícitas.
+Para homologação, colunas ou células EVFAM-BR ausentes são populadas
+sinteticamente, de forma determinística e probabilisticamente correlacionada à
+vulnerabilidade municipal do INSE. As 941 linhas atuais usam essa camada micro
+sintética; 20 delas usam fallback apenas para a distância ausente. Os campos
+`evfam_dados_sinteticos` e `evfam_sintese_versao` impedem que esses valores sejam
+confundidos com dados coletados na APS.
+Na execução do `queue.prioritize.dpss`, o indicador é recalculado para cada
+solicitação com os valores atuais; um `s_vulnerabilidade` antigo no CSV nunca é
+aceito como resultado final. Assim, novas linhas e alterações em EVFAM-BR ou
+distância entram no próximo cálculo após o recarregamento automático do dataset.
 
 Filtros de `queue.list`: `specialty`, `priority` (`alta`/`media`/`baixa`), `city`,
 `procedure_id`, `oncological` (booleano, derivado do CID), `min_days`, `max_days`,

@@ -19,6 +19,10 @@ COLUNAS_FILA_NORM = [
     "prioridade_regulacao_norm", "flag_oncologico_norm", "flag_diabetico_norm",
     "flag_piora_clinica_norm", "avaliacao_pre_anestesica_norm",
     "exames_pre_op_validos_norm", "limitacao_funcional_norm", "sexo_norm",
+    "id_municipio", "inse_medio", "s_vulnerabilidade",
+    "s_vulnerabilidade_imputada", "s_evfam", "s_ibge", "s_social",
+    "s_social_source", "s_evfam_colunas_utilizadas", "s_geografico",
+    "s_distancia_imputada", "s_distancia_teto_km",
 ]
 COLUNAS_EVENTOS_NORM = [
     "evento_id", "solicitacao_id", "paciente_id", "data_evento", "tipo_evento",
@@ -32,6 +36,14 @@ COLUNAS_PROCS_NORM = [
     "especialidade_norm",
 ]
 COLUNAS_SWALIS_NORM = ["classe", "descricao", "prazo_maximo_dias", "exemplos", "classe_norm"]
+COLUNAS_SOCIOECONOMIC_NORM = [
+    "id_municipio", "inse_medio", "observacoes_inse", "s_vulnerabilidade",
+    "source", "source_year", "source_version", "weight_method",
+]
+COLUNAS_DISEASE_BURDEN_NORM = [
+    "cid_prefix_norm", "health_state", "disability_weight_norm", "source",
+    "source_version", "mapping_method",
+]
 
 
 # --- aplicação sobre o dataset real --------------------------------------
@@ -68,12 +80,31 @@ def _escrever(caminho, colunas, linhas):
 def dataset_sintetico(tmp_path):
     """Monta um diretório no formato de dataset/normalizado/ com linhas controladas."""
 
-    def montar(fila=(), eventos=(), procedimentos=(), swalis=()):
+    def montar(
+        fila=(),
+        eventos=(),
+        procedimentos=(),
+        swalis=(),
+        socioeconomic=None,
+        disease_burden=None,
+    ):
         destino = tmp_path / "normalizado"
         _escrever(destino / "fila_cirurgica_normalizada.csv", COLUNAS_FILA_NORM, fila)
         _escrever(destino / "eventos_clinicos_normalizados.csv", COLUNAS_EVENTOS_NORM, eventos)
         _escrever(destino / "procedimentos_normalizados.csv", COLUNAS_PROCS_NORM, procedimentos)
         _escrever(destino / "swalis_normalizado.csv", COLUNAS_SWALIS_NORM, swalis)
+        if socioeconomic is not None:
+            _escrever(
+                destino / "socioeconomic_normalized.csv",
+                COLUNAS_SOCIOECONOMIC_NORM,
+                socioeconomic,
+            )
+        if disease_burden is not None:
+            _escrever(
+                destino / "disease_burden_normalized.csv",
+                COLUNAS_DISEASE_BURDEN_NORM,
+                disease_burden,
+            )
         return destino
 
     return montar
@@ -85,7 +116,11 @@ def app_sintetico(dataset_sintetico):
 
     def montar(**tabelas):
         destino = dataset_sintetico(**tabelas)
-        return create_app("teste", DATASET_DIR=Path(destino))
+        return create_app(
+            "teste",
+            DATASET_DIR=Path(destino),
+            VERIFIER_DATASET_DIR=Path(destino),
+        )
 
     return montar
 
@@ -142,7 +177,8 @@ def conversa(app):
 
     def rodar(*comandos):
         ws = WsFalso(comandos)
-        serve(ws, app.extensions["repository"], limits(app.config))
+        with app.app_context():
+            serve(ws, app.extensions["repository"], limits(app.config))
         return ws
 
     return rodar

@@ -8,6 +8,8 @@ steps without changing the HTTP endpoint or CSV contract.
 from dataclasses import dataclass
 
 from .dps import MODEL_VERSION, prioritize
+from .dpss import MODEL_VERSION as DPSS_MODEL_VERSION
+from .dpss import prioritize as prioritize_dpss
 
 
 @dataclass(frozen=True)
@@ -16,6 +18,8 @@ class PipelineSources:
     events_by_request: dict
     procedures_by_id: dict
     swalis: list
+    socioeconomic: list = ()
+    disease_burden: list = ()
 
 
 class DpsStep:
@@ -29,6 +33,25 @@ class DpsStep:
             sources.swalis,
             as_of,
             include_inactive=include_inactive,
+        )
+
+
+class DpssStep:
+    name = "dpss"
+    version = DPSS_MODEL_VERSION
+
+    def __init__(self, socioeconomic_weight=0.25):
+        self.socioeconomic_weight = socioeconomic_weight
+
+    def run(self, sources, records=None, **_):
+        if records is None:
+            raise ValueError("DPSS requires a previous DPS pipeline step")
+        return prioritize_dpss(
+            records,
+            sources.queue,
+            sources.socioeconomic,
+            sources.disease_burden,
+            self.socioeconomic_weight,
         )
 
 
@@ -59,3 +82,8 @@ class PrioritizationPipeline:
 
 
 DEFAULT_PIPELINE = PrioritizationPipeline()
+
+
+def dpss_pipeline(socioeconomic_weight=0.25):
+    """Build an isolated DPSS pipeline without changing the DPS default."""
+    return PrioritizationPipeline((DpsStep(), DpssStep(socioeconomic_weight)))

@@ -2,7 +2,8 @@
 
 9ª Hackatona de Engenharia de Software · 2026 · Fin-x · PUCRS · Hospital São Lucas
 
-**Dados 100% sintéticos. Nenhum paciente real. Uso livre.**
+**Dados clínicos 100% sintéticos. Nenhum paciente real.** `IBGE.csv` é uma
+referência socioeconômica pública externa e deve manter sua licença/proveniência documentada.
 **Data de referência: 23/10/2026** (todos os `dias_em_fila` e os eventos foram calculados em relação a esta data).
 
 ## Arquivos
@@ -13,6 +14,8 @@
 | `eventos_clinicos.csv` | ~1.500 | O que aconteceu durante a espera: biópsias, HbA1c, pronto-socorro, internações, exames de imagem, reavaliações, contatos telefônicos e faltas. |
 | `procedimentos.csv` | 23 | Catálogo de procedimentos: especialidade, porte, risco cirúrgico (1 a 5), duração média e necessidade de UTI. |
 | `referencias/swalis.csv` | 5 | Um framework possível de urgência (classes A1 a D com prazo máximo). Opcional. |
+| `IBGE.csv` | ~169 mil | INSE por município, ano, rede e localização; usado para gerar o indicador territorial `S` do DPSS. |
+| `referencias/municipios_ibge.csv` | 38 | Mapeamento local auditável de `municipio_norm + uf` para o código IBGE da fila. |
 | `dicionario_dados.md` | — | Descrição de cada coluna, domínios e observações. |
 | `verificar_fila_priorizada.py` | — | Verificador da regra de ouro para o `fila_priorizada.csv` que a sua equipe vai entregar. |
 
@@ -25,6 +28,16 @@ Formato: CSV, separador vírgula, UTF-8 (sem BOM), datas em `AAAA-MM-DD`, decima
 - **Regra de ouro:** nenhum paciente com neoplasia maligna (CID iniciado por `C`) pode ficar abaixo de um paciente sem urgência clínica. Use o CID, não a flag.
 - `eventos_clinicos.csv` se liga à fila por `solicitacao_id` (e também traz `paciente_id`). Quando um paciente tem mais de uma solicitação, os eventos podem estar ligados a apenas uma delas.
 - Os campos de preparo pré-operatório (`hba1c_ultima`, `avaliacao_pre_anestesica`, `exames_pre_op_validos`) são opcionais e não são avaliados.
+- O INSE é agregado pela média por `id_municipio` e invertido por min-max. Ele é
+  fallback da camada social quando não há EVFAM-BR válida; sem EVFAM e INSE, a
+  camada social recebe `0,5`. O indicador final é
+  `S=clip(0,8*social + 0,2*clip(distancia_hospital_km/150), 0, 1)`. Distância
+  ausente ou negativa recebe fator geográfico neutro `0,5`, sempre com flag.
+- Para homologação, `normalizar_dataset.py` preenche colunas ou células EVFAM-BR
+  ausentes com valores binários determinísticos e probabilidades correlacionadas
+  ao INSE. Valores existentes não são sobrescritos. Toda linha preenchida recebe
+  `evfam_dados_sinteticos=sim`; esses valores não representam aplicação real do
+  questionário.
 
 ## Exemplos rápidos
 

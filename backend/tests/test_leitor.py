@@ -90,7 +90,7 @@ def test_diretorio_ausente_sugere_o_comando(tmp_path):
         reader.load(tmp_path / "nao-existe")
 
 
-def test_carregar_le_as_quatro_tabelas(dataset_sintetico):
+def test_carregar_le_tabelas_obrigatorias_e_referencias_opcionais(dataset_sintetico):
     destino = dataset_sintetico(
         fila=[{"solicitacao_id": "SOL-1"}],
         eventos=[{"evento_id": "EVT-1"}],
@@ -98,5 +98,20 @@ def test_carregar_le_as_quatro_tabelas(dataset_sintetico):
         swalis=[{"classe": "A1"}],
     )
     tabelas = reader.load(destino)
-    assert set(tabelas) == {"fila", "eventos", "procedimentos", "swalis"}
+    assert set(tabelas) == {
+        "fila", "eventos", "procedimentos", "swalis",
+        "socioeconomic", "disease_burden",
+    }
     assert len(tabelas["fila"]) == 1
+    assert tabelas["socioeconomic"] == []
+    assert tabelas["disease_burden"] == []
+
+
+def test_carregar_converte_referencias_dpss(dataset_sintetico):
+    destino = dataset_sintetico(
+        socioeconomic=[{"id_municipio": "4314902", "s_vulnerabilidade": "0,42"}],
+        disease_burden=[{"cid_prefix_norm": "C50", "disability_weight_norm": "0.6"}],
+    )
+    tabelas = reader.load(destino)
+    assert tabelas["socioeconomic"][0]["s_vulnerabilidade"] == 0.42
+    assert tabelas["disease_burden"][0]["disability_weight_norm"] == 0.6

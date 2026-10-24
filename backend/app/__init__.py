@@ -40,6 +40,7 @@ def create_app(environment=None, **overrides):
                 "regulation": {
                     "rest": f"{regulation.API_PREFIX}/hospitais/{app.config['HOSPITAL_ID']}",
                     "stream": regulation.STREAM_PATH,
+                    "dpss_stream": regulation.DPSS_STREAM_PATH,
                 },
                 "protocol": realtime.protocol.PROTOCOL_VERSION,
                 "actions": realtime.actions.names(),

@@ -37,7 +37,9 @@ def test_dataset_dir_padrao_fica_dentro_do_backend():
     "fila_cirurgica.csv",
     "eventos_clinicos.csv",
     "procedimentos.csv",
+    "IBGE.csv",
     "referencias/swalis.csv",
+    "referencias/municipios_ibge.csv",
 ])
 def test_dataset_de_origem_e_scripts_estao_onde_os_comandos_esperam(arquivo):
     # O verificador oficial lê os CSVs de origem, não os normalizados.
