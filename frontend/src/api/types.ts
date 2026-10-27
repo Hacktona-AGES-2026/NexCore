@@ -254,7 +254,7 @@ export interface VerifierRun {
 }
 
 export interface ImpactReport {
-  /** "referencia" quando o backend ainda não calcula e o front usa o relatório da entrega. */
+  /** "referencia" quando o backend ainda não calcula e o front usa o relatório de referência do mock. */
   source?: "backend" | "referencia";
   total: number;
   /** Como a fila manual de referência foi montada. */

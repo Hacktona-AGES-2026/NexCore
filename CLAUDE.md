@@ -15,7 +15,6 @@ explica cada posição. Peças:
 - `frontend/` — React + TypeScript + Vite (painel da regulação, telão).
 - `simulador/` — Go, só biblioteca padrão; alimenta a ingestão na demonstração.
 - `docs/` — `CONTRATO_BACKEND.md` (contrato front↔back), `DPSS.md`, `ANALISE_DADOS.md`. `docs/TESTES.md` existe localmente mas está no `.gitignore`.
-- `entrega/impacto.json` — relatório usado pelo front quando o backend não tem `/painel/impacto`.
 - `mock/` — mockups HTML estáticos, não fazem parte da app.
 
 Dados 100% sintéticos. Ver também [backend/README.md](backend/README.md),
@@ -166,7 +165,7 @@ em frames. Comando inválido rende `error` e **não** fecha a conexão.
 implementação de referência do contrato), `src/domain/` (regras puras, espelho das do
 backend), `src/state/QueueContext`. Por padrão usa o mock (`VITE_USE_MOCK=true`); variáveis em
 `frontend/.env.example`. Se `/painel/impacto` ou `/fila/exportar` derem 404, o front cai em
-`entrega/impacto.json`. Em Docker, o nginx (`nginx.conf.template`, `BACKEND_UPSTREAM`) serve o
+`src/mock/impacto.json`. Em Docker, o nginx (`nginx.conf.template`, `BACKEND_UPSTREAM`) serve o
 build e faz proxy de `/v1` e `/api`, então o navegador fala com uma origem só.
 
 **Simulador (`simulador/`).** Sobe no compose da raiz depois do healthcheck do backend

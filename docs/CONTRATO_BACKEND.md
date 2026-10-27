@@ -292,7 +292,7 @@ Achado atual dos dados (bom para o pitch): quem mora a mais de 200 km espera em 
 
 ### `GET /painel/impacto` → `ImpactReport` e `GET /fila/exportar`
 
-Já existe uma implementação de referência em Python: [`entrega/gerar_entrega.py`](../entrega/gerar_entrega.py) com o cálculo em [`entrega/neco.py`](../entrega/neco.py) (só biblioteca padrão). Ela gera exatamente o `impacto.json` e o `fila_priorizada.csv` que o front consome.
+Os números de referência no dataset completo (verificador oficial na fila do Neco e na manual) estão em [`backend/tests/dados/impacto_referencia.json`](../backend/tests/dados/impacto_referencia.json), travados por `backend/tests/test_impacto.py`. O front tem uma cópia em `frontend/src/mock/impacto.json`, usada pelo mock e como fallback.
 
 - `/fila/exportar`: CSV com `solicitacao_id,posicao,justificativa` da fila **atual** (respeitando reordenações manuais).
 - `/painel/impacto`: roda o verificador oficial (`verificar_fila_priorizada.py`) na fila do Neco e na fila manual de referência (prioridade manual, desempate por espera) e devolve os indicadores, a matriz classe × prioridade manual, os números de destaque e quem mais subiu. Pode ser calculado na subida e recalculado a cada mudança.

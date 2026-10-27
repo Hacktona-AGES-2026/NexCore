@@ -17,7 +17,7 @@ cd backend && python wsgi.py          # outro terminal
 cd frontend && npm run dev:backend    # usa .env.backend
 ```
 
-Se `/painel/impacto` ou `/fila/exportar` responderem 404 (backend antigo), o front usa o relatório de `entrega/impacto.json` e monta o `fila_priorizada.csv` a partir da fila ao vivo. No modo backend não há "Simular evento": as atualizações em tempo real vêm das ações dos administradores e, quando existir, da ingestão (`/fila/eventos`).
+Se `/painel/impacto` ou `/fila/exportar` responderem 404 (backend antigo), o front usa o relatório de referência `src/mock/impacto.json` e monta o `fila_priorizada.csv` a partir da fila ao vivo. No modo backend não há "Simular evento": as atualizações em tempo real vêm das ações dos administradores e, quando existir, da ingestão (`/fila/eventos`).
 
 ## Estrutura
 
@@ -69,6 +69,6 @@ O "Pergunte ao Neco" deve ser um LLM com ferramentas de consulta à fila no back
 - `/telao`: painel para TV, sem nomes completos. Abra em outra janela e use tela cheia. No modo mock, as ações feitas na aba principal são repetidas no telão (BroadcastChannel).
 - Ctrl+K abre o "Pergunte ao Neco" em qualquer tela.
 
-Os agregados do mock (`src/mock/stats.json`) foram gerados a partir do dataset completo (941 solicitações). `impacto.json` e `fila_priorizada.csv` vêm de `python entrega/gerar_entrega.py --front`.
+Os agregados do mock (`src/mock/stats.json`) foram gerados a partir do dataset completo (941 solicitações). `impacto.json` é a mesma referência que `backend/tests/dados/impacto_referencia.json`; se o painel de impacto mudar, atualize os dois.
 
 Tipos completos em [src/api/types.ts](src/api/types.ts).

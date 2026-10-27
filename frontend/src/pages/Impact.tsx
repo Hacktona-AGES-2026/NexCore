@@ -164,7 +164,7 @@ export function Impact() {
       </div>
       <p className="note">
         {data.baseline} A fila do Neco é a mesma do arquivo exportado.
-        {data.source === "referencia" && " Comparação gerada por entrega/gerar_entrega.py com o verificador oficial, enquanto o backend não calcula este painel."}
+        {data.source === "referencia" && " Comparação de referência gerada com o verificador oficial, enquanto o backend não calcula este painel."}
       </p>
     </section>
   );
