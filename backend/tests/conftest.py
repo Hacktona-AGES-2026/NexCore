@@ -36,6 +36,12 @@ COLUNAS_PROCS_NORM = [
     "especialidade_norm",
 ]
 COLUNAS_SWALIS_NORM = ["classe", "descricao", "prazo_maximo_dias", "exemplos", "classe_norm"]
+# Os prazos de referencias/swalis.csv. A fila da regulação calcula o DPS ao criar a app,
+# e o DPS recusa classe sem prazo: sem esta tabela a app nem sobe.
+SWALIS_PADRAO = [
+    {"classe": classe, "prazo_maximo_dias": prazo, "classe_norm": classe}
+    for classe, prazo in (("A1", 15), ("A2", 21), ("B", 60), ("C", 180), ("D", 360))
+]
 COLUNAS_SOCIOECONOMIC_NORM = [
     "id_municipio", "inse_medio", "observacoes_inse", "s_vulnerabilidade",
     "source", "source_year", "source_version", "weight_method",
@@ -84,7 +90,7 @@ def dataset_sintetico(tmp_path):
         fila=(),
         eventos=(),
         procedimentos=(),
-        swalis=(),
+        swalis=SWALIS_PADRAO,
         socioeconomic=None,
         disease_burden=None,
     ):

@@ -304,32 +304,37 @@ def test_exportar_inclui_quem_entrou(cliente_fila):
 
 # --- POST /fila/eventos ------------------------------------------------------
 
-def test_ida_ao_ps_reclassifica_e_sobe(cliente_fila, frames):
+def test_ida_ao_ps_e_registrada_e_auditada_mesmo_sem_mudar_a_posicao(cliente_fila, frames):
+    # no DPSS a ida ao PS entra no fator clínico; aqui não basta para passar SOL-B
     resposta = cliente_fila.post(f"{H}/fila/eventos", json=novo_evento())
     assert resposta.status_code == 202
     corpo = resposta.get_json()
     assert corpo["id"] == "SOL-C" and corpo["urgencyClass"] == "C"
-    assert (corpo["position"], corpo["previousPosition"]) == (2, 3)
+    assert corpo["position"] == 3 and "previousPosition" not in corpo
     assert corpo["events"][-1]["type"] == "pronto_socorro"
-    assert ordem(cliente_fila) == ["SOL-A", "SOL-C", "SOL-B"]
+    assert ordem(cliente_fila) == ["SOL-A", "SOL-B", "SOL-C"]
 
     patch, audit, atividade = frames()
-    assert {e["id"] for e in patch["entries"]} == {"SOL-B", "SOL-C"}
-    assert audit["entry"]["kind"] == "recalc" and (audit["entry"]["from"], audit["entry"]["to"]) == (3, 2)
-    assert "Reclassificado de Eletivo (D) para Moderado (C)" in audit["entry"]["justification"]
-    assert atividade["text"] == "Paciente subiu de 3 para 2 após ida ao pronto-socorro"
+    assert {e["id"] for e in patch["entries"]} == {"SOL-C"}
+    assert audit["entry"]["kind"] == "recalc" and (audit["entry"]["from"], audit["entry"]["to"]) == (3, 3)
+    assert "DPSS de 0,736 para 0,742, classe mantida" in audit["entry"]["justification"]
+    assert atividade["text"] == "Paciente: ida ao pronto-socorro registrada, posição 3 mantida"
 
 
-def test_hba1c_e_registrada_mas_nao_muda_prioridade(cliente_fila, frames):
+def test_hba1c_entra_no_dps_como_vulnerabilidade_metabolica(cliente_fila, frames):
+    # no DPS a HbA1c é um dos três componentes do fator clínico: 9,1 basta para passar SOL-B
     resposta = cliente_fila.post(f"{H}/fila/eventos", json=novo_evento(
         tipo="hba1c", resultado="resultado", valor_numerico=9.1, origem="laboratorio",
     ))
     assert resposta.status_code == 202
-    assert resposta.get_json()["events"][-1]["value"] == "9.1"
-    assert ordem(cliente_fila) == ["SOL-A", "SOL-B", "SOL-C"]
-    _, audit, _ = frames()
-    assert (audit["entry"]["from"], audit["entry"]["to"]) == (3, 3)
-    assert "critério de preparo cirúrgico, não de prioridade" in audit["entry"]["justification"]
+    corpo = resposta.get_json()
+    assert corpo["events"][-1]["value"] == "9.1"
+    assert corpo["urgencyClass"] == "C" and (corpo["position"], corpo["previousPosition"]) == (2, 3)
+    assert ordem(cliente_fila) == ["SOL-A", "SOL-C", "SOL-B"]
+    patch, audit, atividade = frames()
+    assert {e["id"] for e in patch["entries"]} == {"SOL-B", "SOL-C"}
+    assert audit["entry"]["kind"] == "recalc" and (audit["entry"]["from"], audit["entry"]["to"]) == (3, 2)
+    assert atividade["text"] == "Paciente subiu de 3 para 2 após HbA1c"
 
 
 def test_quem_a_regulacao_fixou_nao_e_movido_pelo_evento(cliente_fila):
@@ -370,11 +375,20 @@ def test_confirmacao_resolvida_nao_volta_com_outro_evento(cliente_fila):
     assert entrada(cliente_fila, "SOL-C")["pendingConfirmation"] is True
 
 
-def test_biopsia_positiva_sem_cid_de_cancer_abre_pendencia(cliente_fila):
+def test_biopsia_positiva_reclassifica_sobe_e_abre_pendencia_sem_cid_de_cancer(cliente_fila, frames):
     corpo = cliente_fila.post(f"{H}/fila/eventos", json=novo_evento(
         tipo="biopsia", resultado="positivo", origem="laboratorio de patologia",
     )).get_json()
-    assert corpo["urgencyClass"] == "A2" and corpo["position"] == 1  # A2 com +6 pela biópsia: passa SOL-A
+    # A2 na faixa protegida, com o mesmo DPSS de SOL-A: o empate fica na ordem do dataset
+    assert corpo["urgencyClass"] == "A2" and (corpo["position"], corpo["previousPosition"]) == (2, 3)
+    assert ordem(cliente_fila) == ["SOL-A", "SOL-C", "SOL-B"]
+
+    patch, audit, subiu, pendencia = frames()
+    assert {e["id"] for e in patch["entries"]} == {"SOL-B", "SOL-C"}
+    assert audit["entry"]["kind"] == "recalc" and (audit["entry"]["from"], audit["entry"]["to"]) == (3, 2)
+    assert "Reclassificado de Moderado (C) para Urgente (A2)" in audit["entry"]["justification"]
+    assert subiu["text"] == "Paciente subiu de 3 para 2 após biópsia"
+    assert "o CID K40.9 não é de câncer" in pendencia["text"]
     assert any(p["kind"] == "biopsy" and p["entryIds"] == ["SOL-C"] for p in cliente_fila.get(f"{H}/pendencias").get_json())
 
 
@@ -514,7 +528,11 @@ GO = shutil.which("go") or ("/usr/local/go/bin/go" if Path("/usr/local/go/bin/go
 @pytest.mark.lento
 @pytest.mark.skipif(GO is None, reason="Go não instalado: o contrato com o simulador não roda aqui")
 def test_dados_do_simulador_passam_na_ingestao_e_pulam_na_fila(app_real):
-    """O que o simulador manda é aceito, e cada história leva o paciente bem para cima.
+    """O que o simulador manda é aceito, e nenhuma história empurra o paciente para baixo.
+
+    No DPSS o salto depende do perfil: varizes, cálculo e nódulo sobem centenas de
+    posições; artrose e hérnia sobem menos; o câncer já entra na faixa protegida e
+    quase não se mexe com os eventos.
 
     Roda o `-dump` do simulador com semente fixa: 27 entradas cobrem os nove perfis, cada
     uma com os 2 eventos que recebe no ritmo padrão (um a cada 5 s, entrada a cada 10 s).
@@ -535,8 +553,7 @@ def test_dados_do_simulador_passam_na_ingestao_e_pulam_na_fila(app_real):
             resposta = cliente.post(f"{H}/fila/eventos", json=evento)
             assert resposta.status_code == 202, resposta.get_json()
         final = resposta.get_json()["position"]
-        # perceptível: no mínimo metade do caminho até o topo (um câncer que entra em 88 vai a 5)
-        assert final <= entrou // 2, f"{corpo['cid_principal']}: {entrou} → {final}"
+        assert final <= entrou, f"{corpo['cid_principal']}: {entrou} → {final}"
     estado = app_real.extensions["queue_state"]
     assert len(estado.order) == 941 + 27
     assert golden_rule_violation(estado.order, estado.assessments) is None

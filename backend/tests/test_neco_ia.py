@@ -223,9 +223,9 @@ def test_ferramentas_do_chat_so_leem(app_nova):
     snapshot = {**estado(app_nova).chat_snapshot(), "rules": RULES_SUMMARY}
     ferramentas = {f.__name__: f for f in build_tools(snapshot)}
     antes = [e["id"] for e in estado(app_nova).entries()]
-    e = primeiro(app_nova, "A1")
+    e = estado(app_nova).entries()[0]  # o topo da fila, de qualquer classe da faixa protegida
     detalhe = ferramentas["detalhar_solicitacao"](e["id"].lower())
-    assert detalhe["posicao"] == e["position"] and detalhe["logo_acima"] is None
+    assert detalhe["posicao"] == 1 and detalhe["logo_acima"] is None
     assert ferramentas["listar_fila"](classe="a1", limite=3)["total"] == 29
     assert ferramentas["buscar_pacientes"](e["name"].split()[0])["total"] >= 1
     assert "erro" in ferramentas["detalhar_solicitacao"]("SOL-0000-00000")

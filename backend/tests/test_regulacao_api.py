@@ -2,8 +2,8 @@
 
 O estado é mutável e vive na app, então tudo que muda a fila usa `app_nova`
 (uma app por teste); as leituras usam a app da sessão. Os números de referência
-dos painéis e das pendências são os do `frontend/src/mock/stats.json`, gerado
-pelo front a partir do dataset completo: se divergirem, o front muda de cara.
+dos painéis e das pendências são os do dataset completo ordenado pelo DPSS: se
+mudarem, o que o front mostra muda junto.
 """
 import pytest
 
@@ -46,7 +46,7 @@ def test_fila_vem_inteira_em_camelcase(cliente):
     assert corpo["hospitalId"] == "hsl"
     assert corpo["total"] == len(corpo["entries"]) == 941
     primeiro = corpo["entries"][0]
-    assert primeiro["id"] == "SOL-2026-00098"
+    assert primeiro["id"] == "SOL-2023-00010"
     assert {"patientId", "daysWaiting", "urgencyClass", "classReason", "factors", "highlights"} <= set(primeiro)
     assert "solicitacao_id" not in primeiro
 
@@ -59,9 +59,9 @@ def test_posicoes_sao_continuas(cliente):
 def test_entrada_do_exemplo_do_contrato(cliente):
     e = next(x for x in cliente.get(f"{H}/fila").get_json()["entries"] if x["id"] == "SOL-2025-00274")
     assert e["name"] == "Gabriela Ramos Quadros"
-    assert e["urgencyClass"] == "C"
+    assert e["urgencyClass"] == "A1"  # o DPS lê "angina instável" no texto clínico
     assert e["asa"] == "3" and e["pain"] == "6"  # texto, como em types.ts
-    assert [f["key"] for f in e["factors"]] == ["urgency", "wait", "events", "symptoms"]
+    assert [f["key"] for f in e["factors"]] == ["wait", "clinical", "social"]
     assert e["locked"] is False and e["pendingConfirmation"] is False
 
 
@@ -120,16 +120,16 @@ def test_reordenar_move_trava_e_audita(nova):
     resposta = mover(nova, "SOL-2025-00274", 210)
     assert resposta.status_code == 200
     registro = resposta.get_json()
-    assert (registro["kind"], registro["from"], registro["to"]) == ("manual", 404, 210)
+    assert (registro["kind"], registro["from"], registro["to"]) == ("manual", 22, 210)
     assert registro["author"] == "Marina Albuquerque"
     assert registro["justification"] == f"Critério clínico não considerado. {JUSTIFICATIVA}"
 
     entradas = nova.get(f"{H}/fila").get_json()["entries"]
     movida = entradas[209]
     assert movida["id"] == "SOL-2025-00274" and movida["locked"] is True
-    assert movida["previousPosition"] == 404
+    assert movida["previousPosition"] == 22
     assert [e["position"] for e in entradas] == list(range(1, 942))
-    assert entradas[210]["previousPosition"] == 210  # quem estava ali desceu um
+    assert entradas[21]["previousPosition"] == 23  # quem estava logo abaixo subiu um
 
 
 @pytest.mark.parametrize("corpo, trecho", [
@@ -139,13 +139,13 @@ def test_reordenar_move_trava_e_audita(nova):
     ({"position": 942, "reason": "x", "justification": JUSTIFICATIVA}, "entre 1 e 941"),
     ({"position": "210", "reason": "x", "justification": JUSTIFICATIVA}, "inteiro"),
     ({"position": True, "reason": "x", "justification": JUSTIFICATIVA}, "inteiro"),
-    ({"position": 404, "reason": "x", "justification": JUSTIFICATIVA}, "já está na posição"),
+    ({"position": 22, "reason": "x", "justification": JUSTIFICATIVA}, "já está na posição"),
 ])
 def test_reordenar_valida_de_novo_no_servidor(nova, corpo, trecho):
     resposta = nova.post(f"{H}/fila/SOL-2025-00274/reordenar", json=corpo)
     assert resposta.status_code == 400
     assert trecho in resposta.get_json()["detail"]
-    assert posicao(nova, "SOL-2025-00274") == 404
+    assert posicao(nova, "SOL-2025-00274") == 22
 
 
 def test_reordenar_sem_corpo_json(nova):
@@ -191,8 +191,8 @@ def test_oncologico_pode_descer_abaixo_de_quem_nao_e_calmo(app_nova, nova):
 
 def test_validar_grava_auditoria_na_posicao_atual(nova):
     registro = nova.post(f"{H}/fila/SOL-2025-00274/validar").get_json()
-    assert (registro["kind"], registro["from"], registro["to"]) == ("validation", 404, 404)
-    assert posicao(nova, "SOL-2025-00274") == 404
+    assert (registro["kind"], registro["from"], registro["to"]) == ("validation", 22, 22)
+    assert posicao(nova, "SOL-2025-00274") == 22
 
 
 # --- pendências ------------------------------------------------------------
@@ -254,16 +254,16 @@ def test_manter_na_fila_limpa_a_confirmacao(nova):
 def test_resumo_bate_com_a_referencia(cliente):
     resumo = cliente.get(f"{H}/painel/resumo").get_json()
     assert resumo["byClass"] == [
-        {"cls": "A1", "total": 29, "overdue": 29}, {"cls": "A2", "total": 171, "overdue": 168},
-        {"cls": "B", "total": 202, "overdue": 198}, {"cls": "C", "total": 247, "overdue": 181},
-        {"cls": "D", "total": 292, "overdue": 121},
+        {"cls": "A1", "total": 29, "overdue": 29}, {"cls": "A2", "total": 195, "overdue": 192},
+        {"cls": "B", "total": 258, "overdue": 253}, {"cls": "C", "total": 367, "overdue": 255},
+        {"cls": "D", "total": 92, "overdue": 40},
     ]
-    assert resumo["overdueTotal"] == 697 and resumo["oncologic"] == 177
+    assert resumo["overdueTotal"] == 769 and resumo["oncologic"] == 177
     assert [b["total"] for b in resumo["waitBuckets"]] == [173, 162, 253, 201, 152]
     assert len(resumo["top"]) == 12
     assert resumo["top"][0] == {
-        "position": 1, "id": "SOL-2026-00098", "initials": "E.L.P.",
-        "procedure": "Histerectomia", "cls": "A1", "days": 264,
+        "position": 1, "id": "SOL-2023-00010", "initials": "J.S.M.",
+        "procedure": "Colectomia", "cls": "A2", "days": 1318,
     }
 
 
@@ -277,7 +277,7 @@ def test_equidade_bate_com_a_referencia(cliente):
     assert len(eq["cities"]) == 38
     assert eq["cities"][0] == {
         "name": "Porto Alegre", "lat": -30.03, "lon": -51.23, "total": 367,
-        "avgWait": 364, "overdue": 252, "urgent": 75, "distanceKm": 14,
+        "avgWait": 364, "overdue": 287, "urgent": 89, "distanceKm": 14,
     }
     assert [(g["label"], g["avgWait"]) for g in eq["byDistance"]] == [
         ("Até 50 km", 366), ("50 a 200 km", 378), ("Mais de 200 km", 492),
@@ -298,7 +298,7 @@ def test_neco_explica_paciente_e_cita_o_id(cliente):
         f"{H}/neco/perguntar", json={"question": "Por que a Gabriela Ramos Quadros está na posição dela?"},
     ).get_json()
     assert resposta["entryIds"] == ["SOL-2025-00274"]
-    assert "posição 404" in resposta["text"]
+    assert "posição 22" in resposta["text"]
 
 
 def test_neco_pede_pergunta(cliente):

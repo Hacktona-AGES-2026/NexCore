@@ -106,11 +106,11 @@ def test_reordenar_publica_patch_auditoria_e_atividade(app_nova):
     st.reorder("SOL-2025-00274", 210, "Critério clínico", "x" * 45)
     patch, auditoria, atividade = sub.get(0), sub.get(0), sub.get(0)
     assert patch["type"] == "queue.patch" and patch["total"] == 941
-    assert {e["position"] for e in patch["entries"]} == set(range(210, 405))
+    assert {e["position"] for e in patch["entries"]} == set(range(22, 211))
     assert auditoria["type"] == "audit.appended" and auditoria["entry"]["kind"] == "manual"
     assert atividade == {
         "type": "activity", "at": auditoria["entry"]["at"],
-        "text": "Marina moveu Gabriela de 404 para 210",
+        "text": "Marina moveu Gabriela de 22 para 210",
     }
 
 
@@ -150,7 +150,7 @@ def test_conexao_real_recebe_snapshot_e_mudancas(servidor, app_nova):
     try:
         snapshot = _receber(cliente)
         assert snapshot["type"] == "queue.snapshot"
-        assert snapshot["snapshot"]["entries"][0]["id"] == "SOL-2026-00098"
+        assert snapshot["snapshot"]["entries"][0]["id"] == "SOL-2023-00010"
 
         resposta = app_nova.test_client().post(
             f"{H}/fila/SOL-2025-00274/validar",
