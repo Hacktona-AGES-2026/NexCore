@@ -4,7 +4,8 @@ Pure functions over the current queue (the front's QueueEntry dicts, in queue
 order). `official_csv` is `GET /fila/exportar`, the challenge's
 fila_priorizada.csv as the queue stands now, manual moves included. `report` is
 `GET /painel/impacto`; it takes the verifier's output already run, so nothing
-here starts a process. The reference implementation is entrega/gerar_entrega.py.
+here starts a process. The reference numbers on the full dataset are locked in
+backend/tests/dados/impacto_referencia.json.
 """
 from collections import Counter
 import csv
@@ -58,7 +59,7 @@ def _manual_priority(entry):
 
 
 def justification(entry, signals=None):
-    """The `justificativa` column, the same text as entrega/neco.py and the front."""
+    """The `justificativa` column, the same text as the front (domain/officialCsv.ts)."""
     cls = entry["urgencyClass"]
     deadline = DEADLINE_DAYS[cls]
     days = entry["daysWaiting"] or 0

@@ -3,7 +3,7 @@
 As funções de `app.regulation.impact` são puras: montam-se entradas à mão no
 formato QueueEntry e confere-se o texto exato. Nas rotas, o verificador oficial
 é trocado por um falso para conferir formato, cache e erro; os testes `lento`
-rodam o verificador de verdade e travam os números de `entrega/impacto.json`
+rodam o verificador de verdade e travam os números de `dados/impacto_referencia.json`
 (0 violações no Neco, 177 na fila manual).
 """
 import csv
@@ -17,7 +17,7 @@ from app import create_app
 from app.regulation import impact, verifier
 
 H = "/v1/hospitais/hsl"
-ENTREGA = Path(__file__).resolve().parents[2] / "entrega" / "impacto.json"
+REFERENCIA = Path(__file__).resolve().parent / "dados" / "impacto_referencia.json"
 JUSTIFICATIVA = "Angina instável confirmada com a cardiologia, lesão de tronco."
 SAIDA_OK = (
     "Arquivo: fila_priorizada.csv  |  3 posições  |  fila: 3 solicitações\n"
@@ -40,13 +40,17 @@ def entrada(rid, posicao, cls="D", manual="baixa", dias=100, **extra):
         "urgencyClass": cls,
         "classReason": "sem dor, limitação ou piora relevantes",
         "daysWaiting": dias,
-        "score": 12.5,
+        # DPSS = espera/prazo * (1 + clínico + peso*S) = 0,5 * (1 + 0,4 + 0,25*0,4)
+        "score": 0.75,
         "factors": [
-            {"key": "urgency", "value": 4, "max": 40},
-            {"key": "wait", "value": 3.5, "max": 25},
-            {"key": "events", "value": 0, "max": 20},
-            {"key": "symptoms", "value": 5, "max": 12},
+            {"key": "wait", "value": 0.5, "max": None},
+            {"key": "clinical", "value": 0.4, "max": None},
+            {"key": "social", "value": 0.1, "max": None},
         ],
+        "priority": {
+            "model": "dpss", "protected": False,
+            "socioeconomicVulnerability": 0.4, "socioeconomicWeight": 0.25,
+        },
         "warnings": [],
         "locked": False,
     }
@@ -66,12 +70,13 @@ def ler_csv(texto):
 
 # --- justificativa e CSV -----------------------------------------------------
 
-def test_justificativa_tem_classe_espera_e_indice():
+def test_justificativa_tem_classe_espera_e_dpss():
     texto = impact.justification(entrada("SOL-1", 1))
     assert texto == (
-        "Classe D (Eletivo, SWALIS adaptado): sem dor, limitação ou piora relevantes. "
+        "Classe D (Eletivo, SWALIS inferido pelo DPS): sem dor, limitação ou piora relevantes. "
         "Espera de 100 dias, dentro do prazo de 360. "
-        "Índice 12,5/97 (urgência 4, espera 3,5, eventos 0, sintomas 5)."
+        "DPSS 0,75 = espera/prazo 0,5 × (1 + fator clínico 0,4 + vulnerabilidade social 0,1, "
+        "S=0,4 com peso 0,25)."
     )
 
 
@@ -198,7 +203,8 @@ def test_impacto_roda_o_verificador_nas_duas_filas(app_nova, verificador_falso):
     assert corpo["verifier"]["neco"]["ok"] is True
     assert corpo["verifier"]["manual"]["violacoes"] == 7
     neco, manual = verificador_falso
-    assert ler_csv(neco)[0]["justificativa"].startswith("Classe A1")
+    topo = ler_csv(neco)[0]["justificativa"]
+    assert topo.startswith("Classe A") and "Faixa protegida (A1/A2 ou câncer)" in topo
     assert ler_csv(manual)[0]["justificativa"].startswith("Prioridade manual: alta")
     assert sum(corpo["matrix"][i][p] for i in range(5) for p in impact.PRIORITIES) == 941
     assert len(corpo["movers"]) == impact.MOVERS
@@ -242,9 +248,9 @@ def test_csv_exportado_passa_no_verificador_oficial(cliente, app):
 
 
 @pytest.mark.lento
-def test_impacto_real_bate_com_a_entrega(app_nova):
+def test_impacto_real_bate_com_a_referencia(app_nova):
     corpo = app_nova.test_client().get(f"{H}/painel/impacto").get_json()
-    referencia = json.loads(ENTREGA.read_text(encoding="utf-8"))
+    referencia = json.loads(REFERENCIA.read_text(encoding="utf-8"))
     assert corpo["verifier"]["neco"]["ok"] is True and corpo["verifier"]["neco"]["violacoes"] == 0
     assert corpo["verifier"]["manual"]["ok"] is False and corpo["verifier"]["manual"]["violacoes"] == 177
     for chave in ("total", "matrix", "headline"):

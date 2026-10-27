@@ -65,8 +65,8 @@ export const httpBackend: Backend = {
   getExplanation: (id) => request(`/fila/${id}/explicacao`),
   getEquityInsight: () => request("/painel/equidade/comentario"),
   getImpactInsight: () => request("/painel/impacto/comentario"),
-  // Enquanto o backend não tiver /painel/impacto, usa o relatório gerado por
-  // entrega/gerar_entrega.py com o verificador oficial (mesmo dataset).
+  // Enquanto o backend não tiver /painel/impacto, usa o relatório de referência
+  // (verificador oficial no mesmo dataset) que vem com o mock.
   getImpact: () => request<ImpactReport>("/painel/impacto").catch(async (err) => {
     if (!missing(err)) throw err;
     const ref = (await import("../mock/impacto.json")).default as ImpactReport;

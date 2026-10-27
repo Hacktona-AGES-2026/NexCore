@@ -1,0 +1,131 @@
+{
+ "total": 941,
+ "baseline": "Fila de hoje: prioridade manual da regulação (alta, média, baixa), com desempate pelo maior tempo de espera.",
+ "verifier": {
+  "neco": {
+   "ok": true,
+   "output": "Arquivo: fila_priorizada.csv  |  941 posições  |  fila: 941 solicitações\n- posição mediana dos oncológicos: 134 de 941\n- oncológicos no primeiro terço: 100%\n- pacientes com PS/internação nos últimos 180 dias na primeira metade: 62%\n- pacientes sem urgência clínica no último terço: 67%\n\n\nRESULTADO: OK — regra de ouro respeitada e formato válido",
+   "violacoes": 0,
+   "medianaOnco": 134,
+   "oncoPrimeiroTerco": 100,
+   "psPrimeiraMetade": 62,
+   "calmosUltimoTerco": 67
+  },
+  "manual": {
+   "ok": false,
+   "output": "Arquivo: fila_priorizada.csv  |  941 posições  |  fila: 941 solicitações\n- posição mediana dos oncológicos: 287 de 941\n- oncológicos no primeiro terço: 53%\n- pacientes com PS/internação nos últimos 180 dias na primeira metade: 38%\n- pacientes sem urgência clínica no último terço: 49%\n\nERRO:  REGRA DE OURO VIOLADA: 177 paciente(s) oncológico(s) abaixo do primeiro paciente sem urgência clínica (posição 12). Exemplos: SOL-2025-00011 (C50.9, pos 13), SOL-2025-00324 (C34.3, pos 38), SOL-2026-00036 (C73, pos 57), SOL-2026-00155 (C61, pos 68), SOL-2026-00191 (C44.9, pos 75)\n\nRESULTADO: 1 erro(s)",
+   "violacoes": 177,
+   "medianaOnco": 287,
+   "oncoPrimeiroTerco": 53,
+   "psPrimeiraMetade": 38,
+   "calmosUltimoTerco": 49
+  }
+ },
+ "matrix": [
+  {
+   "cls": "A1",
+   "alta": 7,
+   "media": 11,
+   "baixa": 9,
+   "vazia": 2
+  },
+  {
+   "cls": "A2",
+   "alta": 97,
+   "media": 54,
+   "baixa": 43,
+   "vazia": 1
+  },
+  {
+   "cls": "B",
+   "alta": 76,
+   "media": 61,
+   "baixa": 117,
+   "vazia": 4
+  },
+  {
+   "cls": "C",
+   "alta": 92,
+   "media": 133,
+   "baixa": 138,
+   "vazia": 4
+  },
+  {
+   "cls": "D",
+   "alta": 27,
+   "media": 11,
+   "baixa": 54,
+   "vazia": 0
+  }
+ ],
+ "headline": {
+  "a1Total": 29,
+  "a1Low": 11,
+  "urgentTotal": 224,
+  "urgentLow": 55,
+  "dTotal": 92,
+  "dHigh": 27
+ },
+ "movers": [
+  {
+   "id": "SOL-2024-00165",
+   "initials": "V.P.R.",
+   "procedure": "Exerese de tumor de pele com reconstrucao",
+   "cls": "A2",
+   "reason": "CID principal C44.3 identificado como oncológico; biópsia positiva (EVT-000098, 24/10/2024); imagem mais recente mostra progressão (EVT-000797, 26/07/2026)",
+   "manualPriority": "vazia",
+   "manualPosition": 933,
+   "necoPosition": 14
+  },
+  {
+   "id": "SOL-2025-00301",
+   "initials": "M.M.S.",
+   "procedure": "Revascularizacao do miocardio",
+   "cls": "A1",
+   "reason": "texto clínico contém o sinal de alarme 'angina instavel'",
+   "manualPriority": "vazia",
+   "manualPosition": 936,
+   "necoPosition": 31
+  },
+  {
+   "id": "SOL-2026-00361",
+   "initials": "M.P.O.",
+   "procedure": "Liberacao do tunel do carpo",
+   "cls": "A1",
+   "reason": "texto clínico contém o sinal de alarme 'perda de funcao'",
+   "manualPriority": "vazia",
+   "manualPosition": 939,
+   "necoPosition": 81
+  },
+  {
+   "id": "SOL-2026-00235",
+   "initials": "R.M.F.",
+   "procedure": "Safenectomia / tratamento cirurgico de varizes",
+   "cls": "A1",
+   "reason": "internação registrada nos últimos 30 dias (EVT-001295, 30/09/2026)",
+   "manualPriority": "baixa",
+   "manualPosition": 860,
+   "necoPosition": 48
+  },
+  {
+   "id": "SOL-2026-00460",
+   "initials": "M.M.M.",
+   "procedure": "Mastectomia / setorectomia de mama",
+   "cls": "A2",
+   "reason": "CID principal C50.9 identificado como oncológico; biópsia positiva (EVT-000521, 08/05/2026)",
+   "manualPriority": "baixa",
+   "manualPosition": 902,
+   "necoPosition": 101
+  },
+  {
+   "id": "SOL-2026-00396",
+   "initials": "O.O.S.",
+   "procedure": "Mastectomia / setorectomia de mama",
+   "cls": "A2",
+   "reason": "CID principal C50.4 identificado como oncológico; imagem mais recente mostra progressão (EVT-001262, 26/09/2026)",
+   "manualPriority": "baixa",
+   "manualPosition": 892,
+   "necoPosition": 95
+  }
+ ]
+}
